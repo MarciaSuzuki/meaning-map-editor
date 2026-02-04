@@ -1,0 +1,103 @@
+{
+  "name": "Ruth",
+  "chapters": 4,
+  "verses": [
+    {
+      "book": "Ruth",
+      "chapter": 1,
+      "verse": 16,
+      "reference": "Ruth 1:16",
+      "clauses": [
+        {
+          "id": 427571,
+          "clause_type": "xYqt",
+          "is_verbless": false,
+          "hebrew_text": "\u05d5\u05b7\u05ea\u05b9\u05bc\u05a4\u05d0\u05de\u05b6\u05e8 \u05e8\u05d5\u05bc\u05ea\u0599",
+          "transliteration": "watto\u02bemer r\u00fb\u1e6f",
+          "gloss": "and-she-said Ruth",
+          "phrases": [
+            { "id": 651234, "function": "Pred", "hebrew": "\u05d5\u05b7\u05ea\u05b9\u05bc\u05a4\u05d0\u05de\u05b6\u05e8", "transliteration": "watto\u02bemer", "gloss": "and-she-said" },
+            { "id": 651235, "function": "Subj", "hebrew": "\u05e8\u05d5\u05bc\u05ea\u0599", "transliteration": "r\u00fb\u1e6f", "gloss": "Ruth" }
+          ]
+        },
+        {
+          "id": 427572,
+          "clause_type": "xYqt",
+          "is_verbless": false,
+          "hebrew_text": "\u05d0\u05b7\u05dc\u05be\u05ea\u05b4\u05bc\u05e4\u05b0\u05d2\u05b0\u05bc\u05e2\u05b4\u05d9\u05be\u05d1\u05b4\u0594\u05d9 \u05dc\u05b0\u05e2\u05b8\u05d6\u05b0\u05d1\u05b5\u0596\u05da\u05b0 \u05dc\u05b8\u05e9\u05c1\u05a3\u05d5\u05bc\u05d1 \u05de\u05b5\u05d0\u05b7\u05d7\u05b2\u05e8\u05b8\u0591\u05d9\u05b4\u05da\u05b0",
+          "transliteration": "\u02beal-tipg\u0259\u02bf\u00ee-\u1e07\u00ee l\u0259\u02bf\u0101z\u0259\u1e07\u0113\u1e35 l\u0101\u0161\u00fb\u1e07 m\u0113\u02bea\u1e25\u0103r\u0101yi\u1e35",
+          "gloss": "not-urge-me to-leave-you to-return from-after-you",
+          "phrases": [
+            { "id": 651236, "function": "Nega", "hebrew": "\u05d0\u05b7\u05dc", "transliteration": "\u02beal", "gloss": "not" },
+            { "id": 651237, "function": "Pred", "hebrew": "\u05ea\u05b4\u05bc\u05e4\u05b0\u05d2\u05b0\u05bc\u05e2\u05b4\u05d9", "transliteration": "tipg\u0259\u02bf\u00ee", "gloss": "urge" },
+            { "id": 651238, "function": "Cmpl", "hebrew": "\u05d1\u05b4\u0594\u05d9", "transliteration": "\u1e07\u00ee", "gloss": "against-me" },
+            { "id": 651239, "function": "Cmpl", "hebrew": "\u05dc\u05b0\u05e2\u05b8\u05d6\u05b0\u05d1\u05b5\u0596\u05da\u05b0", "transliteration": "l\u0259\u02bf\u0101z\u0259\u1e07\u0113\u1e35", "gloss": "to-leave-you" },
+            { "id": 651240, "function": "Cmpl", "hebrew": "\u05dc\u05b8\u05e9\u05c1\u05a3\u05d5\u05bc\u05d1 \u05de\u05b5\u05d0\u05b7\u05d7\u05b2\u05e8\u05b8\u0591\u05d9\u05b4\u05da\u05b0", "transliteration": "l\u0101\u0161\u00fb\u1e07 m\u0113\u02bea\u1e25\u0103r\u0101yi\u1e35", "gloss": "to-return from-after-you" }
+          ]
+        },
+        {
+          "id": 427573,
+          "clause_type": "xYqt",
+          "is_verbless": false,
+          "hebrew_text": "\u05db\u05b4\u05bc\u05a0\u05d9 \u05d0\u05b6\u05dc\u05be\u05d0\u05b2\u05e9\u05b6\u05c1\u05a8\u05e8 \u05ea\u05b5\u05bc\u05dc\u05b0\u05db\u05b4\u059c\u05d9 \u05d0\u05b5\u05dc\u05b5\u0597\u05da\u05b0",
+          "transliteration": "k\u00ee \u02beel-\u02be\u0103\u0161er t\u0113l\u0259\u1e35\u00ee \u02be\u0113l\u0113\u1e35",
+          "gloss": "for to-where you-go I-will-go",
+          "phrases": [
+            { "id": 651241, "function": "Conj", "hebrew": "\u05db\u05b4\u05bc\u05a0\u05d9", "transliteration": "k\u00ee", "gloss": "for" },
+            { "id": 651242, "function": "Cmpl", "hebrew": "\u05d0\u05b6\u05dc\u05be\u05d0\u05b2\u05e9\u05b6\u05c1\u05a8\u05e8 \u05ea\u05b5\u05bc\u05dc\u05b0\u05db\u05b4\u059c\u05d9", "transliteration": "\u02beel-\u02be\u0103\u0161er t\u0113l\u0259\u1e35\u00ee", "gloss": "to-where you-go" },
+            { "id": 651243, "function": "Pred", "hebrew": "\u05d0\u05b5\u05dc\u05b5\u0597\u05da\u05b0", "transliteration": "\u02be\u0113l\u0113\u1e35", "gloss": "I-will-go" }
+          ]
+        },
+        {
+          "id": 427574,
+          "clause_type": "xYqt",
+          "is_verbless": false,
+          "hebrew_text": "\u05d5\u05bc\u05d1\u05b7\u05d0\u05b2\u05e9\u05b6\u05c1\u05a4\u05e8 \u05ea\u05b8\u05bc\u05dc\u05b4\u0599\u05d9\u05e0\u05b4\u05d9\u0599 \u05d0\u05b8\u05dc\u05b4\u0594\u05d9\u05df",
+          "transliteration": "\u00fb\u1e07a\u02be\u0103\u0161er t\u0101l\u00een\u00ee \u02be\u0101l\u00een",
+          "gloss": "and-where you-lodge I-will-lodge",
+          "phrases": [
+            { "id": 651244, "function": "Conj", "hebrew": "\u05d5\u05bc", "transliteration": "\u00fb", "gloss": "and" },
+            { "id": 651245, "function": "Cmpl", "hebrew": "\u05d1\u05b7\u05d0\u05b2\u05e9\u05b6\u05c1\u05a4\u05e8 \u05ea\u05b8\u05bc\u05dc\u05b4\u0599\u05d9\u05e0\u05b4\u05d9\u0599", "transliteration": "\u1e07a\u02be\u0103\u0161er t\u0101l\u00een\u00ee", "gloss": "where you-lodge" },
+            { "id": 651246, "function": "Pred", "hebrew": "\u05d0\u05b8\u05dc\u05b4\u0594\u05d9\u05df", "transliteration": "\u02be\u0101l\u00een", "gloss": "I-will-lodge" }
+          ]
+        },
+        {
+          "id": 427575,
+          "clause_type": "NmCl",
+          "is_verbless": true,
+          "hebrew_text": "\u05e2\u05b7\u05de\u05b5\u05bc\u05a3\u05da\u05b0 \u05e2\u05b7\u05de\u05b4\u05bc\u0594\u05d9",
+          "transliteration": "\u02bfamm\u0113\u1e35 \u02bfamm\u00ee",
+          "gloss": "your-people my-people",
+          "phrases": [
+            { "id": 651247, "function": "Subj", "hebrew": "\u05e2\u05b7\u05de\u05b5\u05bc\u05a3\u05da\u05b0", "transliteration": "\u02bfamm\u0113\u1e35", "gloss": "your-people" },
+            { "id": 651248, "function": "PreC", "hebrew": "\u05e2\u05b7\u05de\u05b4\u05bc\u0594\u05d9", "transliteration": "\u02bfamm\u00ee", "gloss": "my-people" }
+          ]
+        },
+        {
+          "id": 427576,
+          "clause_type": "NmCl",
+          "is_verbless": true,
+          "hebrew_text": "\u05d5\u05b5\u05d0\u05dc\u05b9\u05d4\u05b7\u0596\u05d9\u05b4\u05da\u05b0 \u05d0\u05b1\u05dc\u05b9\u05d4\u05b8\u05bd\u05d9",
+          "transliteration": "w\u0113\u02bel\u014dhayi\u1e35 \u02be\u0115l\u014dh\u0101y",
+          "gloss": "and-your-God my-God",
+          "phrases": [
+            { "id": 651249, "function": "Subj", "hebrew": "\u05d5\u05b5\u05d0\u05dc\u05b9\u05d4\u05b7\u0596\u05d9\u05b4\u05da\u05b0", "transliteration": "w\u0113\u02bel\u014dhayi\u1e35", "gloss": "and-your-God" },
+            { "id": 651250, "function": "PreC", "hebrew": "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b8\u05bd\u05d9", "transliteration": "\u02be\u0115l\u014dh\u0101y", "gloss": "my-God" }
+          ]
+        },
+        {
+          "id": 427577,
+          "clause_type": "xYqt",
+          "is_verbless": false,
+          "hebrew_text": "\u05d1\u05b7\u05bc\u05d0\u05b2\u05e9\u05b6\u05c1\u05a4\u05e8 \u05ea\u05b8\u05bc\u05de\u0599\u05d5\u05bc\u05ea\u05b4\u05d9\u0599 \u05d0\u05b8\u05de\u0594\u05d5\u05bc\u05ea",
+          "transliteration": "ba\u02be\u0103\u0161er t\u0101m\u00fb\u1e6f\u00ee \u02be\u0101m\u00fb\u1e6f",
+          "gloss": "where you-die I-will-die",
+          "phrases": [
+            { "id": 651251, "function": "Cmpl", "hebrew": "\u05d1\u05b7\u05bc\u05d0\u05b2\u05e9\u05b6\u05c1\u05a4\u05e8 \u05ea\u05b8\u05bc\u05de\u0599\u05d5\u05bc\u05ea\u05b4\u05d9\u0599", "transliteration": "ba\u02be\u0103\u0161er t\u0101m\u00fb\u1e6f\u00ee", "gloss": "where you-die" },
+            { "id": 651252, "function": "Pred", "hebrew": "\u05d0\u05b8\u05de\u0594\u05d5\u05bc\u05ea", "transliteration": "\u02be\u0101m\u00fb\u1e6f", "gloss": "I-will-die" }
+          ]
+        }
+      ]
+    }
+  ]
+}
