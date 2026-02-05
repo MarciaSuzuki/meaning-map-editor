@@ -292,6 +292,13 @@ export default function EditorPage() {
     confidence: 'not_specified',
     notes: '',
   });
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantInput, setAssistantInput] = useState('');
+  const [assistantMessages, setAssistantMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
+  const [assistantStatus, setAssistantStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [assistantError, setAssistantError] = useState<string | null>(null);
+  const [lastFocusedFieldKey, setLastFocusedFieldKey] = useState<string>('');
+  const [assistantFocus, setAssistantFocus] = useState('auto');
   const clausePanelRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedClauseId, setSelectedClauseId] = useState<number | null>(null);
@@ -445,6 +452,7 @@ export default function EditorPage() {
       if (current[key]) return prev;
       return { ...prev, [clauseId]: { ...current, [key]: true } };
     });
+    setLastFocusedFieldKey(key);
   }
 
   function isFieldConfirmed(clauseId: number, key: string) {
@@ -456,6 +464,121 @@ export default function EditorPage() {
       ...inputStyle,
       ...(isFieldConfirmed(clauseId, key) ? confirmedFieldStyle : {}),
     };
+  }
+
+  function getFieldHelp(key: string, annotation: ClauseAnnotation | null) {
+    if (!key) {
+      return { label: 'General', options: [] as string[], note: '' };
+    }
+    const options = (list: Array<{ value: string }>) => list.map((opt) => opt.value);
+    if (key.includes('event_category')) return { label: 'Event Category', options: options(EVENT_CATEGORIES), note: '' };
+    if (key.includes('verbal_core')) {
+      const match = key.match(/event:(\d+):/);
+      const eventIndex = match ? Number(match[1]) : 0;
+      const event = annotation?.events?.[eventIndex];
+      const cores = event ? VERBAL_CORES[event.event_category] ?? [] : [];
+      return { label: 'Verbal Core', options: options(cores), note: 'Verbal cores depend on the selected event category.' };
+    }
+    if (key.includes('predication_type')) return { label: 'Predication Type', options: options(PREDICATION_TYPES), note: '' };
+    if (key.includes('reality')) return { label: 'Reality', options: options(REALITY_VALUES), note: '' };
+    if (key.includes('evidentiality')) return { label: 'Evidentiality', options: options(EVIDENTIALITY_VALUES), note: '' };
+    if (key.includes('time_frame')) return { label: 'Time Frame', options: options(TIME_FRAME_VALUES), note: '' };
+    if (key.includes('aspect')) return { label: 'Aspect', options: options(ASPECT_VALUES), note: '' };
+    if (key.includes('polarity')) return { label: 'Polarity', options: options(POLARITY_VALUES), note: '' };
+    if (key.includes('discourse_function')) return { label: 'Discourse Function', options: options(DISCOURSE_FUNCTIONS), note: '' };
+    if (key.includes('discourse_relation')) return { label: 'Discourse Relation', options: options(DISCOURSE_RELATIONS), note: '' };
+    if (key.includes('register')) return { label: 'Register', options: options(REGISTERS), note: '' };
+    if (key.includes('social_axis')) return { label: 'Social Axis', options: options(SOCIAL_AXES), note: '' };
+    if (key.includes('prominence')) return { label: 'Prominence', options: options(PROMINENCE_VALUES), note: '' };
+    if (key.includes('pacing')) return { label: 'Pacing', options: options(PACING_VALUES), note: '' };
+    if (key.includes('emotion_intensity')) return { label: 'Emotion Intensity', options: options(EMOTION_INTENSITIES), note: '' };
+    if (key.includes('emotion')) return { label: 'Emotion', options: options(EMOTIONS), note: '' };
+    if (key.includes('narrator_stance')) return { label: 'Narrator Stance', options: options(NARRATOR_STANCES), note: '' };
+    if (key.includes('speech_act')) return { label: 'Speech Act', options: options(SPEECH_ACTS), note: '' };
+    if (key.includes('audience_response')) return { label: 'Audience Response', options: options(AUDIENCE_RESPONSES), note: '' };
+    if (key.includes('figurative_language')) return { label: 'Figurative Language', options: options(FIGURATIVE_LANGUAGE), note: '' };
+    if (key.includes('figurative_transferability')) return { label: 'Figurative Transferability', options: options(FIGURATIVE_TRANSFERABILITY), note: '' };
+    if (key.includes('key_term_domain')) return { label: 'Key Term Domain', options: options(KEY_TERM_DOMAINS), note: '' };
+    if (key.includes('key_term_consistency')) return { label: 'Key Term Consistency', options: options(KEY_TERM_CONSISTENCY), note: '' };
+    if (key.includes('retrieval_tags')) return { label: 'Retrieval Tags', options: options(RETRIEVAL_TAG_CATEGORIES), note: 'Tags are free-form; categories guide retrieval.' };
+    if (key.includes('poetic_parallelism')) return { label: 'Poetic Parallelism', options: options(POETIC_PARALLELISM), note: '' };
+    if (key.includes('poetic_line_structure')) return { label: 'Poetic Line Structure', options: options(POETIC_LINE_STRUCTURE), note: '' };
+    if (key.includes('poetic_compression')) return { label: 'Poetic Compression', options: options(POETIC_COMPRESSION), note: '' };
+    if (key.includes('poetic_sound_patterns')) return { label: 'Poetic Sound Patterns', options: options(POETIC_SOUND_PATTERNS), note: '' };
+    if (key.includes('proverb_type')) return { label: 'Proverb Type', options: options(PROVERB_TYPES), note: '' };
+    if (key.includes('wisdom_function')) return { label: 'Wisdom Function', options: options(WISDOM_FUNCTIONS), note: '' };
+    if (key.includes('authority_source')) return { label: 'Authority Source', options: options(WISDOM_AUTHORITY_SOURCES), note: '' };
+    if (key.includes('applicability')) return { label: 'Applicability', options: options(WISDOM_APPLICABILITY), note: '' };
+    if (key.includes('participant') && key.includes('type')) return { label: 'Participant Type', options: options(PARTICIPANT_TYPES), note: '' };
+    if (key.includes('participant') && (key.includes('semantic_role') || key.includes('participant_role'))) {
+      return { label: 'Semantic Role', options: options(SEMANTIC_ROLES), note: '' };
+    }
+    if (key.includes('participant') && (key.includes('quantity') || key.includes('participant_quantity'))) {
+      return { label: 'Participant Quantity', options: options(QUANTITIES), note: '' };
+    }
+    if (key.includes('participant') && (key.includes('reference_status') || key.includes('reference_status'))) {
+      return { label: 'Reference Status', options: options(REFERENCE_STATUSES), note: '' };
+    }
+    if (key === 'participant_role') return { label: 'Semantic Role', options: options(SEMANTIC_ROLES), note: '' };
+    if (key === 'participant_quantity') return { label: 'Participant Quantity', options: options(QUANTITIES), note: '' };
+    if (key === 'reference_status') return { label: 'Reference Status', options: options(REFERENCE_STATUSES), note: '' };
+    if (key.includes('property:') && key.includes('dimension')) return { label: 'Property Dimension', options: Object.keys(PROPERTY_DIMENSIONS), note: '' };
+    if (key.includes('property:') && key.includes('value')) return { label: 'Property Value', options: [], note: 'Property values depend on the chosen dimension.' };
+    if (key.includes('relation')) return { label: 'Relation', options: [], note: 'Relation options depend on the selected relation type.' };
+    return { label: 'General', options: [] as string[], note: '' };
+  }
+
+  async function askAssistant() {
+    if (!assistantInput.trim()) return;
+    const focusKey = assistantFocus === 'auto' ? lastFocusedFieldKey : assistantFocus;
+    const fieldHelp = getFieldHelp(focusKey, activeAnnotation);
+    const clauseContext = selected
+      ? {
+          reference: selected.verse.reference,
+          clause_id: selected.clause.id,
+          clause_type: selected.clause.clause_type,
+          hebrew: selected.clause.hebrew_text,
+          transliteration: selected.clause.transliteration,
+          gloss: selected.clause.gloss,
+          bhsa_discourse: getBhsaDiscourse(selected.clause.clause_type),
+        }
+      : null;
+
+    setAssistantStatus('loading');
+    setAssistantError(null);
+    const userMessage = assistantInput.trim();
+    setAssistantMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+    setAssistantInput('');
+    try {
+      const response = await fetch('/api/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: projectId,
+          genre,
+          subgenre,
+          active_pass: activePass + 1,
+          clause: clauseContext,
+          field: {
+            key: focusKey || 'general',
+            label: fieldHelp.label,
+            options: fieldHelp.options,
+            note: fieldHelp.note,
+          },
+          question: userMessage,
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Assistant failed');
+      }
+      const data = await response.json();
+      setAssistantMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      setAssistantStatus('idle');
+    } catch (error) {
+      setAssistantStatus('error');
+      setAssistantError(error instanceof Error ? error.message : 'Assistant failed');
+    }
   }
 
   function handlePericopeApply() {
@@ -1864,6 +1987,128 @@ export default function EditorPage() {
                 <p style={{ fontSize: '0.85rem', color: s.muted }}>Select a clause from the left panel to begin annotation.</p>
               </div>
             )}
+          </div>
+          <div style={{ position: 'sticky', bottom: '1.25rem', display: 'flex', justifyContent: 'flex-end', marginTop: '2rem', pointerEvents: 'none' }}>
+            <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+              {assistantOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '3.5rem',
+                    right: 0,
+                    width: 320,
+                    backgroundColor: 'white',
+                    border: `1px solid ${s.border}`,
+                    borderRadius: 12,
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
+                    padding: '0.9rem',
+                    zIndex: 20,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Ontology Assistant</span>
+                    <button
+                      onClick={() => setAssistantOpen(false)}
+                      style={{ border: 'none', background: 'transparent', color: s.muted, cursor: 'pointer', fontSize: '0.85rem' }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div style={{ marginBottom: '0.6rem' }}>
+                    <label style={labelStyle}>Focus Field</label>
+                    <select
+                      value={assistantFocus}
+                      onChange={(e) => setAssistantFocus(e.target.value)}
+                      style={inputStyle}
+                    >
+                      <option value="auto">Auto (last clicked field)</option>
+                      <option value="event_category">Event Category</option>
+                      <option value="verbal_core">Verbal Core</option>
+                      <option value="reality">Reality</option>
+                      <option value="evidentiality">Evidentiality</option>
+                      <option value="time_frame">Time Frame</option>
+                      <option value="aspect">Aspect</option>
+                      <option value="polarity">Polarity</option>
+                      <option value="discourse_function">Discourse Function</option>
+                      <option value="discourse_relation">Discourse Relation</option>
+                      <option value="register">Register</option>
+                      <option value="social_axis">Social Axis</option>
+                      <option value="prominence">Prominence</option>
+                      <option value="pacing">Pacing</option>
+                      <option value="emotion">Emotion</option>
+                      <option value="emotion_intensity">Emotion Intensity</option>
+                      <option value="narrator_stance">Narrator Stance</option>
+                      <option value="speech_act">Speech Act</option>
+                      <option value="audience_response">Audience Response</option>
+                      <option value="figurative_language">Figurative Language</option>
+                      <option value="figurative_transferability">Figurative Transferability</option>
+                      <option value="key_term_domain">Key Term Domain</option>
+                      <option value="key_term_consistency">Key Term Consistency</option>
+                      <option value="poetic_parallelism">Poetic Parallelism</option>
+                      <option value="poetic_line_structure">Poetic Line Structure</option>
+                      <option value="poetic_sound_patterns">Poetic Sound Patterns</option>
+                      <option value="poetic_compression">Poetic Compression</option>
+                      <option value="proverb_type">Proverb Type</option>
+                      <option value="wisdom_function">Wisdom Function</option>
+                      <option value="authority_source">Authority Source</option>
+                      <option value="applicability">Applicability</option>
+                      <option value="participant_type">Participant Type</option>
+                      <option value="participant_role">Semantic Role</option>
+                      <option value="participant_quantity">Participant Quantity</option>
+                      <option value="reference_status">Reference Status</option>
+                    </select>
+                  </div>
+                  <div style={{ maxHeight: 200, overflowY: 'auto', border: `1px solid ${s.border}`, borderRadius: 8, padding: '0.5rem', marginBottom: '0.6rem', backgroundColor: s.bgCard }}>
+                    {assistantMessages.length === 0 && (
+                      <p style={{ fontSize: '0.75rem', color: s.muted, margin: 0 }}>
+                        Ask about the selected clause and the ontology field you are unsure about.
+                      </p>
+                    )}
+                    {assistantMessages.map((msg, idx) => (
+                      <div key={`assistant_msg_${idx}`} style={{ marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 600, color: msg.role === 'assistant' ? s.azul : s.telha }}>
+                          {msg.role === 'assistant' ? 'Assistant' : 'You'}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: s.dark }}>{msg.content}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <textarea
+                    style={{ ...inputStyle, minHeight: 70 }}
+                    value={assistantInput}
+                    onChange={(e) => setAssistantInput(e.target.value)}
+                    placeholder="Ask about the selected clause..."
+                  />
+                  <button
+                    onClick={askAssistant}
+                    style={{ marginTop: '0.5rem', padding: '0.4rem 0.75rem', borderRadius: 8, border: 'none', backgroundColor: s.telha, color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', width: '100%' }}
+                  >
+                    {assistantStatus === 'loading' ? 'Asking...' : 'Ask Assistant'}
+                  </button>
+                  {assistantStatus === 'error' && assistantError && (
+                    <p style={{ fontSize: '0.7rem', color: '#A94442', marginTop: '0.4rem' }}>{assistantError}</p>
+                  )}
+                </div>
+              )}
+              <button
+                onClick={() => setAssistantOpen((prev) => !prev)}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: '50%',
+                  border: 'none',
+                  backgroundColor: s.telha,
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 16px rgba(0,0,0,0.12)',
+                }}
+                aria-label="Open ontology assistant"
+              >
+                ?
+              </button>
+            </div>
           </div>
         </section>
 
