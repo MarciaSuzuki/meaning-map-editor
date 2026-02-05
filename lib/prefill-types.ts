@@ -86,6 +86,10 @@ export interface PrefillParticipant {
   id: string;
   label: string;
   label_hebrew: string;
+  lexeme?: string;
+  lexeme_utf8?: string;
+  sp?: string;
+  nametype?: string;
   type: PrefillValue<string>;
   quantity: PrefillValue<string>;
   reference_status: PrefillValue<string>;

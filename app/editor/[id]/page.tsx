@@ -17,7 +17,7 @@ import type {
   EmbeddedRelation,
   RetrievalTag,
 } from '@/lib/types';
-import type { BHSAEnrichedBook, PrefillClauseResult, PrefillEventCore } from '@/lib/prefill-types';
+import type { BHSAEnrichedBook, PrefillClauseResult, PrefillEventCore, PrefillParticipant } from '@/lib/prefill-types';
 import { prefillPericope } from '@/lib/prefill-engine';
 import {
   PARTICIPANT_TYPES,
@@ -153,6 +153,47 @@ const smallMuted = { fontSize: '0.75rem', color: s.muted };
 
 const DEFAULT_PERICOPE = { chapterStart: 1, verseStart: 1, chapterEnd: 1, verseEnd: 5 };
 
+type BookRegistryEntry = {
+  id: string;
+  label: string;
+  label_hebrew: string;
+  type: string;
+  quantity: string;
+  key: string;
+  source_id: string;
+};
+
+type ParticipantLinkingContext = {
+  registryByKey: Map<string, BookRegistryEntry>;
+  firstOccurrenceByKey: Map<string, number>;
+  clauseOrder: Map<number, number>;
+  linkedKeys: Set<string>;
+};
+
+function normalizeParticipantKeyValue(raw: string) {
+  if (!raw) return '';
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/^the\s+/i, '')
+    .replace(/\s+/g, ' ');
+}
+
+function formatRegistryLabel(entry: BookRegistryEntry) {
+  const parts = [];
+  if (entry.label) parts.push(entry.label);
+  if (entry.label_hebrew && entry.label_hebrew !== entry.label) parts.push(entry.label_hebrew);
+  const label = parts.length ? parts.join(' / ') : entry.id;
+  return `${label} (${entry.id})`;
+}
+
+function isNamedParticipant(p: PrefillParticipant) {
+  if (!p) return false;
+  if (p.sp === 'nmpr') return true;
+  if (p.nametype && p.nametype !== 'NA' && p.nametype !== 'unknown') return true;
+  return false;
+}
+
 function sourceKey(key: string) {
   return `${SOURCE_PREFIX}${key}`;
 }
@@ -214,6 +255,7 @@ function getVerseRange(book: BHSABook, range: typeof DEFAULT_PERICOPE) {
 function createDefaultParticipant(id: string): Participant {
   return {
     id,
+    registry_id: '',
     label: '',
     type: 'not_specified',
     quantity: 'not_specified',
@@ -366,7 +408,8 @@ function mapVerbalCore(
 
 function applyPrefillToAnnotation(
   base: ClauseAnnotation,
-  prefill?: PrefillClauseResult | null
+  prefill?: PrefillClauseResult | null,
+  linking?: ParticipantLinkingContext
 ): ClauseAnnotation {
   if (!prefill) return base;
   const next = { ...base };
@@ -413,22 +456,55 @@ function applyPrefillToAnnotation(
   }
 
   if (primaryEvent.participants.length === 0 && prefill.participants.length) {
-    primaryEvent.participants = prefill.participants.map((p, index) => ({
-      id: p.id || `p_${base.clause_id}_${index + 1}`,
-      label: p.label || '',
-      type: (p.type.value as Participant['type']) ?? 'not_specified',
-      quantity: (p.quantity.value as Participant['quantity']) ?? 'not_specified',
-      reference_status: (p.reference_status.value as Participant['reference_status']) ?? 'not_specified',
-      semantic_role: (p.semantic_role.value as Participant['semantic_role']) ?? 'not_specified',
-      properties: [],
-      name_meaning: '',
-    }));
-    prefill.participants.forEach((_, index) => {
+    primaryEvent.participants = prefill.participants.map((p, index) => {
+      const key = normalizeParticipantKeyValue(p.label_hebrew || p.label || '');
+      const registryEntry = key && linking ? linking.registryByKey.get(key) : undefined;
+      const shouldAutoLink = Boolean(
+        registryEntry && (isNamedParticipant(p) || (linking && linking.linkedKeys.has(key)))
+      );
+      const registryId = shouldAutoLink && registryEntry ? registryEntry.id : '';
+
+      const participant: Participant = {
+        id: p.id || `p_${base.clause_id}_${index + 1}`,
+        registry_id: registryId,
+        label: p.label || '',
+        type: (p.type.value as Participant['type']) ?? 'not_specified',
+        quantity: (p.quantity.value as Participant['quantity']) ?? 'not_specified',
+        reference_status: (p.reference_status.value as Participant['reference_status']) ?? 'not_specified',
+        semantic_role: (p.semantic_role.value as Participant['semantic_role']) ?? 'not_specified',
+        properties: [],
+        name_meaning: '',
+      };
+
+      if (registryEntry) {
+        if (participant.type === 'not_specified' && registryEntry.type) {
+          participant.type = registryEntry.type as Participant['type'];
+        }
+        if (participant.quantity === 'not_specified' && registryEntry.quantity) {
+          participant.quantity = registryEntry.quantity as Participant['quantity'];
+        }
+        if (participant.reference_status === 'not_specified' && linking && key) {
+          const clauseIndex = linking.clauseOrder.get(base.clause_id) ?? 0;
+          const firstIndex = linking.firstOccurrenceByKey.get(key);
+          if (typeof firstIndex === 'number') {
+            participant.reference_status = clauseIndex > firstIndex ? 'given' : 'new_mention';
+          }
+        }
+      }
+
+      return participant;
+    });
+    prefill.participants.forEach((p, index) => {
       sources = setFieldSource(sources, `event:0:participant:${index}:label`, SOURCE_AUTO);
       sources = setFieldSource(sources, `event:0:participant:${index}:type`, SOURCE_AUTO);
       sources = setFieldSource(sources, `event:0:participant:${index}:quantity`, SOURCE_AUTO);
       sources = setFieldSource(sources, `event:0:participant:${index}:reference_status`, SOURCE_AUTO);
       sources = setFieldSource(sources, `event:0:participant:${index}:semantic_role`, SOURCE_AUTO);
+      const key = normalizeParticipantKeyValue(p.label_hebrew || p.label || '');
+      const registryEntry = key && linking ? linking.registryByKey.get(key) : undefined;
+      if (registryEntry && (isNamedParticipant(p) || (linking && linking.linkedKeys.has(key)))) {
+        sources = setFieldSource(sources, `event:0:participant:${index}:registry_id`, SOURCE_AUTO);
+      }
     });
   }
 
@@ -520,6 +596,69 @@ export default function EditorPage() {
     prefillData.clauses.forEach((clause) => map.set(clause.clause_id, clause));
     return map;
   }, [prefillData]);
+  const clauseOrder = useMemo(() => {
+    const map = new Map<number, number>();
+    let idx = 0;
+    enrichedBook?.verses?.forEach((verse) => {
+      verse.clauses.forEach((clause) => {
+        map.set(clause.clause_id, idx);
+        idx += 1;
+      });
+    });
+    return map;
+  }, [enrichedBook]);
+  const bookPrefill = useMemo(() => {
+    if (!enrichedBook?.verses?.length) return null;
+    const first = enrichedBook.verses[0];
+    const last = enrichedBook.verses[enrichedBook.verses.length - 1];
+    return prefillPericope(
+      enrichedBook.verses,
+      enrichedBook.book,
+      first.chapter,
+      first.verse,
+      last.chapter,
+      last.verse,
+    );
+  }, [enrichedBook]);
+  const bookParticipantRegistry = useMemo<BookRegistryEntry[]>(() => {
+    if (!bookPrefill) return [];
+    const filtered = bookPrefill.participant_registry.filter((p) => !['prps', 'prde', 'suffix'].includes(p.sp || ''));
+    return filtered.map((p, index) => ({
+      id: `P${index + 1}`,
+      label: p.label || '',
+      label_hebrew: p.label_hebrew || '',
+      type: p.type.value ?? 'not_specified',
+      quantity: p.quantity.value ?? 'not_specified',
+      key: normalizeParticipantKeyValue(p.label_hebrew || p.label || ''),
+      source_id: p.id,
+    }));
+  }, [bookPrefill]);
+  const bookRegistryByKey = useMemo(() => {
+    const map = new Map<string, BookRegistryEntry>();
+    bookParticipantRegistry.forEach((entry) => {
+      if (entry.key && !map.has(entry.key)) map.set(entry.key, entry);
+    });
+    return map;
+  }, [bookParticipantRegistry]);
+  const bookRegistryById = useMemo(() => {
+    const map = new Map<string, BookRegistryEntry>();
+    bookParticipantRegistry.forEach((entry) => map.set(entry.id, entry));
+    return map;
+  }, [bookParticipantRegistry]);
+  const firstOccurrenceByKey = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!bookPrefill) return map;
+    bookPrefill.clauses.forEach((clause) => {
+      const clauseIndex = clauseOrder.get(clause.clause_id) ?? 0;
+      clause.participants.forEach((p) => {
+        const key = normalizeParticipantKeyValue(p.label_hebrew || p.label || '');
+        if (!key) return;
+        if (!bookRegistryByKey.has(key)) return;
+        if (!map.has(key)) map.set(key, clauseIndex);
+      });
+    });
+    return map;
+  }, [bookPrefill, clauseOrder, bookRegistryByKey]);
   const pericopeReadyForReview = useMemo(() => {
     if (pericopeClauses.length === 0) return false;
     return pericopeClauses.every((clause) => {
@@ -558,16 +697,28 @@ export default function EditorPage() {
     if (pericopeClauses.length === 0) return;
     setAnnotations((prev) => {
       const next = { ...prev };
+      const linkedKeys = new Set<string>();
       for (const clause of pericopeClauses) {
+        const prefillClause = prefillByClauseId?.get(clause.id) ?? null;
         if (!next[clause.id]) {
           const base = createDefaultAnnotation(projectId, clause.id, presets, clause);
-          const prefillClause = prefillByClauseId?.get(clause.id) ?? null;
-          next[clause.id] = applyPrefillToAnnotation(base, prefillClause);
+          next[clause.id] = applyPrefillToAnnotation(base, prefillClause, {
+            registryByKey: bookRegistryByKey,
+            firstOccurrenceByKey,
+            clauseOrder,
+            linkedKeys,
+          });
+        }
+        if (prefillClause) {
+          prefillClause.participants.forEach((p) => {
+            const key = normalizeParticipantKeyValue(p.label_hebrew || p.label || '');
+            if (key) linkedKeys.add(key);
+          });
         }
       }
       return next;
     });
-  }, [pericopeClauses, presets, projectId, prefillByClauseId]);
+  }, [pericopeClauses, presets, projectId, prefillByClauseId, bookRegistryByKey, firstOccurrenceByKey, clauseOrder]);
 
   useEffect(() => {
     setThematicSpine('');
@@ -747,6 +898,13 @@ export default function EditorPage() {
     if (key.includes('wisdom_function')) return { label: 'Wisdom Function', options: options(WISDOM_FUNCTIONS), note: '' };
     if (key.includes('authority_source')) return { label: 'Authority Source', options: options(WISDOM_AUTHORITY_SOURCES), note: '' };
     if (key.includes('applicability')) return { label: 'Applicability', options: options(WISDOM_APPLICABILITY), note: '' };
+    if (key.includes('registry_id')) {
+      return {
+        label: 'Book Participant',
+        options: bookParticipantRegistry.map((entry) => entry.id),
+        note: 'Link this mention to a book-level participant ID.',
+      };
+    }
     if (key.includes('participant') && key.includes('type')) return { label: 'Participant Type', options: options(PARTICIPANT_TYPES), note: '' };
     if (key.includes('name_meaning')) return { label: 'Name Meaning', options: [] as string[], note: 'Use only if the text activates the name meaning.' };
     if (key.includes('participant') && (key.includes('semantic_role') || key.includes('participant_role'))) {
@@ -1575,6 +1733,43 @@ export default function EditorPage() {
                                     Remove Participant
                                   </button>
                                 </div>
+                                <div style={{ marginBottom: '0.5rem' }}>
+                                  <label style={labelStyle}>Book Participant (ID)</label>
+                                  <select
+                                    value={participant.registry_id ?? ''}
+                                    onChange={(e) => {
+                                      const nextId = e.target.value;
+                                      const entry = bookRegistryById.get(nextId);
+                                      updateParticipant(selected.clause.id, eventIndex, pIndex, (p) => {
+                                        const next = { ...p, registry_id: nextId };
+                                        if (entry) {
+                                          if (!next.label) next.label = entry.label;
+                                          if (next.type === 'not_specified' && entry.type) {
+                                            next.type = entry.type as Participant['type'];
+                                          }
+                                          if (next.quantity === 'not_specified' && entry.quantity) {
+                                            next.quantity = entry.quantity as Participant['quantity'];
+                                          }
+                                          if (next.reference_status === 'not_specified') {
+                                            const clauseIndex = clauseOrder.get(selected.clause.id) ?? 0;
+                                            const firstIndex = firstOccurrenceByKey.get(entry.key);
+                                            if (typeof firstIndex === 'number') {
+                                              next.reference_status = clauseIndex > firstIndex ? 'given' : 'new_mention';
+                                            }
+                                          }
+                                        }
+                                        return next;
+                                      });
+                                    }}
+                                    onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:registry_id`)}
+                                    style={fieldStyle(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:registry_id`)}
+                                  >
+                                    <option value="">Link to book participant…</option>
+                                    {bookParticipantRegistry.map((entry) => (
+                                      <option key={entry.id} value={entry.id}>{formatRegistryLabel(entry)}</option>
+                                    ))}
+                                  </select>
+                                </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: showSemanticRoles ? '1.2fr 1fr 1fr' : '1.2fr 1fr', gap: '0.6rem' }}>
                                   <div>
                                     <label style={labelStyle}>Label</label>
@@ -1762,9 +1957,13 @@ export default function EditorPage() {
                             style={fieldStyle(selected.clause.id, `relation:${rIndex}:from`)}
                           >
                             <option value="">From participant</option>
-                            {activeAnnotation.events.flatMap((ev) => ev.participants).map((p) => (
-                              <option key={p.id} value={p.id}>{p.label || p.id}</option>
-                            ))}
+                            {activeAnnotation.events.flatMap((ev) => ev.participants).map((p) => {
+                              const registryLabel = p.registry_id ? bookRegistryById.get(p.registry_id)?.label : '';
+                              const label = p.label || registryLabel || p.id;
+                              return (
+                                <option key={p.id} value={p.id}>{label}</option>
+                              );
+                            })}
                           </select>
                           <select
                             value={relation.to_participant}
@@ -1773,9 +1972,13 @@ export default function EditorPage() {
                             style={fieldStyle(selected.clause.id, `relation:${rIndex}:to`)}
                           >
                             <option value="">To participant</option>
-                            {activeAnnotation.events.flatMap((ev) => ev.participants).map((p) => (
-                              <option key={p.id} value={p.id}>{p.label || p.id}</option>
-                            ))}
+                            {activeAnnotation.events.flatMap((ev) => ev.participants).map((p) => {
+                              const registryLabel = p.registry_id ? bookRegistryById.get(p.registry_id)?.label : '';
+                              const label = p.label || registryLabel || p.id;
+                              return (
+                                <option key={p.id} value={p.id}>{label}</option>
+                              );
+                            })}
                           </select>
                           <button
                             onClick={() => removeRelation(selected.clause.id, rIndex)}

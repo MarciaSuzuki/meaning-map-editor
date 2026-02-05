@@ -67,6 +67,7 @@ export type SemanticRole =
 
 export interface Participant {
   id: string;
+  registry_id?: string; // link to book-level participant registry
   label: string; // free-text label, e.g., "Ruth", "Naomi"
   type: ParticipantType;
   quantity: Quantity;
