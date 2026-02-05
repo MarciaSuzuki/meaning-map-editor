@@ -26,12 +26,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 });
     }
 
-    const systemPrompt = `You are an ontology assistant for the Tripod Method Meaning Map workflow.
+    const systemPrompt = `You are a friendly helper for the Tripod Method Meaning Map workflow.
 You only EXPLAIN and GUIDE. You never change tags or choose for the analyst.
-Use the provided ontology options, definitions, and examples to explain terms.
-If field_definitions are provided, cite them explicitly.
+Write in plain, non-technical language for non‑linguists. Avoid jargon.
+Use the provided ontology options and definitions, and cite them explicitly.
 Only include examples when the analyst asks for them (or explicitly asks "for example").
-Keep answers short (3-6 sentences), ask 1 clarifying question if needed.
+Keep answers short (2-4 short sentences). Focus on the simplest explanation.
+Ask 1 short clarifying question only if truly needed.
 Always remind the analyst that they decide the final tag.`;
 
     const tripodPath = path.join(process.cwd(), 'public', 'ontology', 'tripod-ontology.html');
