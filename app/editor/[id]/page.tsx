@@ -291,6 +291,13 @@ export default function EditorPage() {
 
   const pericopeVerses = useMemo(() => getVerseRange(book, pericopeRange), [book, pericopeRange]);
   const pericopeClauses = useMemo(() => pericopeVerses.flatMap((v) => v.clauses), [pericopeVerses]);
+  const pericopeReadyForReview = useMemo(() => {
+    if (pericopeClauses.length === 0) return false;
+    return pericopeClauses.every((clause) => {
+      const confirmed = confirmedFields[clause.id];
+      return confirmed && Object.keys(confirmed).length > 0;
+    });
+  }, [pericopeClauses, confirmedFields]);
 
   const selected = useMemo(() => {
     if (!selectedClauseId) return null;
@@ -337,6 +344,12 @@ export default function EditorPage() {
       return next;
     });
   }, [pericopeClauses, presets, projectId]);
+
+  useEffect(() => {
+    if (activePass === 3 && !pericopeReadyForReview) {
+      setActivePass(2);
+    }
+  }, [activePass, pericopeReadyForReview]);
 
   function updateAnnotation(clauseId: number, updater: (current: ClauseAnnotation) => ClauseAnnotation) {
     setAnnotations((prev) => {
@@ -528,19 +541,23 @@ export default function EditorPage() {
         {PASSES.map((pass, i) => (
           <button
             key={pass.label}
-            onClick={() => setActivePass(i)}
+            onClick={() => {
+              if (i === 3 && !pericopeReadyForReview) return;
+              setActivePass(i);
+            }}
             style={{
               padding: '0.6rem 1rem',
               fontWeight: 500,
               fontSize: '0.85rem',
               borderBottom: i === activePass ? `2px solid ${pass.color}` : '2px solid transparent',
               color: i === activePass ? pass.color : s.muted,
+              opacity: i === 3 && !pericopeReadyForReview ? 0.45 : 1,
               background: 'none',
               border: 'none',
               borderBottomWidth: 2,
               borderBottomStyle: 'solid',
               borderBottomColor: i === activePass ? pass.color : 'transparent',
-              cursor: 'pointer',
+              cursor: i === 3 && !pericopeReadyForReview ? 'not-allowed' : 'pointer',
               fontFamily: s.body,
             }}
           >
@@ -1649,29 +1666,40 @@ export default function EditorPage() {
                 {activePass === 3 && (
                   <div style={{ backgroundColor: s.bgCard, borderRadius: 12, padding: '1.25rem', border: `1px solid ${s.border}` }}>
                     <h3 style={labelStyle}>AI Review (Pass 4)</h3>
-                    <p style={smallMuted}>AI reviews the completed clause annotations and flags inconsistencies. It does not edit or suggest answers.</p>
-                    <button
-                      onClick={runAIReview}
-                      style={{ padding: '0.45rem 0.9rem', borderRadius: 8, border: 'none', backgroundColor: s.dark, color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginTop: '0.6rem' }}
-                    >
-                      {reviewStatus === 'loading' ? 'Reviewing...' : 'Run AI Review'}
-                    </button>
-                    {reviewStatus === 'error' && reviewError && (
-                      <p style={{ fontSize: '0.75rem', color: '#A94442', marginTop: '0.6rem' }}>{reviewError}</p>
-                    )}
-                    {reviewStatus === 'done' && reviewFlags.length === 0 && (
-                      <p style={{ fontSize: '0.75rem', color: s.muted, marginTop: '0.6rem' }}>No issues flagged.</p>
-                    )}
-                    {reviewFlags.length > 0 && (
-                      <div style={{ marginTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                        {reviewFlags.map((flag, idx) => (
-                          <div key={`flag_${idx}`} style={{ backgroundColor: 'white', borderRadius: 10, border: `1px solid ${s.border}`, padding: '0.7rem' }}>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>Clause {flag.clause_id} - {flag.severity}</div>
-                            <p style={{ fontSize: '0.75rem', color: s.muted, margin: '0.2rem 0' }}>{flag.message}</p>
-                            <p style={{ fontSize: '0.75rem', color: s.dark, margin: 0 }}>{flag.recommendation}</p>
+                    {pericopeReadyForReview ? (
+                      <>
+                        <p style={smallMuted}>AI reviews the completed clause annotations and flags inconsistencies. It does not edit or suggest answers.</p>
+                        <button
+                          onClick={runAIReview}
+                          style={{ padding: '0.45rem 0.9rem', borderRadius: 8, border: 'none', backgroundColor: s.dark, color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginTop: '0.6rem' }}
+                        >
+                          {reviewStatus === 'loading' ? 'Reviewing...' : 'Run AI Review'}
+                        </button>
+                        {reviewStatus === 'error' && reviewError && (
+                          <p style={{ fontSize: '0.75rem', color: '#A94442', marginTop: '0.6rem' }}>{reviewError}</p>
+                        )}
+                        {reviewStatus === 'done' && reviewFlags.length === 0 && (
+                          <p style={{ fontSize: '0.75rem', color: s.muted, marginTop: '0.6rem' }}>No issues flagged.</p>
+                        )}
+                        {reviewFlags.length > 0 && (
+                          <div style={{ marginTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            {reviewFlags.map((flag, idx) => (
+                              <div key={`flag_${idx}`} style={{ backgroundColor: 'white', borderRadius: 10, border: `1px solid ${s.border}`, padding: '0.7rem' }}>
+                                <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>Clause {flag.clause_id} - {flag.severity}</div>
+                                <p style={{ fontSize: '0.75rem', color: s.muted, margin: '0.2rem 0' }}>{flag.message}</p>
+                                <p style={{ fontSize: '0.75rem', color: s.dark, margin: 0 }}>{flag.recommendation}</p>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <p style={smallMuted}>Pass 4 unlocks after every clause in this pericope has been reviewed.</p>
+                        <p style={{ fontSize: '0.75rem', color: s.muted, marginTop: '0.5rem' }}>
+                          Remaining clauses: {pericopeClauses.filter((clause) => !confirmedFields[clause.id] || Object.keys(confirmedFields[clause.id]).length === 0).length}
+                        </p>
+                      </>
                     )}
                   </div>
                 )}
