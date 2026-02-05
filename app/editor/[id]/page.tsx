@@ -300,7 +300,6 @@ export default function EditorPage() {
   const [assistantStatus, setAssistantStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [assistantError, setAssistantError] = useState<string | null>(null);
   const [lastFocusedFieldKey, setLastFocusedFieldKey] = useState<string>('');
-  const [assistantFocus, setAssistantFocus] = useState('auto');
   const clausePanelRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedClauseId, setSelectedClauseId] = useState<number | null>(null);
@@ -583,7 +582,7 @@ export default function EditorPage() {
 
   async function askAssistant() {
     if (!assistantInput.trim()) return;
-    const focusKey = assistantFocus === 'auto' ? lastFocusedFieldKey : assistantFocus;
+    const focusKey = lastFocusedFieldKey;
     const fieldHelp = getFieldHelp(focusKey, activeAnnotation);
     const clauseContext = selected
       ? {
@@ -643,7 +642,6 @@ export default function EditorPage() {
         setAssistantInput('');
         setAssistantStatus('idle');
         setAssistantError(null);
-        setAssistantFocus('auto');
       }
       return next;
     });
@@ -2112,50 +2110,6 @@ export default function EditorPage() {
                     >
                       Close
                     </button>
-                  </div>
-                  <div style={{ marginBottom: '0.6rem' }}>
-                    <label style={labelStyle}>Focus Field</label>
-                    <select
-                      value={assistantFocus}
-                      onChange={(e) => setAssistantFocus(e.target.value)}
-                      style={inputStyle}
-                    >
-                      <option value="auto">Auto (last clicked field)</option>
-                      <option value="event_category">Event Category</option>
-                      <option value="verbal_core">Verbal Core</option>
-                      <option value="reality">Reality</option>
-                      <option value="evidentiality">Evidentiality</option>
-                      <option value="time_frame">Time Frame</option>
-                      <option value="aspect">Aspect</option>
-                      <option value="polarity">Polarity</option>
-                      <option value="discourse_function">Discourse Function</option>
-                      <option value="discourse_relation">Discourse Relation</option>
-                      <option value="register">Register</option>
-                      <option value="social_axis">Social Axis</option>
-                      <option value="prominence">Prominence</option>
-                      <option value="pacing">Pacing</option>
-                      <option value="emotion">Emotion</option>
-                      <option value="emotion_intensity">Emotion Intensity</option>
-                      <option value="narrator_stance">Narrator Stance</option>
-                      <option value="speech_act">Speech Act</option>
-                      <option value="audience_response">Audience Response</option>
-                      <option value="figurative_language">Figurative Language</option>
-                      <option value="figurative_transferability">Figurative Transferability</option>
-                      <option value="key_term_domain">Key Term Domain</option>
-                      <option value="key_term_consistency">Key Term Consistency</option>
-                      <option value="poetic_parallelism">Poetic Parallelism</option>
-                      <option value="poetic_line_structure">Poetic Line Structure</option>
-                      <option value="poetic_sound_patterns">Poetic Sound Patterns</option>
-                      <option value="poetic_compression">Poetic Compression</option>
-                      <option value="proverb_type">Proverb Type</option>
-                      <option value="wisdom_function">Wisdom Function</option>
-                      <option value="authority_source">Authority Source</option>
-                      <option value="applicability">Applicability</option>
-                      <option value="participant_type">Participant Type</option>
-                      <option value="participant_role">Semantic Role</option>
-                      <option value="participant_quantity">Participant Quantity</option>
-                      <option value="reference_status">Reference Status</option>
-                    </select>
                   </div>
                   <div style={{ maxHeight: 200, overflowY: 'auto', border: `1px solid ${s.border}`, borderRadius: 8, padding: '0.5rem', marginBottom: '0.6rem', backgroundColor: s.bgCard }}>
                     {assistantMessages.length === 0 && (
