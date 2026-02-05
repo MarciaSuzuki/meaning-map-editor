@@ -303,7 +303,7 @@
     <h3>Property Dimensions (11 Dimensions, 114 Values)</h3>
     <div class="dim-note">Values are cross-linguistic universals — concepts lexicalized in most of the world's languages and attested in biblical texts. Each dimension also carries <em>not_specified</em> (default) and <em>other →</em> (flagged). Values marked <span class="new-tag">NEW</span> were added in the expanded v5.3 amendment.</div>
 
-    <h3>Physical (15 values)</h3>
+    <h3>Physical (17 values)</h3>
     <table>
       <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
       <tr><td>old</td><td>Advanced in age</td><td>Abraham was old, advanced in years</td></tr>
@@ -321,6 +321,8 @@
       <tr><td>thin <span class="new-tag">NEW</span></td><td>Lean, not fleshy</td><td>Seven thin cows (Pharaoh's dream)</td></tr>
       <tr><td>healthy <span class="new-tag">NEW</span></td><td>Sound in body, well</td><td>He was restored healthy</td></tr>
       <tr><td>sick <span class="new-tag">NEW</span></td><td>Unwell, diseased</td><td>Hezekiah became sick</td></tr>
+      <tr><td>alive <span class="new-tag">NEW</span></td><td>Living, not dead</td><td>He was still alive</td></tr>
+      <tr><td>deceased <span class="new-tag">NEW</span></td><td>No longer alive</td><td>Elimelech died</td></tr>
       <tr class="default-row"><td>not_specified</td><td colspan="2">Default — no physical property indicated</td></tr>
       <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
     </table>
@@ -497,6 +499,12 @@
       <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
     </table>
 
+    <h3>1.5 Name Meaning (Optional)</h3>
+    <table>
+      <tr><th>Field</th><th>Definition</th><th>When to Use</th></tr>
+      <tr><td>name_meaning</td><td>Semantic content of a proper name when narratively significant</td><td>Only when the text activates the meaning (wordplay, explicit etymology, irony)</td></tr>
+    </table>
+
   </div>
 </div>
 
@@ -584,16 +592,35 @@
   </div>
 </div>
 
-<!-- ===================== 3. EVENTS ===================== -->
+<!-- ===================== 3. CLAUSE SEMANTICS ===================== -->
 <div class="layer-section" id="events">
   <div class="layer-header lh-events" onclick="toggle(this)">
-    <span class="badge">LAYER 3</span> Events — 9 Categories, 197 Cores, 16 Semantic Roles
+    <span class="badge">LAYER 3</span> Clause Semantics — 5 Clause Types, 10 Event Categories, 197+ Cores, 18 Semantic Roles
     <span class="arrow">▼</span>
   </div>
   <div class="layer-body">
 
-    <h3>3.1 Event Categories (9)</h3>
-    <div class="note">Each clause maps to one event. 197 event cores (cognitive primitives) are distributed across these 9 categories, drawn from cross-linguistic patterns.</div>
+    <h3>3.0 Clause Type (5)</h3>
+    <table>
+      <tr><th>Clause Type</th><th>Definition</th><th>When to Use</th></tr>
+      <tr><td>event</td><td>Clause built around a verbal predicate (something happens or is done)</td><td>Finite verb, infinitive, or participle functioning as predicate</td></tr>
+      <tr><td>identification</td><td>Names or identifies a participant (X is called Y)</td><td>Naming formulas, identity statements</td></tr>
+      <tr><td>classification</td><td>Assigns a participant to a class/group (X is a Y)</td><td>Ethnic, tribal, occupational, or origin classifications</td></tr>
+      <tr><td>attribution</td><td>Assigns a quality/property to a participant (X is [quality])</td><td>Descriptions, evaluations, property attributions</td></tr>
+      <tr><td>existential</td><td>Asserts existence or presence (there is X)</td><td>Existential statements, including many היה clauses</td></tr>
+    </table>
+
+    <h3>3.1b Non-Event Roles (4)</h3>
+    <table>
+      <tr><th>Role</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>subject</td><td>What is being described or named</td><td>"the man" in "the name of the man [was] Elimelech"</td></tr>
+      <tr><td>predicate</td><td>The name/class/quality being asserted</td><td>"Elimelech" in "the name of the man [was] Elimelech"</td></tr>
+      <tr><td>domain</td><td>The property dimension being specified</td><td>"name" in "the name of the man [was] Elimelech"</td></tr>
+      <tr><td>location</td><td>Where something exists or is located</td><td>"in the land" in "there was famine in the land"</td></tr>
+    </table>
+
+    <h3>3.1 Event Categories (10)</h3>
+    <div class="note">Each clause maps to one proposition. Event categories apply only when clause type = event.</div>
     <table>
       <tr><th>Category</th><th>Definition</th><th>Example Cores</th></tr>
       <tr><td><span class="cat-label" style="background:#e0f0ff;color:#2a5a8a;">STATE</span></td><td>Conditions and properties</td><td>be, exist, have, lack, contain, remain</td></tr>
@@ -605,9 +632,10 @@
       <tr><td><span class="cat-label" style="background:#e0e8f0;color:#3a4a6b;">PROCESS</span></td><td>Changes over time</td><td>become, grow, die, change, heal, ripen, decay</td></tr>
       <tr><td><span class="cat-label" style="background:#f0e8d0;color:#5a4a2a;">RITUAL</span></td><td>Ceremonies and formal acts</td><td>sacrifice, worship, consecrate, purify, anoint</td></tr>
       <tr><td><span class="cat-label" style="background:#e8e8e8;color:#4a4a4a;">META</span></td><td>Narrative commentary</td><td>narrator frames, episode markers, summary statements</td></tr>
+      <tr><td><span class="cat-label" style="background:#dfe8ff;color:#2b3f7a;">SOCIAL</span></td><td>Social/legal acts that change status</td><td>marry, divorce, adopt, inherit, covenant, judge, redeem, vow</td></tr>
     </table>
 
-    <h3>3.2 Semantic Roles (16)</h3>
+    <h3>3.2 Semantic Roles (18)</h3>
     <table>
       <tr><th>Role</th><th>Definition</th><th>Example</th></tr>
       <tr><td>initiator</td><td>Who causes or performs the action</td><td>"<b>David</b> killed Goliath"</td></tr>
@@ -626,6 +654,8 @@
       <tr><td>purpose</td><td>Intended goal</td><td>"…<b>to save his people</b>"</td></tr>
       <tr><td>result</td><td>What results</td><td>"…<b>so that they lived</b>"</td></tr>
       <tr><td>theme</td><td>What moves or is located</td><td>"<b>The spirit</b> moved over the waters"</td></tr>
+      <tr><td>identity</td><td>What a participant is called or identified as</td><td>"He called his name <b>Isaac</b>"</td></tr>
+      <tr><td>separated_from</td><td>Who/what a participant is removed from or deprived of</td><td>"She was left from <b>her children</b> and <b>her husband</b>"</td></tr>
     </table>
 
   </div>
@@ -634,7 +664,7 @@
 <!-- ===================== 4. EVENT MODIFIERS ===================== -->
 <div class="layer-section" id="modifiers">
   <div class="layer-header lh-modifiers" onclick="toggle(this)">
-    <span class="badge">LAYER 4</span> Event Modifiers — Reality, Time, Evidentiality, Aspect, Polarity
+    <span class="badge">LAYER 4</span> Event Modifiers — Reality, Time, Evidentiality, Aspect, Polarity, Duration, Volitionality
     <span class="arrow">▼</span>
   </div>
   <div class="layer-body">
@@ -665,6 +695,24 @@
           <tr><td>immediate</td><td>Present / at reference time</td></tr>
           <tr><td>prospective</td><td>Future / after reference time</td></tr>
           <tr><td>gnomic</td><td>Timeless / always true</td></tr>
+        </table>
+
+        <h3>Duration (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>point</td><td>A single moment or instantaneous event</td></tr>
+          <tr><td>bounded</td><td>A defined time span (e.g., "ten years")</td></tr>
+          <tr><td>unbounded</td><td>Open-ended, no end stated</td></tr>
+          <tr><td>not_specified</td><td>No duration indicated</td></tr>
+        </table>
+
+        <h3>Duration Precision (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>exact</td><td>A precise number is given ("seven days")</td></tr>
+          <tr><td>approximate</td><td>An estimate or hedged number ("about ten years")</td></tr>
+          <tr><td>vague</td><td>No number, only qualitative ("a long time")</td></tr>
+          <tr><td>not_specified</td><td>No precision indicated</td></tr>
         </table>
 
         <h3>Polarity (2 values)</h3>
@@ -701,6 +749,15 @@
           <tr><td>inchoative</td><td>Beginning / starting</td></tr>
           <tr><td>cessative</td><td>Ending / stopping</td></tr>
         </table>
+
+        <h3>Volitionality (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>volitional</td><td>Participant acts by choice</td></tr>
+          <tr><td>non_volitional</td><td>Participant is acted upon or left without choice</td></tr>
+          <tr><td>ambiguous</td><td>Text does not clarify</td></tr>
+          <tr><td>not_specified</td><td>Default</td></tr>
+        </table>
       </div>
     </div>
 
@@ -726,7 +783,7 @@
       <tr><td>Peak</td><td>PEAK</td><td>Climactic prominence / turning point</td></tr>
     </table>
 
-    <h3>5.2 Discourse Relations (12)</h3>
+    <h3>5.2 Discourse Relations (14)</h3>
     <table>
       <tr><th>Relation</th><th>Definition</th><th>Signal Words</th></tr>
       <tr><td>sequence</td><td>One event after another</td><td>then, afterward, next</td></tr>
@@ -741,6 +798,8 @@
       <tr><td>elaboration</td><td>More detail</td><td>specifically, in particular</td></tr>
       <tr><td>evidence</td><td>Supports claim</td><td>for example, as shown by</td></tr>
       <tr><td>restatement</td><td>Says again differently</td><td>in other words</td></tr>
+      <tr><td>additive</td><td>Repeats or extends prior event with increased scope/intensity</td><td>also, even, likewise</td></tr>
+      <tr><td>resumption</td><td>Mainline narrative resumes after a digression</td><td>wayyiqtol resumes after nominal block</td></tr>
     </table>
 
     <h3>5.3 Peak Event &amp; Thematic Spine</h3>
@@ -750,13 +809,44 @@
       <tr><td>Thematic Spine</td><td>A one-sentence summary of the passage's meaning arc, written by the validator.</td></tr>
     </table>
 
+    <h3>5.4 Information Structure</h3>
+    <div class="sub-grid">
+      <div>
+        <h3>Topic</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>unmarked</td><td>Default word order; no element foregrounded</td></tr>
+          <tr><td>marked_topic</td><td>Known participant placed in a marked position</td></tr>
+          <tr><td>contrastive_topic</td><td>Participant highlighted in contrast to another</td></tr>
+          <tr><td>not_specified</td><td>Default</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Focus</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>unmarked</td><td>No special focus</td></tr>
+          <tr><td>new_info_focus</td><td>New information highlighted</td></tr>
+          <tr><td>contrastive_focus</td><td>Element highlighted in contrast to an expected alternative</td></tr>
+          <tr><td>not_specified</td><td>Default</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>5.5 Formulaic Marker</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>formulaic</td><td>Recognized fixed formula in the source language</td><td>ויהי בימי — narrative opening formula</td></tr>
+      <tr><td>non_formulaic</td><td>Ordinary clause</td><td>Most narrative clauses</td></tr>
+    </table>
+
   </div>
 </div>
 
 <!-- ===================== 6. PRAGMATIC LAYER ===================== -->
 <div class="layer-section" id="pragmatics">
   <div class="layer-header lh-pragmatics" onclick="toggle(this)">
-    <span class="badge">LAYER 6</span> Pragmatic Layer — Register, Social Axis, Prominence, Pacing
+    <span class="badge">LAYER 6</span> Pragmatic Layer — Register, Social Axis, Prominence, Pacing, Focalization
     <span class="arrow">▼</span>
   </div>
   <div class="layer-body">
@@ -816,6 +906,15 @@
           <tr><td>normal</td><td>Standard narration pace</td></tr>
           <tr><td>slow</td><td>Detailed description</td></tr>
           <tr><td>pause</td><td>Narration stops / reflection</td></tr>
+        </table>
+
+        <h3>6.5 Focalization (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>narrator_external</td><td>Narrator describes from outside, no character perspective</td></tr>
+          <tr><td>narrator_aligned</td><td>Narrator describes toward a specific character's perspective</td></tr>
+          <tr><td>character_internal</td><td>Events presented as experienced by a named character</td></tr>
+          <tr><td>not_specified</td><td>Default</td></tr>
         </table>
       </div>
     </div>
@@ -1058,7 +1157,7 @@
 
     <div class="note">Key terms are important biblical vocabulary tagged for Concept Bank lookup during composition.</div>
 
-    <h3>12.1 Semantic Domains (9)</h3>
+    <h3>12.1 Semantic Domains (10)</h3>
     <table>
       <tr><th>Domain</th><th>Example Terms</th></tr>
       <tr><td>divine</td><td>God, LORD, Spirit, holy, glory</td></tr>
@@ -1070,6 +1169,7 @@
       <tr><td>kinship</td><td>father, mother, brother, clan</td></tr>
       <tr><td>authority</td><td>king, judge, ruler, servant</td></tr>
       <tr><td>creation</td><td>create, make, form, earth</td></tr>
+      <tr><td>land_belonging</td><td>sojourn, exile, return, inherit, alien/stranger, homeland</td></tr>
     </table>
 
     <h3>12.2 Consistency Levels (3)</h3>

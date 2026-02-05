@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     // Build the review prompt
     const systemPrompt = `You are a quality reviewer for semantic annotations of biblical Hebrew text.
-You are reviewing Meaning Maps created using the Tripod Ontology v5.3.
+You are reviewing Meaning Maps created using the Tripod Ontology v5.4.
 
 The passage genre is: ${genre} (${subgenre}).
 

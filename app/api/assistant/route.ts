@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 });
     }
 
-    const systemPrompt = `You are a friendly helper for the Tripod Method Meaning Map workflow.
+    const systemPrompt = `You are a friendly helper for the Tripod Method Meaning Map workflow (v5.4).
 You only EXPLAIN and GUIDE. You never change tags or choose for the analyst.
 Write in plain, non-technical language for non‑linguists. Avoid jargon.
 Use the provided ontology options and definitions, and cite them explicitly.
@@ -74,10 +74,13 @@ Always remind the analyst that they decide the final tag.`;
     const fieldContext: Record<string, string> = field?.context ?? {};
 
     const headingMap: Record<string, { file: 'tripod' | 'expanded'; heading: RegExp }> = {
+      'Clause Type': { file: 'tripod', heading: /Clause Type/i },
+      'Non-Event Roles': { file: 'tripod', heading: /Non-Event Roles/i },
       'Event Category': { file: 'tripod', heading: /Event Categories/i },
       'Participant Type': { file: 'tripod', heading: /Participant Types/i },
       'Participant Quantity': { file: 'tripod', heading: /Quantity<\/h3>/i },
       'Reference Status': { file: 'tripod', heading: /Reference Status/i },
+      'Name Meaning': { file: 'tripod', heading: /Name Meaning/i },
       'Semantic Role': { file: 'tripod', heading: /Semantic Roles/i },
       'Kinship Relation': { file: 'tripod', heading: /Kinship Relations/i },
       'Social Relation': { file: 'tripod', heading: /Social Relations/i },
@@ -86,15 +89,22 @@ Always remind the analyst that they decide the final tag.`;
       'Part-Whole Relation': { file: 'tripod', heading: /Part-Whole Relations/i },
       'Reality': { file: 'tripod', heading: /Reality/i },
       'Time Frame': { file: 'tripod', heading: /Time Frame/i },
+      'Duration': { file: 'tripod', heading: /Duration \(4/i },
+      'Duration Precision': { file: 'tripod', heading: /Duration Precision/i },
       'Evidentiality': { file: 'tripod', heading: /Evidentiality/i },
       'Aspect': { file: 'tripod', heading: /Aspect/i },
       'Polarity': { file: 'tripod', heading: /Polarity/i },
+      'Volitionality': { file: 'tripod', heading: /Volitionality/i },
       'Discourse Function': { file: 'tripod', heading: /Discourse Functions/i },
       'Discourse Relation': { file: 'tripod', heading: /Discourse Relations/i },
+      'Information Structure Topic': { file: 'tripod', heading: /<h3>Topic<\/h3>/i },
+      'Information Structure Focus': { file: 'tripod', heading: /<h3>Focus<\/h3>/i },
+      'Formulaic Marker': { file: 'tripod', heading: /Formulaic Marker/i },
       'Register': { file: 'tripod', heading: /Register/i },
       'Social Axis': { file: 'tripod', heading: /Social Axis/i },
       'Prominence': { file: 'tripod', heading: /Prominence/i },
       'Pacing': { file: 'tripod', heading: /Pacing/i },
+      'Focalization': { file: 'tripod', heading: /Focalization/i },
       'Emotion': { file: 'tripod', heading: /Emotion Types/i },
       'Emotion Intensity': { file: 'tripod', heading: /Intensity Levels/i },
       'Narrator Stance': { file: 'tripod', heading: /Narrator Stance/i },

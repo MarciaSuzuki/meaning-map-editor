@@ -22,6 +22,8 @@ import {
   QUANTITIES,
   REFERENCE_STATUSES,
   SEMANTIC_ROLES,
+  CLAUSE_TYPES,
+  NON_EVENT_ROLES,
   PROPERTY_DIMENSIONS,
   KINSHIP_RELATIONS,
   SOCIAL_RELATIONS,
@@ -30,19 +32,25 @@ import {
   PART_WHOLE_RELATIONS,
   EVENT_CATEGORIES,
   VERBAL_CORES,
-  PREDICATION_TYPES,
   EMBEDDED_RELATIONS,
   REALITY_VALUES,
   TIME_FRAME_VALUES,
+  DURATION_VALUES,
+  DURATION_PRECISION_VALUES,
   EVIDENTIALITY_VALUES,
   ASPECT_VALUES,
   POLARITY_VALUES,
+  VOLITIONALITY_VALUES,
   DISCOURSE_FUNCTIONS,
   DISCOURSE_RELATIONS,
+  INFORMATION_STRUCTURE_TOPICS,
+  INFORMATION_STRUCTURE_FOCI,
+  FORMULAIC_MARKERS,
   REGISTERS,
   SOCIAL_AXES,
   PROMINENCE_VALUES,
   PACING_VALUES,
+  FOCALIZATION_VALUES,
   EMOTIONS,
   EMOTION_INTENSITIES,
   NARRATOR_STANCES,
@@ -188,6 +196,7 @@ function createDefaultParticipant(id: string): Participant {
     reference_status: 'not_specified',
     semantic_role: 'not_specified',
     properties: [],
+    name_meaning: '',
   };
 }
 
@@ -211,24 +220,39 @@ function createDefaultEvent(id: string): SemanticEvent {
     polarity: 'not_specified',
     time_frame: 'not_specified',
     aspect: 'not_specified',
+    duration: 'not_specified',
+    duration_precision: 'not_specified',
+    volitionality: 'not_specified',
   };
 }
 
-function createDefaultAnnotation(projectId: string, clauseId: number, presets: Record<string, string>): ClauseAnnotation {
+function createDefaultAnnotation(projectId: string, clauseId: number, presets: Record<string, string>, clause?: BHSAClause): ClauseAnnotation {
   const event = createDefaultEvent(`event_${clauseId}_1`);
   if (presets.reality) event.reality = presets.reality as SemanticEvent['reality'];
+  const defaultClauseType: ClauseAnnotation['clause_type'] = clause?.is_verbless ? 'not_specified' : 'event';
   const annotation: ClauseAnnotation = {
     id: `ann_${clauseId}`,
     project_id: projectId,
     clause_id: clauseId,
+    clause_type: defaultClauseType,
+    non_event_roles: {
+      subject: '',
+      predicate: '',
+      domain: '',
+      location: '',
+    },
     events: [event],
     relations: [],
     discourse_function: 'not_specified',
     discourse_relation: 'not_specified',
+    information_structure_topic: 'not_specified',
+    information_structure_focus: 'not_specified',
+    formulaic_marker: 'not_specified',
     register: (presets.register as ClauseAnnotation['register']) ?? 'not_specified',
     social_axis: (presets.social_axis as ClauseAnnotation['social_axis']) ?? 'not_specified',
     prominence: 'not_specified',
     pacing: 'not_specified',
+    focalization: 'not_specified',
     inference_source: 'not_specified',
     emotion: 'not_specified',
     emotion_intensity: 'not_specified',
@@ -266,6 +290,8 @@ function getPresetKey(genre: string, subgenre: string) {
 function hasAnyContent(annotation: ClauseAnnotation) {
   if (!annotation) return false;
   if (annotation.notes.trim()) return true;
+  if (annotation.clause_type && annotation.clause_type !== 'not_specified') return true;
+  if (Object.values(annotation.non_event_roles || {}).some((value) => value && value.trim())) return true;
   if (annotation.events.some((e) => e.event_category !== 'not_specified')) return true;
   if (annotation.relations.length) return true;
   if (annotation.discourse_function !== 'not_specified') return true;
@@ -294,6 +320,7 @@ export default function EditorPage() {
     confidence: 'not_specified',
     notes: '',
   });
+  const [thematicSpine, setThematicSpine] = useState('');
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [assistantInput, setAssistantInput] = useState('');
   const [assistantMessages, setAssistantMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
@@ -354,7 +381,7 @@ export default function EditorPage() {
       const next = { ...prev };
       for (const clause of pericopeClauses) {
         if (!next[clause.id]) {
-          next[clause.id] = createDefaultAnnotation(projectId, clause.id, presets);
+          next[clause.id] = createDefaultAnnotation(projectId, clause.id, presets, clause);
         }
       }
       return next;
@@ -368,6 +395,7 @@ export default function EditorPage() {
       confidence: 'not_specified',
       notes: '',
     });
+    setThematicSpine('');
   }, [pericopeRange]);
 
   useEffect(() => {
@@ -472,6 +500,8 @@ export default function EditorPage() {
       return { label: 'General', options: [] as string[], note: '', context: {} as Record<string, string> };
     }
     const options = (list: Array<{ value: string }>) => list.map((opt) => opt.value);
+    if (key.includes('clause_type')) return { label: 'Clause Type', options: options(CLAUSE_TYPES), note: '' };
+    if (key.includes('non_event_roles')) return { label: 'Non-Event Roles', options: options(NON_EVENT_ROLES), note: '' };
     if (key.includes('event_category')) return { label: 'Event Category', options: options(EVENT_CATEGORIES), note: '' };
     if (key.includes('verbal_core')) {
       const match = key.match(/event:(\d+):/);
@@ -480,18 +510,24 @@ export default function EditorPage() {
       const cores = event ? VERBAL_CORES[event.event_category] ?? [] : [];
       return { label: 'Verbal Core', options: options(cores), note: 'Verbal cores depend on the selected event category.' };
     }
-    if (key.includes('predication_type')) return { label: 'Predication Type', options: options(PREDICATION_TYPES), note: '' };
     if (key.includes('reality')) return { label: 'Reality', options: options(REALITY_VALUES), note: '' };
     if (key.includes('evidentiality')) return { label: 'Evidentiality', options: options(EVIDENTIALITY_VALUES), note: '' };
     if (key.includes('time_frame')) return { label: 'Time Frame', options: options(TIME_FRAME_VALUES), note: '' };
+    if (key.includes('duration_precision')) return { label: 'Duration Precision', options: options(DURATION_PRECISION_VALUES), note: '' };
+    if (key.includes('duration')) return { label: 'Duration', options: options(DURATION_VALUES), note: '' };
     if (key.includes('aspect')) return { label: 'Aspect', options: options(ASPECT_VALUES), note: '' };
     if (key.includes('polarity')) return { label: 'Polarity', options: options(POLARITY_VALUES), note: '' };
+    if (key.includes('volitionality')) return { label: 'Volitionality', options: options(VOLITIONALITY_VALUES), note: '' };
     if (key.includes('discourse_function')) return { label: 'Discourse Function', options: options(DISCOURSE_FUNCTIONS), note: '' };
     if (key.includes('discourse_relation')) return { label: 'Discourse Relation', options: options(DISCOURSE_RELATIONS), note: '' };
+    if (key.includes('information_structure_topic')) return { label: 'Information Structure Topic', options: options(INFORMATION_STRUCTURE_TOPICS), note: '' };
+    if (key.includes('information_structure_focus')) return { label: 'Information Structure Focus', options: options(INFORMATION_STRUCTURE_FOCI), note: '' };
+    if (key.includes('formulaic_marker')) return { label: 'Formulaic Marker', options: options(FORMULAIC_MARKERS), note: '' };
     if (key.includes('register')) return { label: 'Register', options: options(REGISTERS), note: '' };
     if (key.includes('social_axis')) return { label: 'Social Axis', options: options(SOCIAL_AXES), note: '' };
     if (key.includes('prominence')) return { label: 'Prominence', options: options(PROMINENCE_VALUES), note: '' };
     if (key.includes('pacing')) return { label: 'Pacing', options: options(PACING_VALUES), note: '' };
+    if (key.includes('focalization')) return { label: 'Focalization', options: options(FOCALIZATION_VALUES), note: '' };
     if (key.includes('emotion_intensity')) return { label: 'Emotion Intensity', options: options(EMOTION_INTENSITIES), note: '' };
     if (key.includes('emotion')) return { label: 'Emotion', options: options(EMOTIONS), note: '' };
     if (key.includes('narrator_stance')) return { label: 'Narrator Stance', options: options(NARRATOR_STANCES), note: '' };
@@ -511,8 +547,10 @@ export default function EditorPage() {
     if (key.includes('authority_source')) return { label: 'Authority Source', options: options(WISDOM_AUTHORITY_SOURCES), note: '' };
     if (key.includes('applicability')) return { label: 'Applicability', options: options(WISDOM_APPLICABILITY), note: '' };
     if (key.includes('participant') && key.includes('type')) return { label: 'Participant Type', options: options(PARTICIPANT_TYPES), note: '' };
+    if (key.includes('name_meaning')) return { label: 'Name Meaning', options: [] as string[], note: 'Use only if the text activates the name meaning.' };
     if (key.includes('participant') && (key.includes('semantic_role') || key.includes('participant_role'))) {
-      return { label: 'Semantic Role', options: options(SEMANTIC_ROLES), note: '' };
+      const roleOptions = annotation?.clause_type === 'event' ? SEMANTIC_ROLES : NON_EVENT_ROLES;
+      return { label: 'Semantic Role', options: options(roleOptions), note: '' };
     }
     if (key.includes('participant') && (key.includes('quantity') || key.includes('participant_quantity'))) {
       return { label: 'Participant Quantity', options: options(QUANTITIES), note: '' };
@@ -589,6 +627,7 @@ export default function EditorPage() {
           reference: selected.verse.reference,
           clause_id: selected.clause.id,
           clause_type: selected.clause.clause_type,
+          analysis_clause_type: activeAnnotation?.clause_type ?? 'not_specified',
           hebrew: selected.clause.hebrew_text,
           transliteration: selected.clause.transliteration,
           gloss: selected.clause.gloss,
@@ -669,7 +708,7 @@ export default function EditorPage() {
     setAnnotations((prev) => {
       const next = { ...prev };
       for (const clause of pericopeClauses) {
-        const current = next[clause.id] ?? createDefaultAnnotation(projectId, clause.id, presets);
+        const current = next[clause.id] ?? createDefaultAnnotation(projectId, clause.id, presets, clause);
         const updated = { ...current };
         if (presets.register) updated.register = presets.register as ClauseAnnotation['register'];
         if (presets.social_axis) updated.social_axis = presets.social_axis as ClauseAnnotation['social_axis'];
@@ -717,6 +756,7 @@ export default function EditorPage() {
       reference: formatRange(pericopeRange),
       genre,
       subgenre,
+      thematic_spine: thematicSpine.trim() ? thematicSpine.trim() : null,
       team_testing_log: {
         analyst: testingLog.analyst,
         duration_minutes: Number.isFinite(minutes) ? minutes : null,
@@ -737,11 +777,16 @@ export default function EditorPage() {
         })
         .filter(Boolean),
     };
-  }, [annotations, pericopeClauses, pericopeRange, projectId, genre, subgenre]);
+  }, [annotations, pericopeClauses, pericopeRange, projectId, genre, subgenre, testingLog, thematicSpine]);
 
   const flaggedClauseIds = new Set(reviewFlags.map((f) => f.clause_id));
 
   const activeAnnotation = selectedClauseId ? annotations[selectedClauseId] : null;
+  const clauseType = activeAnnotation?.clause_type ?? 'not_specified';
+  const isEventClause = clauseType === 'event';
+  const isNonEventClause = ['identification', 'classification', 'attribution', 'existential'].includes(clauseType);
+  const clauseTypePending = !isEventClause && !isNonEventClause;
+  const semanticRoleOptions = isNonEventClause ? NON_EVENT_ROLES : SEMANTIC_ROLES;
   const showSemanticRoles = genreLayers.semantic_roles !== false;
   const showParticipantProperties = genreLayers.participant_properties !== false;
   const showFigurative = genreLayers.figurative_language !== false;
@@ -1059,7 +1104,87 @@ export default function EditorPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     {genreLayers.events !== false && (
                       <div style={{ backgroundColor: s.bgCard, borderRadius: 12, padding: '1rem', border: `1px solid ${s.border}` }}>
-                        <h3 style={labelStyle}>Events</h3>
+                        <h3 style={labelStyle}>Clause Semantics</h3>
+                        {genreLayers.clause_type !== false && (
+                          <div style={{ marginTop: '0.6rem', marginBottom: '0.6rem' }}>
+                            <label style={labelStyle}>Clause Type</label>
+                            <select
+                              value={activeAnnotation.clause_type}
+                              onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({ ...current, clause_type: e.target.value as ClauseAnnotation['clause_type'] }))}
+                              onFocus={() => confirmField(selected.clause.id, 'clause_type')}
+                              style={fieldStyle(selected.clause.id, 'clause_type')}
+                            >
+                              {CLAUSE_TYPES.map((opt) => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                              ))}
+                            </select>
+                            {clauseTypePending && (
+                              <p style={{ fontSize: '0.7rem', color: s.muted, marginTop: '0.4rem' }}>
+                                Select a clause type first to reveal the correct fields for this clause.
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {isNonEventClause && genreLayers.non_event_roles !== false && (
+                          <div style={{ marginBottom: '0.8rem', backgroundColor: 'white', borderRadius: 10, border: `1px solid ${s.border}`, padding: '0.8rem' }}>
+                            <h4 style={{ fontSize: '0.8rem', margin: 0, marginBottom: '0.5rem' }}>Non-Event Roles</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+                              <div>
+                                <label style={labelStyle}>Subject</label>
+                                <input
+                                  style={fieldStyle(selected.clause.id, 'non_event_roles:subject')}
+                                  value={activeAnnotation.non_event_roles?.subject ?? ''}
+                                  onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({
+                                    ...current,
+                                    non_event_roles: { ...(current.non_event_roles ?? { subject: '', predicate: '', domain: '', location: '' }), subject: e.target.value },
+                                  }))}
+                                  onFocus={() => confirmField(selected.clause.id, 'non_event_roles:subject')}
+                                  placeholder="Who/what is being described?"
+                                />
+                              </div>
+                              <div>
+                                <label style={labelStyle}>Predicate</label>
+                                <input
+                                  style={fieldStyle(selected.clause.id, 'non_event_roles:predicate')}
+                                  value={activeAnnotation.non_event_roles?.predicate ?? ''}
+                                  onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({
+                                    ...current,
+                                    non_event_roles: { ...(current.non_event_roles ?? { subject: '', predicate: '', domain: '', location: '' }), predicate: e.target.value },
+                                  }))}
+                                  onFocus={() => confirmField(selected.clause.id, 'non_event_roles:predicate')}
+                                  placeholder="Name/class/quality asserted"
+                                />
+                              </div>
+                              <div>
+                                <label style={labelStyle}>Domain</label>
+                                <input
+                                  style={fieldStyle(selected.clause.id, 'non_event_roles:domain')}
+                                  value={activeAnnotation.non_event_roles?.domain ?? ''}
+                                  onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({
+                                    ...current,
+                                    non_event_roles: { ...(current.non_event_roles ?? { subject: '', predicate: '', domain: '', location: '' }), domain: e.target.value },
+                                  }))}
+                                  onFocus={() => confirmField(selected.clause.id, 'non_event_roles:domain')}
+                                  placeholder="Property domain (e.g., name)"
+                                />
+                              </div>
+                              <div>
+                                <label style={labelStyle}>Location</label>
+                                <input
+                                  style={fieldStyle(selected.clause.id, 'non_event_roles:location')}
+                                  value={activeAnnotation.non_event_roles?.location ?? ''}
+                                  onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({
+                                    ...current,
+                                    non_event_roles: { ...(current.non_event_roles ?? { subject: '', predicate: '', domain: '', location: '' }), location: e.target.value },
+                                  }))}
+                                  onFocus={() => confirmField(selected.clause.id, 'non_event_roles:location')}
+                                  placeholder="Where it exists"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         {activeAnnotation.events.map((event, eventIndex) => (
                         <div key={event.id} style={{ marginTop: '0.75rem', backgroundColor: 'white', borderRadius: 12, border: `1px solid ${s.border}`, padding: '1rem' }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
@@ -1082,93 +1207,40 @@ export default function EditorPage() {
                               </button>
                             )}
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                            <div>
-                              <label style={labelStyle}>Event Category</label>
-                              <select
-                                value={event.event_category}
-                                onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, event_category: e.target.value as SemanticEvent['event_category'], verbal_core: undefined }))}
-                                onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:event_category`)}
-                                style={fieldStyle(selected.clause.id, `event:${eventIndex}:event_category`)}
-                              >
-                                {EVENT_CATEGORIES.map((opt) => (
-                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                ))}
-                              </select>
-                            </div>
-                            {!event.is_primary && (
+                          {isEventClause && (
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                               <div>
-                                <label style={labelStyle}>Embedded Relation</label>
+                                <label style={labelStyle}>Event Category</label>
                                 <select
-                                  value={event.embedded_relation ?? 'not_specified'}
-                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, embedded_relation: e.target.value as EmbeddedRelation }))}
-                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:embedded_relation`)}
-                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:embedded_relation`)}
+                                  value={event.event_category}
+                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, event_category: e.target.value as SemanticEvent['event_category'], verbal_core: undefined }))}
+                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:event_category`)}
+                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:event_category`)}
                                 >
-                                  {EMBEDDED_RELATIONS.map((opt) => (
+                                  {EVENT_CATEGORIES.map((opt) => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                   ))}
                                 </select>
                               </div>
-                            )}
-                          </div>
+                              {!event.is_primary && (
+                                <div>
+                                  <label style={labelStyle}>Embedded Relation</label>
+                                  <select
+                                    value={event.embedded_relation ?? 'not_specified'}
+                                    onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, embedded_relation: e.target.value as EmbeddedRelation }))}
+                                    onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:embedded_relation`)}
+                                    style={fieldStyle(selected.clause.id, `event:${eventIndex}:embedded_relation`)}
+                                  >
+                                    {EMBEDDED_RELATIONS.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
-                          {selected.clause.is_verbless ? (
-                            <div style={{ marginTop: '0.75rem', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
-                              <div>
-                                <label style={labelStyle}>Predication Type</label>
-                                <select
-                                  value={event.verbless_predication?.predication_type ?? 'not_specified'}
-                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({
-                                    ...ev,
-                                    verbless_predication: {
-                                      predication_type: e.target.value as any,
-                                      subject_term: ev.verbless_predication?.subject_term ?? '',
-                                      predicate_term: ev.verbless_predication?.predicate_term ?? '',
-                                    },
-                                  }))}
-                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:predication_type`)}
-                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:predication_type`)}
-                                >
-                                  {PREDICATION_TYPES.map((opt) => (
-                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </div>
-                              <div>
-                                <label style={labelStyle}>Subject Term</label>
-                                <input
-                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:subject_term`)}
-                                  value={event.verbless_predication?.subject_term ?? ''}
-                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({
-                                    ...ev,
-                                    verbless_predication: {
-                                      predication_type: ev.verbless_predication?.predication_type ?? 'not_specified',
-                                      subject_term: e.target.value,
-                                      predicate_term: ev.verbless_predication?.predicate_term ?? '',
-                                    },
-                                  }))}
-                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:subject_term`)}
-                                />
-                              </div>
-                              <div>
-                                <label style={labelStyle}>Predicate Term</label>
-                                <input
-                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:predicate_term`)}
-                                  value={event.verbless_predication?.predicate_term ?? ''}
-                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({
-                                    ...ev,
-                                    verbless_predication: {
-                                      predication_type: ev.verbless_predication?.predication_type ?? 'not_specified',
-                                      subject_term: ev.verbless_predication?.subject_term ?? '',
-                                      predicate_term: e.target.value,
-                                    },
-                                  }))}
-                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:predicate_term`)}
-                                />
-                              </div>
-                            </div>
-                          ) : (
+                          {isEventClause && (
                             <div style={{ marginTop: '0.75rem' }}>
                               <label style={labelStyle}>Verbal Core</label>
                               <select
@@ -1185,7 +1257,7 @@ export default function EditorPage() {
                             </div>
                           )}
 
-                          <div style={{ marginTop: '0.9rem', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.75rem' }}>
+                          <div style={{ marginTop: '0.9rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
                             {genreLayers.reality !== false && (
                               <div>
                                 <label style={labelStyle}>Reality</label>
@@ -1202,7 +1274,7 @@ export default function EditorPage() {
                                 </select>
                               </div>
                             )}
-                            {genreLayers.evidentiality !== false && (
+                            {isEventClause && genreLayers.evidentiality !== false && (
                               <div>
                                 <label style={labelStyle}>Evidentiality</label>
                                 <select
@@ -1217,7 +1289,7 @@ export default function EditorPage() {
                                 </select>
                               </div>
                             )}
-                            {genreLayers.time_frame !== false && (
+                            {isEventClause && genreLayers.time_frame !== false && (
                               <div>
                                 <label style={labelStyle}>Time Frame</label>
                                 <select
@@ -1232,7 +1304,37 @@ export default function EditorPage() {
                                 </select>
                               </div>
                             )}
-                            {genreLayers.aspect !== false && (
+                            {isEventClause && genreLayers.duration !== false && (
+                              <div>
+                                <label style={labelStyle}>Duration</label>
+                                <select
+                                  value={event.duration}
+                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, duration: e.target.value as SemanticEvent['duration'] }))}
+                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:duration`)}
+                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:duration`)}
+                                >
+                                  {DURATION_VALUES.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            {isEventClause && genreLayers.duration_precision !== false && (
+                              <div>
+                                <label style={labelStyle}>Duration Precision</label>
+                                <select
+                                  value={event.duration_precision}
+                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, duration_precision: e.target.value as SemanticEvent['duration_precision'] }))}
+                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:duration_precision`)}
+                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:duration_precision`)}
+                                >
+                                  {DURATION_PRECISION_VALUES.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            {isEventClause && genreLayers.aspect !== false && (
                               <div>
                                 <label style={labelStyle}>Aspect</label>
                                 <select
@@ -1257,6 +1359,21 @@ export default function EditorPage() {
                                   style={fieldStyle(selected.clause.id, `event:${eventIndex}:polarity`)}
                                 >
                                   {POLARITY_VALUES.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            {isEventClause && genreLayers.volitionality !== false && (
+                              <div>
+                                <label style={labelStyle}>Volitionality</label>
+                                <select
+                                  value={event.volitionality}
+                                  onChange={(e) => updateEvent(selected.clause.id, eventIndex, (ev) => ({ ...ev, volitionality: e.target.value as SemanticEvent['volitionality'] }))}
+                                  onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:volitionality`)}
+                                  style={fieldStyle(selected.clause.id, `event:${eventIndex}:volitionality`)}
+                                >
+                                  {VOLITIONALITY_VALUES.map((opt) => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                   ))}
                                 </select>
@@ -1324,12 +1441,22 @@ export default function EditorPage() {
                                         onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:semantic_role`)}
                                         style={fieldStyle(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:semantic_role`)}
                                       >
-                                        {SEMANTIC_ROLES.map((opt) => (
+                                        {semanticRoleOptions.map((opt) => (
                                           <option key={opt.value} value={opt.value}>{opt.label}</option>
                                         ))}
                                       </select>
                                     </div>
                                   )}
+                                </div>
+                                <div style={{ marginTop: '0.5rem' }}>
+                                  <label style={labelStyle}>Name Meaning (Optional)</label>
+                                  <input
+                                    style={fieldStyle(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:name_meaning`)}
+                                    value={participant.name_meaning ?? ''}
+                                    onChange={(e) => updateParticipant(selected.clause.id, eventIndex, pIndex, (p) => ({ ...p, name_meaning: e.target.value }))}
+                                    onFocus={() => confirmField(selected.clause.id, `event:${eventIndex}:participant:${pIndex}:name_meaning`)}
+                                    placeholder="Use only if the text activates the name meaning"
+                                  />
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginTop: '0.6rem' }}>
                                   <div>
@@ -1415,15 +1542,17 @@ export default function EditorPage() {
                         </div>
                       ))}
 
-                        <button
-                        onClick={() => updateAnnotation(selected.clause.id, (current) => ({
-                          ...current,
-                          events: [...current.events, createDefaultEvent(`event_${selected.clause.id}_${current.events.length + 1}`)],
-                        }))}
-                        style={{ marginTop: '0.75rem', padding: '0.35rem 0.75rem', borderRadius: 8, border: `1px dashed ${s.border}`, backgroundColor: 'transparent', fontSize: '0.75rem', cursor: 'pointer' }}
-                      >
-                        Add Another Event
-                        </button>
+                        {isEventClause && (
+                          <button
+                            onClick={() => updateAnnotation(selected.clause.id, (current) => ({
+                              ...current,
+                              events: [...current.events, createDefaultEvent(`event_${selected.clause.id}_${current.events.length + 1}`)],
+                            }))}
+                            style={{ marginTop: '0.75rem', padding: '0.35rem 0.75rem', borderRadius: 8, border: `1px dashed ${s.border}`, backgroundColor: 'transparent', fontSize: '0.75rem', cursor: 'pointer' }}
+                          >
+                            Add Another Event
+                          </button>
+                        )}
                       </div>
                     )}
 
@@ -1505,6 +1634,16 @@ export default function EditorPage() {
 
                 {activePass === 1 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <div style={{ backgroundColor: s.bgCard, borderRadius: 12, padding: '1rem', border: `1px solid ${s.border}` }}>
+                      <h3 style={labelStyle}>Thematic Spine (Pericope)</h3>
+                      <p style={smallMuted}>Write a one-sentence summary of the passage’s meaning arc.</p>
+                      <textarea
+                        style={{ ...inputStyle, minHeight: 90 }}
+                        value={thematicSpine}
+                        onChange={(e) => setThematicSpine(e.target.value)}
+                        placeholder="Example: A family migrates because of famine, and death strips a woman of her husband and sons."
+                      />
+                    </div>
                     {genreLayers.discourse_structure !== false && (
                       <div style={{ backgroundColor: s.bgCard, borderRadius: 12, padding: '1rem', border: `1px solid ${s.border}` }}>
                         <h3 style={labelStyle}>Discourse Structure</h3>
@@ -1535,7 +1674,52 @@ export default function EditorPage() {
                               ))}
                             </select>
                           </div>
+                          {genreLayers.information_structure !== false && (
+                            <div>
+                              <label style={labelStyle}>Topic (Information Structure)</label>
+                              <select
+                                value={activeAnnotation.information_structure_topic}
+                                onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({ ...current, information_structure_topic: e.target.value as ClauseAnnotation['information_structure_topic'] }))}
+                                onFocus={() => confirmField(selected.clause.id, 'information_structure_topic')}
+                                style={fieldStyle(selected.clause.id, 'information_structure_topic')}
+                              >
+                                {INFORMATION_STRUCTURE_TOPICS.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                          {genreLayers.information_structure !== false && (
+                            <div>
+                              <label style={labelStyle}>Focus (Information Structure)</label>
+                              <select
+                                value={activeAnnotation.information_structure_focus}
+                                onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({ ...current, information_structure_focus: e.target.value as ClauseAnnotation['information_structure_focus'] }))}
+                                onFocus={() => confirmField(selected.clause.id, 'information_structure_focus')}
+                                style={fieldStyle(selected.clause.id, 'information_structure_focus')}
+                              >
+                                {INFORMATION_STRUCTURE_FOCI.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
                         </div>
+                        {genreLayers.formulaic_marker !== false && (
+                          <div style={{ marginTop: '0.75rem' }}>
+                            <label style={labelStyle}>Formulaic Marker</label>
+                            <select
+                              value={activeAnnotation.formulaic_marker}
+                              onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({ ...current, formulaic_marker: e.target.value as ClauseAnnotation['formulaic_marker'] }))}
+                              onFocus={() => confirmField(selected.clause.id, 'formulaic_marker')}
+                              style={fieldStyle(selected.clause.id, 'formulaic_marker')}
+                            >
+                              {FORMULAIC_MARKERS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -1599,6 +1783,21 @@ export default function EditorPage() {
                               style={fieldStyle(selected.clause.id, 'pacing')}
                             >
                               {PACING_VALUES.map((opt) => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                        {genreLayers.focalization !== false && (
+                          <div>
+                            <label style={labelStyle}>Focalization</label>
+                            <select
+                              value={activeAnnotation.focalization}
+                              onChange={(e) => updateAnnotation(selected.clause.id, (current) => ({ ...current, focalization: e.target.value as ClauseAnnotation['focalization'] }))}
+                              onFocus={() => confirmField(selected.clause.id, 'focalization')}
+                              style={fieldStyle(selected.clause.id, 'focalization')}
+                            >
+                              {FOCALIZATION_VALUES.map((opt) => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
                               ))}
                             </select>

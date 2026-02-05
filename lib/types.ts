@@ -1,6 +1,6 @@
 // =============================================================================
 // MEANING MAP EDITOR \u2014 TYPE DEFINITIONS
-// Tripod Ontology v5.3
+// Tripod Ontology v5.4
 // =============================================================================
 
 // ---------------------------------------------------------------------------
@@ -61,6 +61,8 @@ export type SemanticRole =
   | 'beneficiary' | 'source' | 'goal' | 'location'
   | 'instrument' | 'companion' | 'manner' | 'time'
   | 'cause' | 'purpose' | 'result' | 'theme'
+  | 'identity' | 'separated_from'
+  | 'subject' | 'predicate' | 'domain'
   | 'not_specified' | 'other';
 
 export interface Participant {
@@ -71,6 +73,7 @@ export interface Participant {
   reference_status: ReferenceStatus;
   semantic_role: SemanticRole;
   properties: ParticipantProperty[];
+  name_meaning?: string;
   other_text?: string; // when type = 'other'
 }
 
@@ -86,7 +89,7 @@ export type PropertyDimension =
 export type PhysicalProperty =
   | 'old' | 'young' | 'strong' | 'weak' | 'beautiful'
   | 'tall' | 'short' | 'big' | 'small' | 'heavy' | 'light'
-  | 'fat' | 'thin' | 'healthy' | 'sick';
+  | 'fat' | 'thin' | 'healthy' | 'sick' | 'alive' | 'deceased';
 
 export type QuantitySizeProperty =
   | 'full' | 'empty' | 'abundant' | 'scarce' | 'whole' | 'broken'
@@ -184,7 +187,15 @@ export interface Relation {
 
 export type EventCategory =
   | 'STATE' | 'MOTION' | 'ACTION' | 'TRANSFER' | 'SPEECH'
-  | 'INTERNAL' | 'PROCESS' | 'RITUAL' | 'META'
+  | 'INTERNAL' | 'PROCESS' | 'RITUAL' | 'META' | 'SOCIAL'
+  | 'not_specified' | 'other';
+
+export type ClauseType =
+  | 'event' | 'identification' | 'classification' | 'attribution' | 'existential'
+  | 'not_specified' | 'other';
+
+export type NonEventRole =
+  | 'subject' | 'predicate' | 'domain' | 'location'
   | 'not_specified' | 'other';
 
 export const VERBAL_CORES: Record<string, string[]> = {
@@ -233,6 +244,9 @@ export interface SemanticEvent {
   polarity: Polarity;
   time_frame: TimeFrame;
   aspect: Aspect;
+  duration: Duration;
+  duration_precision: DurationPrecision;
+  volitionality: Volitionality;
   other_text?: string; // when event_category = 'other'
 }
 
@@ -251,6 +265,18 @@ export type Reality =
 
 export type TimeFrame =
   | 'retrospective' | 'immediate' | 'prospective' | 'gnomic'
+  | 'not_specified' | 'other';
+
+// ---------------------------------------------------------------------------
+// Layer 7b: Duration
+// ---------------------------------------------------------------------------
+
+export type Duration =
+  | 'point' | 'bounded' | 'unbounded'
+  | 'not_specified' | 'other';
+
+export type DurationPrecision =
+  | 'exact' | 'approximate' | 'vague'
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
@@ -279,6 +305,14 @@ export type Polarity =
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
+// Layer 10b: Volitionality
+// ---------------------------------------------------------------------------
+
+export type Volitionality =
+  | 'volitional' | 'non_volitional' | 'ambiguous'
+  | 'not_specified' | 'other';
+
+// ---------------------------------------------------------------------------
 // Layer 11: Discourse Structure
 // ---------------------------------------------------------------------------
 
@@ -289,7 +323,19 @@ export type DiscourseFunction =
 export type DiscourseRelation =
   | 'sequence' | 'simultaneous' | 'cause' | 'result' | 'purpose'
   | 'condition' | 'contrast' | 'concession' | 'clarification'
-  | 'elaboration' | 'evidence' | 'restatement'
+  | 'elaboration' | 'evidence' | 'restatement' | 'additive' | 'resumption'
+  | 'not_specified' | 'other';
+
+export type InformationStructureTopic =
+  | 'unmarked' | 'marked_topic' | 'contrastive_topic'
+  | 'not_specified' | 'other';
+
+export type InformationStructureFocus =
+  | 'unmarked' | 'new_info_focus' | 'contrastive_focus'
+  | 'not_specified' | 'other';
+
+export type FormulaicMarker =
+  | 'formulaic' | 'non_formulaic'
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
@@ -315,6 +361,10 @@ export type Prominence =
 
 export type Pacing =
   | 'summary' | 'normal' | 'slow' | 'pause'
+  | 'not_specified' | 'other';
+
+export type Focalization =
+  | 'narrator_external' | 'narrator_aligned' | 'character_internal'
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
@@ -373,7 +423,7 @@ export type FigurativeTransferability =
 
 export type KeyTermDomain =
   | 'divine' | 'covenant' | 'salvation' | 'sin' | 'worship'
-  | 'ethics' | 'kinship' | 'authority' | 'creation'
+  | 'ethics' | 'kinship' | 'authority' | 'creation' | 'land_belonging'
   | 'not_specified' | 'other';
 
 export type KeyTermConsistency =
@@ -497,16 +547,27 @@ export interface ClauseAnnotation {
   id: string;
   project_id: string;
   clause_id: number; // BHSA clause ID
+  clause_type: ClauseType;
+  non_event_roles: {
+    subject: string;
+    predicate: string;
+    domain: string;
+    location: string;
+  };
   // Pass 1 \u2014 Structural Skeleton
   events: SemanticEvent[];
   relations: Relation[];
   // Pass 2 \u2014 Semantic Context
   discourse_function: DiscourseFunction;
   discourse_relation: DiscourseRelation;
+  information_structure_topic: InformationStructureTopic;
+  information_structure_focus: InformationStructureFocus;
+  formulaic_marker: FormulaicMarker;
   register: Register;
   social_axis: SocialAxis;
   prominence: Prominence;
   pacing: Pacing;
+  focalization: Focalization;
   inference_source: InferenceSource;
   // Pass 3 \u2014 Expressive Layer
   emotion: Emotion;

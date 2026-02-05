@@ -1,5 +1,5 @@
 // =============================================================================
-// TRIPOD ONTOLOGY v5.3 \u2014 SHARED CONSTANTS
+// TRIPOD ONTOLOGY v5.4 \u2014 SHARED CONSTANTS
 // Single source of truth for all enumerated values.
 // Every field includes 'not_specified' (default) and 'other' (opens text input).
 // =============================================================================
@@ -48,6 +48,18 @@ export const SEMANTIC_ROLES = opts([
   'beneficiary', 'source', 'goal', 'location',
   'instrument', 'companion', 'manner', 'time',
   'cause', 'purpose', 'result', 'theme',
+  'identity', 'separated_from',
+  'subject', 'predicate', 'domain',
+  'not_specified', 'other',
+] as const);
+
+export const CLAUSE_TYPES = opts([
+  'event', 'identification', 'classification', 'attribution', 'existential',
+  'not_specified', 'other',
+] as const);
+
+export const NON_EVENT_ROLES = opts([
+  'subject', 'predicate', 'domain', 'location',
   'not_specified', 'other',
 ] as const);
 
@@ -58,7 +70,7 @@ export const SEMANTIC_ROLES = opts([
 export const PROPERTY_DIMENSIONS: Record<string, OntologyOption[]> = {
   physical: opts([
     'old', 'young', 'strong', 'weak', 'beautiful', 'tall', 'short',
-    'big', 'small', 'heavy', 'light', 'fat', 'thin', 'healthy', 'sick',
+    'big', 'small', 'heavy', 'light', 'fat', 'thin', 'healthy', 'sick', 'alive', 'deceased',
     'not_specified', 'other',
   ]),
   quantity_size: opts([
@@ -153,7 +165,7 @@ export const PART_WHOLE_RELATIONS = opts([
 
 export const EVENT_CATEGORIES = opts([
   'STATE', 'MOTION', 'ACTION', 'TRANSFER', 'SPEECH',
-  'INTERNAL', 'PROCESS', 'RITUAL', 'META',
+  'INTERNAL', 'PROCESS', 'RITUAL', 'META', 'SOCIAL',
   'not_specified', 'other',
 ] as const);
 
@@ -167,6 +179,7 @@ export const VERBAL_CORES: Record<string, OntologyOption[]> = {
   PROCESS: opts(['grow', 'die', 'be_born', 'ripen', 'decay', 'heal', 'age', 'change']),
   RITUAL: opts(['sacrifice', 'anoint', 'purify', 'circumcise', 'consecrate', 'worship']),
   META: opts(['begin', 'finish', 'continue', 'repeat', 'cause', 'prevent', 'try']),
+  SOCIAL: opts(['marry', 'divorce', 'adopt', 'inherit', 'covenant', 'judge', 'redeem', 'vow']),
 };
 
 export const PREDICATION_TYPES = opts([
@@ -196,6 +209,16 @@ export const TIME_FRAME_VALUES = opts([
   'not_specified', 'other',
 ] as const);
 
+export const DURATION_VALUES = opts([
+  'point', 'bounded', 'unbounded',
+  'not_specified', 'other',
+] as const);
+
+export const DURATION_PRECISION_VALUES = opts([
+  'exact', 'approximate', 'vague',
+  'not_specified', 'other',
+] as const);
+
 export const EVIDENTIALITY_VALUES = opts([
   'witnessed_visual', 'witnessed_sensory', 'reported', 'inferred',
   'assumed', 'general_knowledge', 'divine_revelation', 'unspecified',
@@ -209,6 +232,11 @@ export const ASPECT_VALUES = opts([
 
 export const POLARITY_VALUES = opts([
   'positive', 'negative',
+  'not_specified', 'other',
+] as const);
+
+export const VOLITIONALITY_VALUES = opts([
+  'volitional', 'non_volitional', 'ambiguous',
   'not_specified', 'other',
 ] as const);
 
@@ -230,7 +258,22 @@ export const DISCOURSE_FUNCTIONS: OntologyOption[] = [
 export const DISCOURSE_RELATIONS = opts([
   'sequence', 'simultaneous', 'cause', 'result', 'purpose',
   'condition', 'contrast', 'concession', 'clarification',
-  'elaboration', 'evidence', 'restatement',
+  'elaboration', 'evidence', 'restatement', 'additive', 'resumption',
+  'not_specified', 'other',
+] as const);
+
+export const INFORMATION_STRUCTURE_TOPICS = opts([
+  'unmarked', 'marked_topic', 'contrastive_topic',
+  'not_specified', 'other',
+] as const);
+
+export const INFORMATION_STRUCTURE_FOCI = opts([
+  'unmarked', 'new_info_focus', 'contrastive_focus',
+  'not_specified', 'other',
+] as const);
+
+export const FORMULAIC_MARKERS = opts([
+  'formulaic', 'non_formulaic',
   'not_specified', 'other',
 ] as const);
 
@@ -260,6 +303,11 @@ export const PROMINENCE_VALUES = opts([
 
 export const PACING_VALUES = opts([
   'summary', 'normal', 'slow', 'pause',
+  'not_specified', 'other',
+] as const);
+
+export const FOCALIZATION_VALUES = opts([
+  'narrator_external', 'narrator_aligned', 'character_internal',
   'not_specified', 'other',
 ] as const);
 
@@ -327,7 +375,7 @@ export const FIGURATIVE_TRANSFERABILITY = opts([
 
 export const KEY_TERM_DOMAINS = opts([
   'divine', 'covenant', 'salvation', 'sin', 'worship',
-  'ethics', 'kinship', 'authority', 'creation',
+  'ethics', 'kinship', 'authority', 'creation', 'land_belonging',
   'not_specified', 'other',
 ] as const);
 
@@ -433,9 +481,11 @@ export const SUBGENRES: Record<string, OntologyOption[]> = {
 
 export type LayerKey =
   | 'participants' | 'participant_properties' | 'relations'
-  | 'events' | 'semantic_roles' | 'reality' | 'time_frame'
+  | 'events' | 'semantic_roles' | 'clause_type' | 'non_event_roles'
+  | 'reality' | 'time_frame' | 'duration' | 'duration_precision' | 'volitionality'
   | 'evidentiality' | 'aspect' | 'polarity' | 'discourse_structure'
-  | 'register' | 'social_axis' | 'prominence' | 'pacing'
+  | 'information_structure' | 'formulaic_marker'
+  | 'register' | 'social_axis' | 'prominence' | 'pacing' | 'focalization'
   | 'emotion' | 'narrator_stance' | 'audience_response'
   | 'speech_acts' | 'figurative_language' | 'figurative_transferability'
   | 'key_terms' | 'key_term_consistency' | 'inference_source'
@@ -446,10 +496,12 @@ export type Activation = true | false | 'conditional' | 'preset';
 export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = {
   narrative: {
     participants: true, participant_properties: true, relations: true,
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: 'conditional', aspect: true, polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: true,
-    prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: true,
+    prominence: true, pacing: true, focalization: true, emotion: true, narrator_stance: true,
     audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: 'conditional', figurative_language: 'conditional',
     figurative_transferability: 'conditional', key_terms: true, key_term_consistency: true,
@@ -457,10 +509,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   law: {
     participants: true, participant_properties: 'conditional', relations: true,
-    events: true, semantic_roles: true, reality: 'preset', time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: 'preset', time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: false, aspect: 'conditional', polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: 'preset',
-    prominence: 'conditional', pacing: false, emotion: false,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: 'preset',
+    prominence: 'conditional', pacing: false, focalization: true, emotion: false,
     narrator_stance: false, audience_response: false, inference_source: 'conditional',
     retrieval_tags: 'conditional', speech_acts: true, figurative_language: false,
     figurative_transferability: false, key_terms: true, key_term_consistency: true,
@@ -468,10 +522,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   poetry: {
     participants: true, participant_properties: true, relations: 'conditional',
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: 'conditional', aspect: true, polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: true,
-    prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: true,
+    prominence: true, pacing: true, focalization: true, emotion: true, narrator_stance: true,
     audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: true, figurative_language: true, figurative_transferability: true,
     key_terms: true, key_term_consistency: true, poetic_structure: true,
@@ -479,10 +535,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   prophecy: {
     participants: true, participant_properties: true, relations: true,
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: true, aspect: true, polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: true,
-    prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: true,
+    prominence: true, pacing: true, focalization: true, emotion: true, narrator_stance: true,
     audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: true, figurative_language: true, figurative_transferability: true,
     key_terms: true, key_term_consistency: true, poetic_structure: 'conditional',
@@ -490,10 +548,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   wisdom: {
     participants: true, participant_properties: true, relations: 'conditional',
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: 'conditional', aspect: 'conditional', polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: 'conditional',
-    prominence: 'conditional', pacing: false, emotion: 'conditional',
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: 'conditional',
+    prominence: 'conditional', pacing: false, focalization: true, emotion: 'conditional',
     narrator_stance: true, audience_response: true, inference_source: true,
     retrieval_tags: 'conditional', speech_acts: true, figurative_language: true,
     figurative_transferability: true, key_terms: true, key_term_consistency: true,
@@ -501,10 +561,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   discourse_speech: {
     participants: true, participant_properties: 'conditional', relations: true,
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: true, aspect: true, polarity: true,
-    discourse_structure: true, register: true, social_axis: true,
-    prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: true, social_axis: true,
+    prominence: true, pacing: true, focalization: true, emotion: true, narrator_stance: true,
     audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: true, figurative_language: 'conditional',
     figurative_transferability: 'conditional', key_terms: true, key_term_consistency: true,
@@ -512,10 +574,12 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
   },
   apocalyptic: {
     participants: true, participant_properties: true, relations: true,
-    events: true, semantic_roles: true, reality: true, time_frame: true,
+    events: true, semantic_roles: true, clause_type: true, non_event_roles: true,
+    reality: true, time_frame: true, duration: true, duration_precision: true, volitionality: true,
     evidentiality: true, aspect: true, polarity: true,
-    discourse_structure: true, register: 'preset', social_axis: true,
-    prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    discourse_structure: true, information_structure: true, formulaic_marker: true,
+    register: 'preset', social_axis: true,
+    prominence: true, pacing: true, focalization: true, emotion: true, narrator_stance: true,
     audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: true, figurative_language: true, figurative_transferability: true,
     key_terms: true, key_term_consistency: true, poetic_structure: 'conditional',
