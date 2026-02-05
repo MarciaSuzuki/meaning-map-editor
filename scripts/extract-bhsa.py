@@ -284,8 +284,7 @@ def main():
     print("Loading BHSA via Text-Fabric...")
     A = use("ETCBC/bhsa", version=BHSA_VERSION, silent="deep")
     api = A.api
-    print("BHSA loaded successfully.
-")
+    print("BHSA loaded successfully.\n")
 
     # Extract each book
     total_clauses = 0
@@ -311,8 +310,7 @@ def main():
 
         print(f"  \u2192 {filename}: {num_verses} verses, {num_clauses} clauses")
 
-    print(f"
-Extraction complete.")
+    print("\nExtraction complete.")
     print(f"  Total: {total_verses} verses, {total_clauses} clauses")
     print(f"  Output: {OUTPUT_DIR}/")
 

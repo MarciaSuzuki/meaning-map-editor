@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripod Ontology v5.3 — Complete Visual Reference</title>
+<style>
+  :root {
+    --sand: #f5f0e8;
+    --cream: #faf8f4;
+    --bark: #3d2b1f;
+    --branch: #6b4f3a;
+    --leaf: #4a7c59;
+    --leaf-light: #e8f0ea;
+    --sky: #3a6b8c;
+    --sky-light: #e4eef4;
+    --clay: #b8654a;
+    --clay-light: #f5e8e3;
+    --gold: #c49b2a;
+    --gold-light: #faf3e0;
+    --purple: #6b4a8c;
+    --purple-light: #f0e8f5;
+    --border: #d4cfc5;
+    --text: #2d2520;
+    --muted: #7a716a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .page-header {
+    background: var(--bark);
+    color: var(--sand);
+    padding: 28px 32px;
+    text-align: center;
+  }
+  .page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: 0.5px; }
+  .page-header p { color: #c4b8a8; margin-top: 6px; font-size: 14px; }
+
+  .tripod-diagram {
+    display: flex; justify-content: center; gap: 32px;
+    padding: 20px; background: var(--sand); border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .tripod-leg {
+    text-align: center; padding: 12px 20px;
+    border-radius: 8px; font-weight: 600; font-size: 13px; min-width: 180px;
+  }
+  .leg-mm { background: var(--sky-light); color: var(--sky); border: 1px solid #b8d4e8; }
+  .leg-la { background: var(--leaf-light); color: var(--leaf); border: 1px solid #b8d8c0; }
+  .leg-cb { background: var(--gold-light); color: #8a6d1a; border: 1px solid #e0d0a0; }
+  .tripod-leg small { display: block; font-weight: 400; margin-top: 2px; font-size: 11px; color: var(--muted); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+  .toc {
+    background: var(--sand); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 28px; margin-bottom: 28px;
+  }
+  .toc h2 { font-size: 16px; margin-bottom: 12px; color: var(--bark); }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 4px 20px; }
+  .toc a {
+    text-decoration: none; color: var(--sky); font-size: 13px;
+    padding: 3px 0; display: block; border-bottom: 1px solid transparent;
+  }
+  .toc a:hover { color: var(--bark); }
+  .toc a .num { color: var(--muted); font-size: 11px; margin-right: 4px; }
+
+  .layer-section {
+    margin-bottom: 28px; background: white;
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .layer-header {
+    padding: 14px 20px; font-size: 16px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 10px;
+    user-select: none; position: sticky; top: 0; z-index: 5;
+  }
+  .layer-header .badge {
+    font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 10px; letter-spacing: 0.3px;
+  }
+  .layer-header .arrow { margin-left: auto; transition: transform 0.2s; font-size: 12px; }
+  .layer-header.collapsed .arrow { transform: rotate(-90deg); }
+  .layer-body { padding: 0 20px 20px; }
+  .layer-body.hidden { display: none; }
+
+  .lh-participants { background: var(--sky-light); color: var(--sky); border-bottom: 2px solid #a0c4d8; }
+  .lh-participants .badge { background: var(--sky); color: white; }
+  .lh-relations { background: #e8eef4; color: #3a5a7c; border-bottom: 2px solid #a0b8d0; }
+  .lh-relations .badge { background: #3a5a7c; color: white; }
+  .lh-events { background: var(--clay-light); color: var(--clay); border-bottom: 2px solid #d8a898; }
+  .lh-events .badge { background: var(--clay); color: white; }
+  .lh-modifiers { background: #f5ece8; color: #8a5a3a; border-bottom: 2px solid #d0b0a0; }
+  .lh-modifiers .badge { background: #8a5a3a; color: white; }
+  .lh-discourse { background: var(--leaf-light); color: var(--leaf); border-bottom: 2px solid #a0c8a8; }
+  .lh-discourse .badge { background: var(--leaf); color: white; }
+  .lh-pragmatics { background: var(--purple-light); color: var(--purple); border-bottom: 2px solid #c0a8d8; }
+  .lh-pragmatics .badge { background: var(--purple); color: white; }
+  .lh-emotions { background: #fce8e8; color: #8c3a3a; border-bottom: 2px solid #d8a0a0; }
+  .lh-emotions .badge { background: #8c3a3a; color: white; }
+  .lh-source { background: #e8f0e8; color: #3a6b3a; border-bottom: 2px solid #a8c8a0; }
+  .lh-source .badge { background: #3a6b3a; color: white; }
+  .lh-retrieval { background: var(--gold-light); color: #7a5a10; border-bottom: 2px solid #d0c080; }
+  .lh-retrieval .badge { background: #7a5a10; color: white; }
+  .lh-speech { background: #e8e4f0; color: #5a4a6b; border-bottom: 2px solid #b8a8c8; }
+  .lh-speech .badge { background: #5a4a6b; color: white; }
+  .lh-figurative { background: #f0e8e4; color: #6b4a3a; border-bottom: 2px solid #c8a898; }
+  .lh-figurative .badge { background: #6b4a3a; color: white; }
+  .lh-keyterms { background: #e4f0f0; color: #3a6b6b; border-bottom: 2px solid #a0c8c8; }
+  .lh-keyterms .badge { background: #3a6b6b; color: white; }
+  .lh-poetic { background: #f0e4f0; color: #6b3a6b; border-bottom: 2px solid #c8a0c8; }
+  .lh-poetic .badge { background: #6b3a6b; color: white; }
+  .lh-proverb { background: #f0f0e4; color: #5a5a2a; border-bottom: 2px solid #c8c8a0; }
+  .lh-proverb .badge { background: #5a5a2a; color: white; }
+  .lh-tagger { background: #e8e8f0; color: #4a4a6b; border-bottom: 2px solid #b0b0c8; }
+  .lh-tagger .badge { background: #4a4a6b; color: white; }
+
+  h3 {
+    font-size: 14px; font-weight: 700; margin: 16px 0 8px;
+    padding-bottom: 4px; border-bottom: 1px solid var(--border);
+    color: var(--bark);
+  }
+  h3:first-child { margin-top: 4px; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin-bottom: 14px;
+    font-size: 13px;
+  }
+  th {
+    text-align: left; padding: 7px 10px;
+    background: var(--sand); font-weight: 600; font-size: 12px;
+    border-bottom: 2px solid var(--border); color: var(--bark);
+  }
+  td {
+    padding: 6px 10px; border-bottom: 1px solid #ebe7e0;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .cat-label {
+    display: inline-block; padding: 1px 7px; border-radius: 4px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+  }
+
+  .tree { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; padding: 12px 16px; background: var(--sand); border-radius: 8px; margin-bottom: 14px; overflow-x: auto; }
+  .tree .node { color: var(--bark); font-weight: 700; }
+  .tree .val { color: var(--branch); }
+  .tree .desc { color: var(--muted); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; }
+
+  .note {
+    background: var(--gold-light); border-left: 3px solid var(--gold);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: #5a4a20; margin-bottom: 14px;
+  }
+
+  .sub-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 700px) { .sub-grid { grid-template-columns: 1fr; } }
+
+  .flow-box {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px; background: var(--sand); border-radius: 8px; margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .flow-step {
+    padding: 5px 10px; border-radius: 6px; font-weight: 600;
+    background: white; border: 1px solid var(--border);
+  }
+  .flow-arrow { color: var(--muted); font-size: 16px; }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .pill {
+    display: inline-block; padding: 3px 9px; border-radius: 12px;
+    font-size: 12px; font-weight: 500;
+  }
+  .pill-pos { background: #dff0df; color: #2a6b2a; }
+  .pill-neg { background: #f5dada; color: #7a2a2a; }
+  .pill-cplx { background: #e8daf5; color: #5a2a7a; }
+
+  .new-tag {
+    display: inline-block; font-size: 9px; font-weight: 700;
+    padding: 1px 5px; border-radius: 3px;
+    background: #e8f0ea; color: #4a7c59;
+    margin-left: 3px; vertical-align: middle; letter-spacing: 0.3px;
+  }
+  .default-row td {
+    background: #f8f5f0; color: #7a716a; font-style: italic;
+    border-top: 1px dashed #d4cfc5;
+  }
+  .default-row td:first-child { font-style: normal; color: #b8654a; }
+  .dim-note {
+    background: #faf3e0; border-left: 3px solid #c49b2a;
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: #5a4a20; margin-bottom: 10px;
+  }
+  .universal-rule {
+    background: #f5e8e3; border-left: 4px solid #b8654a;
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    font-size: 13px; margin-bottom: 16px;
+  }
+  .universal-rule strong { color: #b8654a; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Tripod Ontology v5.3 — Complete Visual Reference</h1>
+  <p>Ready Vessels Project • Tripod Method • 14 Layers • Expanded Properties (11 Dimensions, 114 Values)</p>
+</div>
+
+<div class="tripod-diagram">
+  <div class="tripod-leg leg-mm">🗺️ Meaning Maps<small>Semantic representations of biblical text</small></div>
+  <div class="tripod-leg leg-la">🎙️ Language Archive<small>Authentic community speech tagged via AViTA</small></div>
+  <div class="tripod-leg leg-cb">📖 Concept Bank<small>Validated expressions for key terms</small></div>
+</div>
+
+<div class="container">
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>14 Ontology Layers</h2>
+  <div class="toc-grid">
+    <a href="#participants"><span class="num">1</span> Participants</a>
+    <a href="#relations"><span class="num">2</span> Participant Relations</a>
+    <a href="#events"><span class="num">3</span> Events (9 Categories, 197 Cores)</a>
+    <a href="#modifiers"><span class="num">4</span> Event Modifiers</a>
+    <a href="#discourse"><span class="num">5</span> Discourse Layer</a>
+    <a href="#pragmatics"><span class="num">6</span> Pragmatic Layer</a>
+    <a href="#emotions"><span class="num">7</span> Emotion Layer (28 Types)</a>
+    <a href="#source"><span class="num">8</span> Source Tracking</a>
+    <a href="#retrieval"><span class="num">9</span> LA Retrieval Tags</a>
+    <a href="#speech"><span class="num">10</span> Speech Acts (15 Types)</a>
+    <a href="#figurative"><span class="num">11</span> Figurative Language</a>
+    <a href="#keyterms"><span class="num">12</span> Key Terms</a>
+    <a href="#poetic"><span class="num">13</span> Poetic Structure</a>
+    <a href="#proverb"><span class="num">14</span> Proverb / Wisdom Features</a>
+  </div>
+</div>
+
+<!-- ===================== 1. PARTICIPANTS ===================== -->
+<div class="layer-section" id="participants">
+  <div class="layer-header lh-participants" onclick="toggle(this)">
+    <span class="badge">LAYER 1</span> Participants
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="universal-rule">
+      <strong>Universal rule — all fields, all layers:</strong> Every enumerated field carries two permanent options. <strong>not_specified</strong> (default) — the text provides no basis for determination. <strong>other →</strong> — opens a text field, flagged for validator review. Honest gaps are always preferable to guesses.
+    </div>
+
+    <h3>1.1 Participant Types</h3>
+    <table>
+      <tr><th>Type</th><th>Definition</th><th>Examples</th></tr>
+      <tr><td>person</td><td>Human beings</td><td>Moses, the woman, they</td></tr>
+      <tr><td>group</td><td>Collective entities</td><td>Israel, the army, the elders</td></tr>
+      <tr><td>divine</td><td>God, gods, divine beings</td><td>YHWH, Elohim, the angel of the LORD</td></tr>
+      <tr><td>animal</td><td>Non-human creatures</td><td>serpent, dove, lion</td></tr>
+      <tr><td>place</td><td>Locations</td><td>Egypt, Jerusalem, the mountain</td></tr>
+      <tr><td>thing</td><td>Concrete inanimate objects</td><td>altar, sword, scroll</td></tr>
+      <tr><td>stuff</td><td>Materials, substances</td><td>water, bread, gold</td></tr>
+      <tr><td>abstract</td><td>Abstract concepts</td><td>wisdom, covenant, righteousness</td></tr>
+      <tr><td>plant</td><td>Vegetation</td><td>fig tree, vine, wheat</td></tr>
+      <tr><td>event_as_participant</td><td>Nominalized events</td><td>"their coming", "the giving"</td></tr>
+    </table>
+
+    <h3>1.2 Participant Properties</h3>
+
+    <div class="sub-grid">
+      <div>
+        <h3>Quantity</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>one</td><td>Single entity</td></tr>
+          <tr><td>two</td><td>Exactly two (dual)</td></tr>
+          <tr><td>few</td><td>Small number (3–10)</td></tr>
+          <tr><td>many</td><td>Large number</td></tr>
+          <tr><td>all</td><td>Complete totality</td></tr>
+          <tr><td>mass</td><td>Uncountable (water, wisdom)</td></tr>
+          <tr><td>generic</td><td>Category reference ("a lion is fierce")</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Reference Status</h3>
+        <table>
+          <tr><th>Status</th><th>Definition</th><th>Example</th></tr>
+          <tr><td>new_mention</td><td>First time entity appears</td><td>"A man from Bethlehem…"</td></tr>
+          <tr><td>given</td><td>Already established in discourse</td><td>"The man went…"</td></tr>
+          <tr><td>inferrable</td><td>Can be inferred from context</td><td>"his wife" (from "man")</td></tr>
+          <tr><td>generic</td><td>Non-specific category</td><td>"Man shall not live by bread alone"</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>Property Dimensions (11 Dimensions, 114 Values)</h3>
+    <div class="dim-note">Values are cross-linguistic universals — concepts lexicalized in most of the world's languages and attested in biblical texts. Each dimension also carries <em>not_specified</em> (default) and <em>other →</em> (flagged). Values marked <span class="new-tag">NEW</span> were added in the expanded v5.3 amendment.</div>
+
+    <h3>Physical (15 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>old</td><td>Advanced in age</td><td>Abraham was old, advanced in years</td></tr>
+      <tr><td>young</td><td>Early in age</td><td>David was the youngest son</td></tr>
+      <tr><td>strong</td><td>Physical power</td><td>Samson was strong</td></tr>
+      <tr><td>weak</td><td>Lacking physical power</td><td>His hands were weak</td></tr>
+      <tr><td>beautiful</td><td>Pleasing in appearance</td><td>Rachel was beautiful in form</td></tr>
+      <tr><td>tall</td><td>Above normal height</td><td>Saul was taller than any of the people</td></tr>
+      <tr><td>short</td><td>Below normal height</td><td>Zacchaeus was short in stature</td></tr>
+      <tr><td>big <span class="new-tag">NEW</span></td><td>Large in size or extent</td><td>A great fish swallowed Jonah</td></tr>
+      <tr><td>small <span class="new-tag">NEW</span></td><td>Little in size or extent</td><td>The least among the clans of Judah</td></tr>
+      <tr><td>heavy <span class="new-tag">NEW</span></td><td>Great in weight</td><td>The stone was heavy</td></tr>
+      <tr><td>light <span class="new-tag">NEW</span></td><td>Little in weight</td><td>Light as a feather (comparative)</td></tr>
+      <tr><td>fat <span class="new-tag">NEW</span></td><td>Fleshy, well-fed</td><td>Eglon was a very fat man</td></tr>
+      <tr><td>thin <span class="new-tag">NEW</span></td><td>Lean, not fleshy</td><td>Seven thin cows (Pharaoh's dream)</td></tr>
+      <tr><td>healthy <span class="new-tag">NEW</span></td><td>Sound in body, well</td><td>He was restored healthy</td></tr>
+      <tr><td>sick <span class="new-tag">NEW</span></td><td>Unwell, diseased</td><td>Hezekiah became sick</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default — no physical property indicated</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Quantity / Size <span class="new-tag">NEW DIMENSION</span> (10 values)</h3>
+    <div class="dim-note">Scalar properties of things and substances. Distinct from participant-level "quantity" (one, two, many) which counts entities. This dimension describes amount, fullness, or magnitude.</div>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>full <span class="new-tag">NEW</span></td><td>Filled, complete in amount</td><td>The earth was full of violence</td></tr>
+      <tr><td>empty <span class="new-tag">NEW</span></td><td>Containing nothing</td><td>I went away full but the LORD brought me back empty</td></tr>
+      <tr><td>abundant <span class="new-tag">NEW</span></td><td>More than enough</td><td>The land had abundant pasture</td></tr>
+      <tr><td>scarce <span class="new-tag">NEW</span></td><td>Barely enough, lacking</td><td>There was famine; food was scarce</td></tr>
+      <tr><td>whole <span class="new-tag">NEW</span></td><td>Complete, entire, not broken</td><td>The whole earth was of one language</td></tr>
+      <tr><td>broken <span class="new-tag">NEW</span></td><td>Fractured, incomplete</td><td>A broken vessel</td></tr>
+      <tr><td>deep <span class="new-tag">NEW</span></td><td>Extending far down or inward</td><td>The deep waters covered the earth</td></tr>
+      <tr><td>shallow <span class="new-tag">NEW</span></td><td>Not extending far down</td><td>The waters receded</td></tr>
+      <tr><td>wide <span class="new-tag">NEW</span></td><td>Broad in extent</td><td>A broad and spacious land</td></tr>
+      <tr><td>narrow <span class="new-tag">NEW</span></td><td>Limited in extent</td><td>The gate is narrow</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default — no quantity/size property indicated</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Sensory <span class="new-tag">NEW DIMENSION</span> (14 values)</h3>
+    <div class="dim-note">How participants are perceived through the five senses. Essential for Language Archive retrieval — oral communities describe the world through sensory experience.</div>
+    <table>
+      <tr><th>Value</th><th>Sense</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>bright <span class="new-tag">NEW</span></td><td>sight</td><td>Emitting or reflecting light</td><td>His face shone like the sun</td></tr>
+      <tr><td>dark <span class="new-tag">NEW</span></td><td>sight</td><td>Absence of light</td><td>Darkness was over the face of the deep</td></tr>
+      <tr><td>loud <span class="new-tag">NEW</span></td><td>hearing</td><td>Great in sound</td><td>A loud trumpet blast</td></tr>
+      <tr><td>quiet <span class="new-tag">NEW</span></td><td>hearing</td><td>Little or no sound</td><td>A still small voice</td></tr>
+      <tr><td>sweet <span class="new-tag">NEW</span></td><td>taste</td><td>Pleasant to taste</td><td>Sweeter than honey</td></tr>
+      <tr><td>bitter <span class="new-tag">NEW</span></td><td>taste</td><td>Harsh, unpleasant to taste</td><td>The waters were bitter</td></tr>
+      <tr><td>fragrant <span class="new-tag">NEW</span></td><td>smell</td><td>Pleasant odor</td><td>A pleasing aroma to the LORD</td></tr>
+      <tr><td>foul <span class="new-tag">NEW</span></td><td>smell</td><td>Unpleasant odor</td><td>The river stank</td></tr>
+      <tr><td>soft <span class="new-tag">NEW</span></td><td>touch</td><td>Yielding to pressure</td><td>Soft clothing (those in kings' houses)</td></tr>
+      <tr><td>hard <span class="new-tag">NEW</span></td><td>touch</td><td>Resistant to pressure</td><td>Hard as rock</td></tr>
+      <tr><td>smooth <span class="new-tag">NEW</span></td><td>touch</td><td>Even surface</td><td>Jacob's skin was smooth</td></tr>
+      <tr><td>rough <span class="new-tag">NEW</span></td><td>touch</td><td>Uneven surface</td><td>Esau was a hairy/rough man</td></tr>
+      <tr><td>hot <span class="new-tag">NEW</span></td><td>temp.</td><td>High temperature</td><td>The sun grew hot</td></tr>
+      <tr><td>cold <span class="new-tag">NEW</span></td><td>temp.</td><td>Low temperature</td><td>Cold water to a thirsty soul</td></tr>
+      <tr class="default-row"><td>not_specified</td><td></td><td colspan="2">Default — no sensory property indicated</td></tr>
+      <tr class="default-row"><td>other →</td><td></td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Character (10 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>righteous</td><td>Morally upright</td><td>Noah was a righteous man</td></tr>
+      <tr><td>wicked</td><td>Morally corrupt</td><td>The wickedness of man was great</td></tr>
+      <tr><td>faithful</td><td>Loyal, trustworthy</td><td>Abraham believed the LORD</td></tr>
+      <tr><td>unfaithful</td><td>Disloyal, untrustworthy</td><td>They were unfaithful to their God</td></tr>
+      <tr><td>wise</td><td>Having wisdom, discerning</td><td>Solomon was wise</td></tr>
+      <tr><td>foolish</td><td>Lacking wisdom</td><td>The fool says in his heart</td></tr>
+      <tr><td>brave <span class="new-tag">NEW</span></td><td>Courageous, bold</td><td>Be strong and courageous</td></tr>
+      <tr><td>cowardly <span class="new-tag">NEW</span></td><td>Lacking courage</td><td>Their hearts melted in fear</td></tr>
+      <tr><td>humble <span class="new-tag">NEW</span></td><td>Lowly in spirit, not proud</td><td>Moses was very humble</td></tr>
+      <tr><td>proud <span class="new-tag">NEW</span></td><td>Arrogant, self-exalting</td><td>Pharaoh's heart was proud</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Social (11 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>rich</td><td>Having wealth</td><td>Abraham was very rich</td></tr>
+      <tr><td>poor</td><td>Lacking wealth</td><td>The poor widow put in two coins</td></tr>
+      <tr><td>noble</td><td>High birth or rank</td><td>The nobles of the people</td></tr>
+      <tr><td>slave</td><td>In bondage, not free</td><td>We were slaves in Egypt</td></tr>
+      <tr><td>free</td><td>Not in bondage</td><td>You shall let the slave go free</td></tr>
+      <tr><td>foreign</td><td>From another land/people</td><td>Ruth the Moabitess, a foreign woman</td></tr>
+      <tr><td>native</td><td>From this land/people</td><td>The native-born among you</td></tr>
+      <tr><td>powerful <span class="new-tag">NEW</span></td><td>Having social influence or authority</td><td>Nimrod was a mighty one</td></tr>
+      <tr><td>powerless <span class="new-tag">NEW</span></td><td>Lacking social influence</td><td>The fatherless and the widow</td></tr>
+      <tr><td>honored <span class="new-tag">NEW</span></td><td>Held in high esteem</td><td>He was more honored than his brothers</td></tr>
+      <tr><td>despised <span class="new-tag">NEW</span></td><td>Held in low esteem, rejected</td><td>He was despised and rejected</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Emotional State (10 values)</h3>
+    <div class="dim-note">Standing emotional state as a participant property — distinct from the Emotion Layer (Layer 7), which tags emotion expressed in a specific clause/event.</div>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>happy</td><td>In a state of well-being</td><td>Hannah's face was no longer sad</td></tr>
+      <tr><td>sad</td><td>In a state of sorrow</td><td>Why is your face sad? (Nehemiah)</td></tr>
+      <tr><td>angry</td><td>In a state of wrath</td><td>Cain was very angry</td></tr>
+      <tr><td>afraid</td><td>In a state of fear</td><td>Moses was afraid to look at God</td></tr>
+      <tr><td>peaceful</td><td>In a state of calm</td><td>He lay down and slept in peace</td></tr>
+      <tr><td>troubled</td><td>In a state of distress</td><td>Pharaoh's spirit was troubled</td></tr>
+      <tr><td>confident <span class="new-tag">NEW</span></td><td>Assured, trusting</td><td>Though an army encamp, I will be confident</td></tr>
+      <tr><td>anxious <span class="new-tag">NEW</span></td><td>Worried, uneasy</td><td>Martha was anxious about many things</td></tr>
+      <tr><td>grieving <span class="new-tag">NEW</span></td><td>In mourning or deep loss</td><td>David mourned for his son</td></tr>
+      <tr><td>joyful <span class="new-tag">NEW</span></td><td>In a state of deep gladness</td><td>Mary's spirit rejoiced in God</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Relational (8 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>married</td><td>In a marriage bond</td><td>Boaz took Ruth as his wife</td></tr>
+      <tr><td>widowed</td><td>Spouse has died</td><td>Naomi was widowed</td></tr>
+      <tr><td>orphaned</td><td>Without parents</td><td>The fatherless</td></tr>
+      <tr><td>firstborn</td><td>First child born</td><td>Esau was the firstborn</td></tr>
+      <tr><td>barren <span class="new-tag">NEW</span></td><td>Unable to bear children</td><td>Sarah was barren</td></tr>
+      <tr><td>pregnant <span class="new-tag">NEW</span></td><td>Carrying a child</td><td>Rebekah conceived</td></tr>
+      <tr><td>betrothed <span class="new-tag">NEW</span></td><td>Pledged to marry</td><td>Mary was betrothed to Joseph</td></tr>
+      <tr><td>divorced <span class="new-tag">NEW</span></td><td>Marriage dissolved</td><td>A certificate of divorce</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Material (10 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>wooden</td><td>Made of wood</td><td>A wooden altar</td></tr>
+      <tr><td>stone</td><td>Made of stone</td><td>Tablets of stone</td></tr>
+      <tr><td>golden</td><td>Made of gold</td><td>The golden calf</td></tr>
+      <tr><td>bronze</td><td>Made of bronze</td><td>The bronze serpent</td></tr>
+      <tr><td>clay</td><td>Made of clay / earthen</td><td>Vessels of clay</td></tr>
+      <tr><td>iron <span class="new-tag">NEW</span></td><td>Made of iron</td><td>Iron chariots</td></tr>
+      <tr><td>silver <span class="new-tag">NEW</span></td><td>Made of silver</td><td>Thirty pieces of silver</td></tr>
+      <tr><td>linen <span class="new-tag">NEW</span></td><td>Made of linen / cloth</td><td>Fine linen garments</td></tr>
+      <tr><td>leather <span class="new-tag">NEW</span></td><td>Made of animal skin</td><td>A garment of leather</td></tr>
+      <tr><td>woven <span class="new-tag">NEW</span></td><td>Made by weaving / textile</td><td>A woven tunic</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Evaluative (10 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>good</td><td>Positive in quality or value</td><td>God saw that it was good</td></tr>
+      <tr><td>bad</td><td>Negative in quality or value</td><td>The bad figs were very bad</td></tr>
+      <tr><td>clean</td><td>Ritually or physically pure</td><td>Clean animals</td></tr>
+      <tr><td>unclean</td><td>Ritually or physically impure</td><td>Unclean spirits</td></tr>
+      <tr><td>holy</td><td>Set apart, sacred</td><td>Holy ground</td></tr>
+      <tr><td>profane</td><td>Common, not sacred</td><td>Profane what is holy</td></tr>
+      <tr><td>true <span class="new-tag">NEW</span></td><td>Genuine, reliable, accurate</td><td>Your word is true</td></tr>
+      <tr><td>false <span class="new-tag">NEW</span></td><td>Deceptive, unreliable</td><td>False prophets</td></tr>
+      <tr><td>precious <span class="new-tag">NEW</span></td><td>Of great value</td><td>Precious stones</td></tr>
+      <tr><td>worthless <span class="new-tag">NEW</span></td><td>Of no value</td><td>Worthless idols</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Temporal (6 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>ancient</td><td>Very old, from long ago</td><td>The ancient paths</td></tr>
+      <tr><td>new</td><td>Recently made or appeared</td><td>A new song, a new covenant</td></tr>
+      <tr><td>temporary</td><td>Lasting a limited time</td><td>Tents, temporary shelters</td></tr>
+      <tr><td>eternal</td><td>Without end</td><td>The eternal God</td></tr>
+      <tr><td>first <span class="new-tag">NEW</span></td><td>Earliest in sequence</td><td>The first day</td></tr>
+      <tr><td>last <span class="new-tag">NEW</span></td><td>Latest/final in sequence</td><td>The last days</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+    <h3>Spatial (10 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>near</td><td>Close in space</td><td>The LORD is near to the brokenhearted</td></tr>
+      <tr><td>far</td><td>Distant in space</td><td>A far country</td></tr>
+      <tr><td>high</td><td>Elevated, above</td><td>The high mountain</td></tr>
+      <tr><td>low</td><td>Below, beneath</td><td>The lowest parts of the earth</td></tr>
+      <tr><td>inner</td><td>Inside, interior</td><td>The inner court</td></tr>
+      <tr><td>outer</td><td>Outside, exterior</td><td>The outer darkness</td></tr>
+      <tr><td>right <span class="new-tag">NEW</span></td><td>Right-hand side</td><td>Sit at my right hand</td></tr>
+      <tr><td>left <span class="new-tag">NEW</span></td><td>Left-hand side</td><td>Do not turn to the left</td></tr>
+      <tr><td>front <span class="new-tag">NEW</span></td><td>Before, in front of</td><td>He went before them</td></tr>
+      <tr><td>behind <span class="new-tag">NEW</span></td><td>At the back of</td><td>Get behind me</td></tr>
+      <tr class="default-row"><td>not_specified</td><td colspan="2">Default</td></tr>
+      <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 2. PARTICIPANT RELATIONS ===================== -->
+<div class="layer-section" id="relations">
+  <div class="layer-header lh-relations" onclick="toggle(this)">
+    <span class="badge">LAYER 2</span> Participant Relations
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="note">Relations connect participants directionally (source → target). Five sub-categories.</div>
+
+    <div class="sub-grid">
+      <div>
+        <h3>2.1 Kinship Relations</h3>
+        <table>
+          <tr><th>Relation</th><th>Definition</th></tr>
+          <tr><td>parent_of</td><td>Mother or father of</td></tr>
+          <tr><td>child_of</td><td>Son or daughter of</td></tr>
+          <tr><td>spouse_of / husband_of / wife_of</td><td>Married to</td></tr>
+          <tr><td>sibling_of</td><td>Brother or sister of</td></tr>
+          <tr><td>grandparent_of</td><td>Grandparent of</td></tr>
+          <tr><td>grandchild_of</td><td>Grandchild of</td></tr>
+          <tr><td>ancestor_of</td><td>Earlier in lineage</td></tr>
+          <tr><td>descendant_of</td><td>Later in lineage</td></tr>
+          <tr><td>in_law</td><td>Related by marriage</td></tr>
+          <tr><td>clan_member</td><td>Same clan/tribe</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>2.2 Social Relations</h3>
+        <table>
+          <tr><th>Relation</th><th>Definition</th></tr>
+          <tr><td>ruler_of</td><td>Has authority over</td></tr>
+          <tr><td>subject_of</td><td>Under authority of</td></tr>
+          <tr><td>master_of</td><td>Owns or commands</td></tr>
+          <tr><td>servant_of</td><td>Serves or belongs to</td></tr>
+          <tr><td>ally_of</td><td>In alliance with</td></tr>
+          <tr><td>enemy_of</td><td>In opposition to</td></tr>
+          <tr><td>friend_of</td><td>Friendly relationship</td></tr>
+          <tr><td>teacher_of</td><td>Instructs</td></tr>
+          <tr><td>student_of</td><td>Learns from</td></tr>
+          <tr><td>colleague_of</td><td>Works alongside</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub-grid">
+      <div>
+        <h3>2.3 Possession Relations</h3>
+        <table>
+          <tr><th>Relation</th><th>Definition</th></tr>
+          <tr><td>owner_of</td><td>Legal ownership</td></tr>
+          <tr><td>possesses</td><td>Has in possession</td></tr>
+          <tr><td>belongs_to</td><td>Is owned by</td></tr>
+          <tr><td>controls</td><td>Has control over</td></tr>
+          <tr><td>lacks</td><td>Does not have</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>2.4 Spatial Relations</h3>
+        <table>
+          <tr><th>Relation</th><th>Definition</th></tr>
+          <tr><td>located_at</td><td>Present at location</td></tr>
+          <tr><td>native_of</td><td>Originally from</td></tr>
+          <tr><td>inhabitant_of</td><td>Lives at</td></tr>
+          <tr><td>from_place</td><td>Geographic origin</td></tr>
+          <tr><td>near</td><td>Proximate to</td></tr>
+          <tr><td>far_from</td><td>Distant from</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>2.5 Part-Whole Relations</h3>
+    <table>
+      <tr><th>Relation</th><th>Definition</th></tr>
+      <tr><td>part_of</td><td>Component of larger whole</td></tr>
+      <tr><td>whole_of</td><td>Contains as parts</td></tr>
+      <tr><td>member_of</td><td>Belongs to group</td></tr>
+      <tr><td>group_of</td><td>Consists of members</td></tr>
+      <tr><td>substance_of</td><td>Made of material</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 3. EVENTS ===================== -->
+<div class="layer-section" id="events">
+  <div class="layer-header lh-events" onclick="toggle(this)">
+    <span class="badge">LAYER 3</span> Events — 9 Categories, 197 Cores, 16 Semantic Roles
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>3.1 Event Categories (9)</h3>
+    <div class="note">Each clause maps to one event. 197 event cores (cognitive primitives) are distributed across these 9 categories, drawn from cross-linguistic patterns.</div>
+    <table>
+      <tr><th>Category</th><th>Definition</th><th>Example Cores</th></tr>
+      <tr><td><span class="cat-label" style="background:#e0f0ff;color:#2a5a8a;">STATE</span></td><td>Conditions and properties</td><td>be, exist, have, lack, contain, remain</td></tr>
+      <tr><td><span class="cat-label" style="background:#d0f0d0;color:#2a6b2a;">MOTION</span></td><td>Physical movement through space</td><td>go, come, enter, exit, return, flee, wander, travel</td></tr>
+      <tr><td><span class="cat-label" style="background:#f5dada;color:#7a2a2a;">ACTION</span></td><td>Physical activities that change the world</td><td>make, break, strike, kill, heal, build, destroy</td></tr>
+      <tr><td><span class="cat-label" style="background:#faf0d0;color:#6a5a10;">TRANSFER</span></td><td>Giving, receiving, exchange</td><td>give, receive, take, buy, sell, offer, sacrifice</td></tr>
+      <tr><td><span class="cat-label" style="background:#e8daf5;color:#5a2a7a;">SPEECH</span></td><td>Verbal communication</td><td>say, ask, command, promise, bless, curse, proclaim</td></tr>
+      <tr><td><span class="cat-label" style="background:#f5e8f0;color:#6b3a5a;">INTERNAL</span></td><td>Mental and emotional states</td><td>think, know, believe, feel, want, fear, love</td></tr>
+      <tr><td><span class="cat-label" style="background:#e0e8f0;color:#3a4a6b;">PROCESS</span></td><td>Changes over time</td><td>become, grow, die, change, heal, ripen, decay</td></tr>
+      <tr><td><span class="cat-label" style="background:#f0e8d0;color:#5a4a2a;">RITUAL</span></td><td>Ceremonies and formal acts</td><td>sacrifice, worship, consecrate, purify, anoint</td></tr>
+      <tr><td><span class="cat-label" style="background:#e8e8e8;color:#4a4a4a;">META</span></td><td>Narrative commentary</td><td>narrator frames, episode markers, summary statements</td></tr>
+    </table>
+
+    <h3>3.2 Semantic Roles (16)</h3>
+    <table>
+      <tr><th>Role</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>initiator</td><td>Who causes or performs the action</td><td>"<b>David</b> killed Goliath"</td></tr>
+      <tr><td>affected</td><td>Who/what is acted upon</td><td>"David killed <b>Goliath</b>"</td></tr>
+      <tr><td>experiencer</td><td>Who perceives or feels</td><td>"<b>David</b> feared the giant"</td></tr>
+      <tr><td>recipient</td><td>Who receives something</td><td>"He gave bread to <b>the poor</b>"</td></tr>
+      <tr><td>beneficiary</td><td>Who benefits from the action</td><td>"She made a coat for <b>her son</b>"</td></tr>
+      <tr><td>source</td><td>Origin point</td><td>"He came from <b>Egypt</b>"</td></tr>
+      <tr><td>goal</td><td>Destination or target</td><td>"He went to <b>Jerusalem</b>"</td></tr>
+      <tr><td>location</td><td>Where it happens</td><td>"They lived in <b>the land</b>"</td></tr>
+      <tr><td>instrument</td><td>Tool or means</td><td>"He struck with <b>a sword</b>"</td></tr>
+      <tr><td>companion</td><td>Who accompanies</td><td>"He went with <b>his servant</b>"</td></tr>
+      <tr><td>manner</td><td>How it happens</td><td>"He spoke <b>angrily</b>"</td></tr>
+      <tr><td>time</td><td>When it happens</td><td>"<b>In those days</b>…"</td></tr>
+      <tr><td>cause</td><td>Why it happens</td><td>"<b>Because of the famine</b>"</td></tr>
+      <tr><td>purpose</td><td>Intended goal</td><td>"…<b>to save his people</b>"</td></tr>
+      <tr><td>result</td><td>What results</td><td>"…<b>so that they lived</b>"</td></tr>
+      <tr><td>theme</td><td>What moves or is located</td><td>"<b>The spirit</b> moved over the waters"</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 4. EVENT MODIFIERS ===================== -->
+<div class="layer-section" id="modifiers">
+  <div class="layer-header lh-modifiers" onclick="toggle(this)">
+    <span class="badge">LAYER 4</span> Event Modifiers — Reality, Time, Evidentiality, Aspect, Polarity
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="note">These capture semantic distinctions that many languages grammaticalize differently.</div>
+
+    <div class="sub-grid">
+      <div>
+        <h3>Reality (9 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>actual</td><td>Actually happened</td></tr>
+          <tr><td>potential</td><td>Could happen</td></tr>
+          <tr><td>hypothetical</td><td>Might happen (conditional)</td></tr>
+          <tr><td>counterfactual</td><td>Contrary to fact</td></tr>
+          <tr><td>obligatory</td><td>Required to happen</td></tr>
+          <tr><td>desired</td><td>Wished for</td></tr>
+          <tr><td>feared</td><td>Dreaded</td></tr>
+          <tr><td>commanded</td><td>Ordered to happen</td></tr>
+          <tr><td>permitted</td><td>Allowed to happen</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Time Frame (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>retrospective</td><td>Past / before reference time</td></tr>
+          <tr><td>immediate</td><td>Present / at reference time</td></tr>
+          <tr><td>prospective</td><td>Future / after reference time</td></tr>
+          <tr><td>gnomic</td><td>Timeless / always true</td></tr>
+        </table>
+
+        <h3>Polarity (2 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>positive</td><td>Affirmative statement</td></tr>
+          <tr><td>negative</td><td>Negated statement</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub-grid">
+      <div>
+        <h3>Evidentiality (8 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>witnessed_visual</td><td>Saw directly</td></tr>
+          <tr><td>witnessed_sensory</td><td>Heard/felt directly</td></tr>
+          <tr><td>reported</td><td>Told by another</td></tr>
+          <tr><td>inferred</td><td>Concluded from evidence</td></tr>
+          <tr><td>assumed</td><td>Taken for granted</td></tr>
+          <tr><td>general_knowledge</td><td>Common knowledge</td></tr>
+          <tr><td>divine_revelation</td><td>From God</td></tr>
+          <tr><td>unspecified</td><td>Source not indicated</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Aspect (5 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Meaning</th></tr>
+          <tr><td>completed</td><td>Seen as complete / perfective</td></tr>
+          <tr><td>ongoing</td><td>In progress / imperfective</td></tr>
+          <tr><td>habitual</td><td>Regular pattern</td></tr>
+          <tr><td>inchoative</td><td>Beginning / starting</td></tr>
+          <tr><td>cessative</td><td>Ending / stopping</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== 5. DISCOURSE LAYER ===================== -->
+<div class="layer-section" id="discourse">
+  <div class="layer-header lh-discourse" onclick="toggle(this)">
+    <span class="badge">LAYER 5</span> Discourse Layer — Functions, Relations, Peak & Spine
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>5.1 Discourse Functions (6)</h3>
+    <table>
+      <tr><th>Function</th><th>Code</th><th>Definition</th></tr>
+      <tr><td>Setting</td><td>SET</td><td>Establishes time, place, circumstances</td></tr>
+      <tr><td>Background</td><td>BG</td><td>Supporting information, not mainline</td></tr>
+      <tr><td>Mainline</td><td>MAIN</td><td>Core storyline events</td></tr>
+      <tr><td>Evaluation</td><td>EVAL</td><td>Narrator or character comment/assessment</td></tr>
+      <tr><td>Quote Margin</td><td>QUOTE_MARGIN</td><td>Speech introduction frames</td></tr>
+      <tr><td>Peak</td><td>PEAK</td><td>Climactic prominence / turning point</td></tr>
+    </table>
+
+    <h3>5.2 Discourse Relations (12)</h3>
+    <table>
+      <tr><th>Relation</th><th>Definition</th><th>Signal Words</th></tr>
+      <tr><td>sequence</td><td>One event after another</td><td>then, afterward, next</td></tr>
+      <tr><td>simultaneous</td><td>At the same time</td><td>while, as, when</td></tr>
+      <tr><td>cause</td><td>Reason for event</td><td>because, for, since</td></tr>
+      <tr><td>result</td><td>Consequence of event</td><td>so, therefore, thus</td></tr>
+      <tr><td>purpose</td><td>Intended goal</td><td>in order to, so that</td></tr>
+      <tr><td>condition</td><td>If-then relationship</td><td>if, when, unless</td></tr>
+      <tr><td>contrast</td><td>Opposing ideas</td><td>but, however, yet</td></tr>
+      <tr><td>concession</td><td>Despite relationship</td><td>although, even though</td></tr>
+      <tr><td>clarification</td><td>Explains previous</td><td>that is, namely</td></tr>
+      <tr><td>elaboration</td><td>More detail</td><td>specifically, in particular</td></tr>
+      <tr><td>evidence</td><td>Supports claim</td><td>for example, as shown by</td></tr>
+      <tr><td>restatement</td><td>Says again differently</td><td>in other words</td></tr>
+    </table>
+
+    <h3>5.3 Peak Event &amp; Thematic Spine</h3>
+    <table>
+      <tr><th>Element</th><th>Description</th></tr>
+      <tr><td>Peak Event</td><td>Each passage has one event marked as the Peak — the climactic moment or turning point.</td></tr>
+      <tr><td>Thematic Spine</td><td>A one-sentence summary of the passage's meaning arc, written by the validator.</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 6. PRAGMATIC LAYER ===================== -->
+<div class="layer-section" id="pragmatics">
+  <div class="layer-header lh-pragmatics" onclick="toggle(this)">
+    <span class="badge">LAYER 6</span> Pragmatic Layer — Register, Social Axis, Prominence, Pacing
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>6.1 Register (18 values)</h3>
+    <table>
+      <tr><th>Register</th><th>Definition</th><th></th></tr>
+      <tr><td>informal</td><td>Casual, everyday speech</td><td></td></tr>
+      <tr><td>narrative</td><td>Standard storytelling</td><td></td></tr>
+      <tr><td>formal</td><td>Elevated, official speech</td><td></td></tr>
+      <tr><td>ceremonial</td><td>Ritual, liturgical contexts</td><td></td></tr>
+      <tr><td>elder_speech</td><td>Traditional authority register</td><td></td></tr>
+      <tr><td>legal</td><td>Laws, commands, regulations</td><td></td></tr>
+      <tr><td>poetic</td><td>Poetry, songs, psalms</td><td></td></tr>
+      <tr><td>prophetic</td><td>Prophetic speech patterns</td><td></td></tr>
+      <tr><td>wisdom</td><td>Proverbs, wisdom sayings</td><td></td></tr>
+      <tr><td>dialogue</td><td>Direct conversation</td><td></td></tr>
+      <tr><td>lament</td><td>Mourning, complaint</td><td></td></tr>
+      <tr><td>hymnic</td><td>Praise and worship songs</td><td>v5.3</td></tr>
+      <tr><td>didactic_poetry</td><td>Teaching poetry (like Proverbs 1–9)</td><td>v5.3</td></tr>
+      <tr><td>love_poetry</td><td>Romantic/erotic poetry (Song of Songs)</td><td>v5.3</td></tr>
+      <tr><td>victory_song</td><td>Celebration of triumph</td><td>v5.3</td></tr>
+      <tr><td>dirge</td><td>Funeral lament poetry</td><td>v5.3</td></tr>
+      <tr><td>taunt</td><td>Mocking poetry against enemies</td><td>v5.3</td></tr>
+      <tr><td>blessing_poetry</td><td>Poetic blessings</td><td>v5.3</td></tr>
+      <tr><td>curse_poetry</td><td>Poetic curses</td><td>v5.3</td></tr>
+    </table>
+
+    <div class="sub-grid">
+      <div>
+        <h3>6.2 Social Axis (7 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>equal_to_equal</td><td>Same social level</td></tr>
+          <tr><td>superior_to_inferior</td><td>Higher to lower status</td></tr>
+          <tr><td>inferior_to_superior</td><td>Lower to higher status</td></tr>
+          <tr><td>divine_to_human</td><td>God speaking to people</td></tr>
+          <tr><td>human_to_divine</td><td>People speaking to God</td></tr>
+          <tr><td>formal_public</td><td>Official, public context</td></tr>
+          <tr><td>intimate_private</td><td>Personal, private context</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>6.3 Prominence (4 levels)</h3>
+        <table>
+          <tr><th>Level</th><th>Definition</th></tr>
+          <tr><td>peak</td><td>Climactic moment</td></tr>
+          <tr><td>high</td><td>Important event</td></tr>
+          <tr><td>medium</td><td>Normal narrative level</td></tr>
+          <tr><td>low</td><td>Background information</td></tr>
+        </table>
+
+        <h3>6.4 Pacing (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>summary</td><td>Quick overview of events</td></tr>
+          <tr><td>normal</td><td>Standard narration pace</td></tr>
+          <tr><td>slow</td><td>Detailed description</td></tr>
+          <tr><td>pause</td><td>Narration stops / reflection</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== 7. EMOTION LAYER ===================== -->
+<div class="layer-section" id="emotions">
+  <div class="layer-header lh-emotions" onclick="toggle(this)">
+    <span class="badge">LAYER 7</span> Emotion Layer — 28 Types, Intensity, Stance, Response
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>7.1 Emotion Types (28 categories)</h3>
+    <p style="margin-bottom:8px;font-size:13px;"><b>Positive (13):</b></p>
+    <div class="pill-row">
+      <span class="pill pill-pos">joy</span><span class="pill pill-pos">hope</span><span class="pill pill-pos">gratitude</span>
+      <span class="pill pill-pos">love</span><span class="pill pill-pos">compassion</span><span class="pill pill-pos">peace</span>
+      <span class="pill pill-pos">trust</span><span class="pill pill-pos">relief</span><span class="pill pill-pos">awe</span>
+      <span class="pill pill-pos">pride</span><span class="pill pill-pos">contentment</span><span class="pill pill-pos">desire</span>
+      <span class="pill pill-pos">zeal</span>
+    </div>
+    <p style="margin-bottom:8px;font-size:13px;"><b>Negative (12):</b></p>
+    <div class="pill-row">
+      <span class="pill pill-neg">sorrow</span><span class="pill pill-neg">fear</span><span class="pill pill-neg">anger</span>
+      <span class="pill pill-neg">disgust</span><span class="pill pill-neg">shame</span><span class="pill pill-neg">guilt</span>
+      <span class="pill pill-neg">despair</span><span class="pill pill-neg">anxiety</span><span class="pill pill-neg">loneliness</span>
+      <span class="pill pill-neg">jealousy</span><span class="pill pill-neg">resentment</span><span class="pill pill-neg">bitterness</span>
+    </div>
+    <p style="margin-bottom:8px;font-size:13px;"><b>Complex (4):</b></p>
+    <div class="pill-row">
+      <span class="pill pill-cplx">awe_fear</span><span class="pill pill-cplx">reverence</span>
+      <span class="pill pill-cplx">remorse</span><span class="pill pill-cplx">longing</span>
+    </div>
+
+    <div class="sub-grid">
+      <div>
+        <h3>7.2 Intensity Levels</h3>
+        <table>
+          <tr><th>Level</th><th>Definition</th></tr>
+          <tr><td>low</td><td>Mild feeling</td></tr>
+          <tr><td>medium</td><td>Moderate feeling</td></tr>
+          <tr><td>high</td><td>Strong feeling</td></tr>
+          <tr><td>extreme</td><td>Overwhelming feeling</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>7.3 Narrator Stance (8 values)</h3>
+        <table>
+          <tr><th>Stance</th><th>Definition</th></tr>
+          <tr><td>neutral</td><td>No evaluation</td></tr>
+          <tr><td>sympathetic</td><td>Positive toward participant</td></tr>
+          <tr><td>critical</td><td>Negative toward participant</td></tr>
+          <tr><td>ironic</td><td>Saying opposite of meaning</td></tr>
+          <tr><td>celebratory</td><td>Praising</td></tr>
+          <tr><td>lamenting</td><td>Mourning</td></tr>
+          <tr><td>didactic</td><td>Teaching a lesson</td></tr>
+          <tr><td>suspenseful</td><td>Building tension</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>7.4 Audience Response (10 values)</h3>
+    <div class="pill-row">
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">empathy</span>
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">sympathy</span>
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">admiration</span>
+      <span class="pill" style="background:#f5e8e3;color:#6b3a2a;">disapproval</span>
+      <span class="pill" style="background:#f5e8e3;color:#6b3a2a;">fear</span>
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">hope</span>
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">relief</span>
+      <span class="pill" style="background:#f5e8e3;color:#6b3a2a;">grief</span>
+      <span class="pill" style="background:#e8f0e8;color:#2a5a2a;">joy</span>
+      <span class="pill" style="background:#e8daf5;color:#5a2a7a;">conviction</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== 8. SOURCE TRACKING ===================== -->
+<div class="layer-section" id="source">
+  <div class="layer-header lh-source" onclick="toggle(this)">
+    <span class="badge">LAYER 8</span> Source Tracking — Inference Source &amp; Confidence
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="sub-grid">
+      <div>
+        <h3>8.1 Inference Source (9 values)</h3>
+        <table>
+          <tr><th>Source</th><th>Definition</th></tr>
+          <tr><td>lexical</td><td>Explicit emotion/state word used in text</td></tr>
+          <tr><td>contextual</td><td>Inferred from narrative situation</td></tr>
+          <tr><td>cultural</td><td>Requires cultural background knowledge</td></tr>
+          <tr><td>behavioral</td><td>Inferred from described actions</td></tr>
+          <tr><td>physiological</td><td>From physical description</td></tr>
+          <tr><td>speech_content</td><td>From what was said</td></tr>
+          <tr><td>narrator_comment</td><td>Narrator explicitly tells us</td></tr>
+          <tr><td>reader_inference</td><td>Reader must infer</td></tr>
+          <tr><td>theological</td><td>Theological reasoning</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>8.2 Confidence Levels</h3>
+        <table>
+          <tr><th>Level</th><th>Definition</th><th>AI Badge</th></tr>
+          <tr><td>high</td><td>Very confident (80%+)</td><td style="color:#2a8a2a;">● Green</td></tr>
+          <tr><td>medium</td><td>Reasonably confident (60–79%)</td><td style="color:#2a6b8c;">● Blue</td></tr>
+          <tr><td>low</td><td>Somewhat uncertain (&lt;60%)</td><td style="color:#b8654a;">● Terracotta</td></tr>
+          <tr><td>speculative</td><td>Best guess</td><td style="color:#b8654a;">● Terracotta + warning</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== 9. LA RETRIEVAL TAGS ===================== -->
+<div class="layer-section" id="retrieval">
+  <div class="layer-header lh-retrieval" onclick="toggle(this)">
+    <span class="badge">LAYER 9</span> LA Retrieval Tags — 9 Tag Categories
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>9.1 Tag Categories</h3>
+    <table>
+      <tr><th>Category</th><th>Purpose</th><th>Examples</th></tr>
+      <tr><td>emotion_tags</td><td>Match emotional tone</td><td>grief_at_death, joy_at_reunion, fear_of_authority</td></tr>
+      <tr><td>event_tags</td><td>Match scene types</td><td>death_narrative, journey_story, divine_encounter</td></tr>
+      <tr><td>register_tags</td><td>Match speech style</td><td>formal_speech, intimate_dialogue, elder_authority</td></tr>
+      <tr><td>discourse_tags</td><td>Match structure</td><td>story_opening, climax_moment, resolution</td></tr>
+      <tr><td>social_tags</td><td>Match social patterns</td><td>widow_vulnerability, divine_provision, royal_command</td></tr>
+      <tr><td>poetic_tags</td><td>Match poetic patterns</td><td>praise_hymn, lament_psalm, victory_song</td></tr>
+      <tr><td>parallelism_tags</td><td>Match structural patterns</td><td>synonymous_parallel, antithetical_pair, chiastic_structure</td></tr>
+      <tr><td>proverb_tags</td><td>Match wisdom patterns</td><td>comparative_proverb, warning_admonition, consequence_saying</td></tr>
+      <tr><td>formulaic_tags</td><td>Match fixed expressions</td><td>blessing_formula, oath_formula, greeting_pattern</td></tr>
+    </table>
+
+    <h3>9.2 How Retrieval Works</h3>
+    <div class="flow-box">
+      <span class="flow-step">1. Composition engine reads Meaning Map event</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">2. Constructs query from retrieval tags</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">3. Searches Language Archive index</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">4. Ranks by semantic similarity</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">5. Top matches provide composition patterns</span>
+    </div>
+    <div class="note">This is meaning-based retrieval, not keyword search. It finds "how this community expresses a grief response to death" — not "passages containing the word death."</div>
+
+  </div>
+</div>
+
+<!-- ===================== 10. SPEECH ACTS ===================== -->
+<div class="layer-section" id="speech">
+  <div class="layer-header lh-speech" onclick="toggle(this)">
+    <span class="badge">LAYER 10</span> Speech Acts — 15 Types
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="note">Applied when an event is classified under the SPEECH category.</div>
+    <table>
+      <tr><th>Speech Act</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>assertive</td><td>Stating facts</td><td>"The LORD is my shepherd"</td></tr>
+      <tr><td>directive</td><td>Commands / requests</td><td>"Go to Pharaoh"</td></tr>
+      <tr><td>commissive</td><td>Promises / vows</td><td>"I will be with you"</td></tr>
+      <tr><td>expressive</td><td>Feelings / attitudes</td><td>"How lovely is your dwelling place!"</td></tr>
+      <tr><td>declarative</td><td>Changing states by speaking</td><td>"You are clean"</td></tr>
+      <tr><td>interrogative</td><td>Questions</td><td>"Where is your brother?"</td></tr>
+      <tr><td>blessing</td><td>Invoking good</td><td>"May the LORD bless you"</td></tr>
+      <tr><td>curse</td><td>Invoking harm</td><td>"Cursed is the ground"</td></tr>
+      <tr><td>oath</td><td>Sworn statements</td><td>"As the LORD lives…"</td></tr>
+      <tr><td>prophecy</td><td>Divine message</td><td>"Thus says the LORD…"</td></tr>
+      <tr><td>praise</td><td>Glorifying</td><td>"Praise the LORD!"</td></tr>
+      <tr><td>lament</td><td>Expressing grief</td><td>"My God, why have you forsaken me?"</td></tr>
+      <tr><td>thanksgiving</td><td>Gratitude</td><td>"I will give thanks to the LORD"</td></tr>
+      <tr><td>petition</td><td>Requests to God</td><td>"Hear my prayer, O LORD"</td></tr>
+      <tr><td>instruction</td><td>Teaching</td><td>"Hear, O Israel…"</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 11. FIGURATIVE LANGUAGE ===================== -->
+<div class="layer-section" id="figurative">
+  <div class="layer-header lh-figurative" onclick="toggle(this)">
+    <span class="badge">LAYER 11</span> Figurative Language — 16 Types + Transferability
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>11.1 Figure Types (16)</h3>
+    <table>
+      <tr><th>Type</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>metaphor</td><td>A is B</td><td>"The LORD is my rock"</td></tr>
+      <tr><td>simile</td><td>A is like B</td><td>"Like a sheep without a shepherd"</td></tr>
+      <tr><td>metonymy</td><td>Part for whole</td><td>"The sword" for war</td></tr>
+      <tr><td>synecdoche</td><td>Related concept</td><td>"Bread" for food</td></tr>
+      <tr><td>personification</td><td>Non-person as person</td><td>"The mountains sing"</td></tr>
+      <tr><td>hyperbole</td><td>Exaggeration</td><td>"Higher than the heavens"</td></tr>
+      <tr><td>litotes</td><td>Understatement</td><td>"Not a few" (meaning many)</td></tr>
+      <tr><td>irony</td><td>Opposite meaning</td><td>Saying "wise" sarcastically</td></tr>
+      <tr><td>idiom</td><td>Fixed expression</td><td>"Lift up your eyes"</td></tr>
+      <tr><td>euphemism</td><td>Softer expression</td><td>"Slept with his fathers" (died)</td></tr>
+      <tr><td>anthropomorphism</td><td>God as human</td><td>"The hand of the LORD"</td></tr>
+      <tr><td>rhetorical_question</td><td>Question as statement</td><td>"Is anything too hard for the LORD?"</td></tr>
+      <tr><td>merism</td><td>Two extremes = totality</td><td>"heaven and earth" = everything</td></tr>
+      <tr><td>hendiadys</td><td>Two words, one idea</td><td>"grace and truth"</td></tr>
+      <tr><td>inclusio</td><td>Repeated phrase frames unit</td><td>Psalm begins and ends same way</td></tr>
+      <tr><td>word_pair</td><td>Traditional pairing of terms</td><td>"steadfast love and faithfulness"</td></tr>
+    </table>
+
+    <h3>11.2 Transferability (5 levels)</h3>
+    <table>
+      <tr><th>Level</th><th>Definition</th></tr>
+      <tr><td>universal</td><td>Works in most languages</td></tr>
+      <tr><td>common</td><td>Works in many languages</td></tr>
+      <tr><td>limited</td><td>Works in some languages</td></tr>
+      <tr><td>culture_specific</td><td>Needs cultural knowledge</td></tr>
+      <tr><td>language_specific</td><td>Needs adaptation</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 12. KEY TERMS ===================== -->
+<div class="layer-section" id="keyterms">
+  <div class="layer-header lh-keyterms" onclick="toggle(this)">
+    <span class="badge">LAYER 12</span> Key Terms — Semantic Domains &amp; Consistency
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <div class="note">Key terms are important biblical vocabulary tagged for Concept Bank lookup during composition.</div>
+
+    <h3>12.1 Semantic Domains (9)</h3>
+    <table>
+      <tr><th>Domain</th><th>Example Terms</th></tr>
+      <tr><td>divine</td><td>God, LORD, Spirit, holy, glory</td></tr>
+      <tr><td>covenant</td><td>covenant, promise, oath, faithfulness</td></tr>
+      <tr><td>salvation</td><td>save, redeem, deliver, rescue</td></tr>
+      <tr><td>sin</td><td>sin, transgression, iniquity, guilt</td></tr>
+      <tr><td>worship</td><td>sacrifice, offering, praise, temple</td></tr>
+      <tr><td>ethics</td><td>righteous, just, good, evil</td></tr>
+      <tr><td>kinship</td><td>father, mother, brother, clan</td></tr>
+      <tr><td>authority</td><td>king, judge, ruler, servant</td></tr>
+      <tr><td>creation</td><td>create, make, form, earth</td></tr>
+    </table>
+
+    <h3>12.2 Consistency Levels (3)</h3>
+    <table>
+      <tr><th>Level</th><th>Definition</th></tr>
+      <tr><td>always</td><td>Always translate the same way</td></tr>
+      <tr><td>preferred</td><td>Usually the same, with documented exceptions</td></tr>
+      <tr><td>flexible</td><td>Context determines translation</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 13. POETIC STRUCTURE ===================== -->
+<div class="layer-section" id="poetic">
+  <div class="layer-header lh-poetic" onclick="toggle(this)">
+    <span class="badge">LAYER 13</span> Poetic Structure — Parallelism, Lines, Sound, Compression
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>13.1 Parallelism Type (8 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>synonymous</td><td>Second line restates first with different words</td><td>"The LORD is my light and my salvation; whom shall I fear?"</td></tr>
+      <tr><td>antithetical</td><td>Second line contrasts with first</td><td>"A wise son brings joy… but a foolish son grief…"</td></tr>
+      <tr><td>synthetic</td><td>Second line extends/completes first</td><td>"The LORD will reign forever and ever"</td></tr>
+      <tr><td>climactic</td><td>Lines build toward climax, repeating with addition</td><td>"Ascribe to the LORD… ascribe to the LORD glory and strength"</td></tr>
+      <tr><td>emblematic</td><td>One line literal, one figurative</td><td>"As a father has compassion… so the LORD has compassion"</td></tr>
+      <tr><td>chiastic</td><td>ABBA pattern</td><td>"We have escaped… the snare is broken… we have escaped"</td></tr>
+      <tr><td>staircase</td><td>Each line picks up element from previous</td><td>"Out of the depths I cry… Lord, hear my voice"</td></tr>
+      <tr><td>none</td><td>No parallelism (single colon)</td><td>Simple declarative statement</td></tr>
+    </table>
+
+    <h3>13.2 Line Structure (7 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th></tr>
+      <tr><td>bicolon</td><td>Two parallel lines (most common in Hebrew poetry)</td></tr>
+      <tr><td>tricolon</td><td>Three parallel lines</td></tr>
+      <tr><td>quatrain</td><td>Four-line unit</td></tr>
+      <tr><td>monocolon</td><td>Single line (isolated)</td></tr>
+      <tr><td>strophe</td><td>Multi-line stanza unit</td></tr>
+      <tr><td>refrain</td><td>Repeated line/phrase that recurs</td></tr>
+      <tr><td>acrostic_element</td><td>Part of alphabetic or other acrostic pattern</td></tr>
+    </table>
+
+    <h3>13.3 Sound Patterns (7 values)</h3>
+    <div class="note">Particularly important for Language Archive, where acoustic patterns are preserved in acoustemes.</div>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Tagging Note</th></tr>
+      <tr><td>alliteration</td><td>Repeated initial consonants</td><td>Mark when prominent</td></tr>
+      <tr><td>assonance</td><td>Repeated vowel sounds</td><td>Mark when prominent</td></tr>
+      <tr><td>rhyme</td><td>End sounds match</td><td>Mark when present</td></tr>
+      <tr><td>rhythm_regular</td><td>Regular metrical pattern</td><td>Mark if identifiable</td></tr>
+      <tr><td>rhythm_irregular</td><td>Free rhythm</td><td>Default for prose-poetry</td></tr>
+      <tr><td>wordplay</td><td>Puns, sound-meaning connections</td><td>Mark when present</td></tr>
+      <tr><td>onomatopoeia</td><td>Sound imitates meaning</td><td>Mark when present</td></tr>
+      <tr><td>tonal_pattern</td><td>Significant use of pitch (for tonal languages)</td><td>Language Archive only</td></tr>
+    </table>
+
+    <h3>13.4 Compression (4 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th></tr>
+      <tr><td>ellipsis</td><td>Words omitted, understood from context</td></tr>
+      <tr><td>gapping</td><td>Verb/element omitted in second line</td></tr>
+      <tr><td>terseness</td><td>Extremely compressed expression</td></tr>
+      <tr><td>normal</td><td>Standard compression for genre</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== 14. PROVERB/WISDOM ===================== -->
+<div class="layer-section" id="proverb">
+  <div class="layer-header lh-proverb" onclick="toggle(this)">
+    <span class="badge">LAYER 14</span> Proverb / Wisdom Features
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>14.1 Proverb Type (7 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th><th>Example</th></tr>
+      <tr><td>observational</td><td>States how things are</td><td>"A gentle answer turns away wrath"</td></tr>
+      <tr><td>comparative</td><td>X is better than Y</td><td>"Better a dry crust with peace than…"</td></tr>
+      <tr><td>numerical</td><td>Lists items (X, X+1 pattern)</td><td>"There are three things… four things…"</td></tr>
+      <tr><td>rhetorical_question</td><td>Question form teaching truth</td><td>"Can a man scoop fire into his lap…?"</td></tr>
+      <tr><td>conditional</td><td>If-then wisdom</td><td>"If you find honey, eat just enough"</td></tr>
+      <tr><td>admonition</td><td>Direct command/prohibition</td><td>"Do not answer a fool according to his folly"</td></tr>
+      <tr><td>consequence</td><td>Action leads to result</td><td>"Whoever digs a pit will fall into it"</td></tr>
+      <tr><td>characterization</td><td>Describes a type of person</td><td>"Like a gold ring in a pig's snout…"</td></tr>
+    </table>
+
+    <h3>14.2 Wisdom Function (8 values)</h3>
+    <table>
+      <tr><th>Value</th><th>Definition</th></tr>
+      <tr><td>teach</td><td>Imparts knowledge or skill</td></tr>
+      <tr><td>warn</td><td>Cautions against danger</td></tr>
+      <tr><td>motivate</td><td>Encourages action</td></tr>
+      <tr><td>evaluate</td><td>Makes value judgment</td></tr>
+      <tr><td>characterize</td><td>Describes a type</td></tr>
+      <tr><td>console</td><td>Offers comfort</td></tr>
+      <tr><td>rebuke</td><td>Corrects behavior</td></tr>
+      <tr><td>celebrate</td><td>Praises what is good</td></tr>
+    </table>
+
+    <div class="sub-grid">
+      <div>
+        <h3>14.3 Authority Source (6 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>tradition</td><td>Ancestral/community wisdom</td></tr>
+          <tr><td>observation</td><td>Life experience</td></tr>
+          <tr><td>divine</td><td>From God/revelation</td></tr>
+          <tr><td>elder</td><td>Parental/authority figure</td></tr>
+          <tr><td>sage</td><td>Wisdom teacher</td></tr>
+          <tr><td>unspecified</td><td>Source not indicated</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>14.4 Applicability (4 values)</h3>
+        <table>
+          <tr><th>Value</th><th>Definition</th></tr>
+          <tr><td>universal</td><td>Applies to all people always</td></tr>
+          <tr><td>situational</td><td>True in specific circumstances</td></tr>
+          <tr><td>cultural</td><td>Embedded in cultural context</td></tr>
+          <tr><td>contested</td><td>May be disputed or qualified elsewhere</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== TAGGER MAPPING (BONUS) ===================== -->
+<div class="layer-section" id="tagger">
+  <div class="layer-header lh-tagger" onclick="toggle(this)">
+    <span class="badge">APPENDIX</span> Language Archive Tagger (AViTA) Mapping
+    <span class="arrow">▼</span>
+  </div>
+  <div class="layer-body">
+
+    <h3>Full Tagging Questions → Ontology</h3>
+    <table>
+      <tr><th>Plain Language Question</th><th>Options</th><th>Maps To</th></tr>
+      <tr><td>What is the storyteller talking about?</td><td>doing / going / saying / feeling / changing / ritual</td><td>Event Domain</td></tr>
+      <tr><td>How does the storyteller know this?</td><td>by seeing / by hearing / someone told / figured out / just assumed / doesn't say</td><td>Evidentiality</td></tr>
+      <tr><td>Did this really happen in the story?</td><td>yes it happened / might happen / imagining / should happen</td><td>Reality</td></tr>
+      <tr><td>When does this happen in the story?</td><td>before / now / later / always true</td><td>Time Frame</td></tr>
+      <tr><td>What is the storyteller doing with this part?</td><td>setting the scene / background / main action / most exciting</td><td>Discourse Function</td></tr>
+      <tr><td>How does this part feel?</td><td>good / bad / neutral / mixed</td><td>Affect Valence</td></tr>
+      <tr><td>Is this like a poem or song?</td><td>yes / no / partly</td><td>Poetic Register</td></tr>
+      <tr><td>Does the speaker repeat the idea in different words?</td><td>yes-same meaning / yes-opposite meaning / yes-adds more / no</td><td>Parallelism Type</td></tr>
+      <tr><td>Is this a saying or proverb?</td><td>yes / no</td><td>Proverb Flag</td></tr>
+      <tr><td>Something special we missed?</td><td>no / yes (with text field)</td><td>Open-ended Capture</td></tr>
+    </table>
+
+    <h3>Quick Tasks (gap-filling after Full Tagging)</h3>
+    <table>
+      <tr><th>Task</th><th>Question</th><th>Purpose</th></tr>
+      <tr><td>Speech Types</td><td>Is this a direct quote, indirect report, or narrator?</td><td>Distinguish speech frames</td></tr>
+      <tr><td>Motion Types</td><td>What kind of motion is this?</td><td>Refine motion events</td></tr>
+      <tr><td>Register</td><td>Is this formal or casual speech?</td><td>Capture style variation</td></tr>
+      <tr><td>Negative Statements</td><td>Does this segment contain a negative?</td><td>Tag polarity</td></tr>
+      <tr><td>Poetic Pattern</td><td>Does this have a rhythm or repeated pattern?</td><td>Identify poetic speech</td></tr>
+      <tr><td>Proverb Check</td><td>Is this a traditional saying?</td><td>Tag wisdom content</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ===================== SUMMARY ===================== -->
+<div class="layer-section">
+  <div class="layer-header" style="background:var(--bark);color:var(--sand);border-bottom:none;cursor:default;">
+    <span class="badge" style="background:var(--sand);color:var(--bark);">SUMMARY</span> 14 Layers at a Glance
+  </div>
+  <div class="layer-body">
+    <table>
+      <tr><th>#</th><th>Layer</th><th>Content</th></tr>
+      <tr><td>1</td><td>Participants</td><td>10 types, 7 quantities, 4 reference statuses, 11 property dimensions (114 values)</td></tr>
+      <tr><td>2</td><td>Relations</td><td>5 sub-types: kinship (10), social (10), possession (5), spatial (6), part-whole (5) = 36 relations</td></tr>
+      <tr><td>3</td><td>Events</td><td>9 categories, 197 cores, 16 semantic roles</td></tr>
+      <tr><td>4</td><td>Event Modifiers</td><td>Reality (9), time frame (4), evidentiality (8), aspect (5), polarity (2) = 28 values</td></tr>
+      <tr><td>5</td><td>Discourse</td><td>6 functions, 12 relations, peak event, thematic spine</td></tr>
+      <tr><td>6</td><td>Pragmatics</td><td>18 registers, 7 social axis values, 4 prominence levels, 4 pacing values</td></tr>
+      <tr><td>7</td><td>Emotions</td><td>28 emotion types (13+12+4 complex [sic]), 4 intensities, 8 narrator stances, 10 audience responses</td></tr>
+      <tr><td>8</td><td>Source Tracking</td><td>9 inference sources, 4 confidence levels</td></tr>
+      <tr><td>9</td><td>LA Retrieval Tags</td><td>9 tag categories for meaning-based retrieval</td></tr>
+      <tr><td>10</td><td>Speech Acts</td><td>15 types</td></tr>
+      <tr><td>11</td><td>Figurative Language</td><td>16 figure types, 5 transferability levels</td></tr>
+      <tr><td>12</td><td>Key Terms</td><td>9 semantic domains, 3 consistency levels</td></tr>
+      <tr><td>13</td><td>Poetic Structure</td><td>8 parallelism types, 7 line structures, 8 sound patterns, 4 compression types</td></tr>
+      <tr><td>14</td><td>Proverb/Wisdom</td><td>8 proverb types, 8 wisdom functions, 6 authority sources, 4 applicability values</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('hidden');
+  header.classList.toggle('collapsed');
+}
+</script>
+
+</body>
+</html>

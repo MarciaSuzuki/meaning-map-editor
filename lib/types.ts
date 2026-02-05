@@ -84,8 +84,8 @@ export type PropertyDimension =
   | 'evaluative' | 'temporal' | 'spatial';
 
 export type PhysicalProperty =
-  | 'male' | 'female' | 'young' | 'old' | 'strong' | 'weak'
-  | 'beautiful' | 'ugly' | 'big' | 'small' | 'heavy' | 'light'
+  | 'old' | 'young' | 'strong' | 'weak' | 'beautiful'
+  | 'tall' | 'short' | 'big' | 'small' | 'heavy' | 'light'
   | 'fat' | 'thin' | 'healthy' | 'sick';
 
 export type QuantitySizeProperty =
@@ -98,13 +98,12 @@ export type SensoryProperty =
   | 'hot' | 'cold';
 
 export type CharacterProperty =
-  | 'wise' | 'foolish' | 'righteous' | 'wicked' | 'faithful'
-  | 'unfaithful' | 'brave' | 'cowardly' | 'humble' | 'proud';
+  | 'righteous' | 'wicked' | 'faithful' | 'unfaithful'
+  | 'wise' | 'foolish' | 'brave' | 'cowardly' | 'humble' | 'proud';
 
 export type SocialProperty =
-  | 'rich' | 'poor' | 'free' | 'enslaved' | 'royal' | 'common'
-  | 'priest' | 'prophet' | 'powerful' | 'powerless' | 'honored'
-  | 'despised';
+  | 'rich' | 'poor' | 'noble' | 'slave' | 'free' | 'foreign'
+  | 'native' | 'powerful' | 'powerless' | 'honored' | 'despised';
 
 export type EmotionalStateProperty =
   | 'happy' | 'sad' | 'angry' | 'afraid' | 'peaceful' | 'troubled'
@@ -115,15 +114,15 @@ export type RelationalProperty =
   | 'pregnant' | 'betrothed' | 'divorced';
 
 export type MaterialProperty =
-  | 'gold' | 'silver' | 'bronze' | 'iron' | 'wood' | 'stone'
-  | 'clay' | 'linen' | 'leather' | 'woven';
+  | 'wooden' | 'stone' | 'golden' | 'bronze' | 'clay' | 'iron'
+  | 'silver' | 'linen' | 'leather' | 'woven';
 
 export type EvaluativeProperty =
-  | 'clean' | 'unclean' | 'holy' | 'profane' | 'blessed' | 'cursed'
+  | 'good' | 'bad' | 'clean' | 'unclean' | 'holy' | 'profane'
   | 'true' | 'false' | 'precious' | 'worthless';
 
 export type TemporalProperty =
-  | 'new' | 'ancient' | 'temporary' | 'permanent' | 'first' | 'last';
+  | 'ancient' | 'new' | 'temporary' | 'eternal' | 'first' | 'last';
 
 export type SpatialProperty =
   | 'near' | 'far' | 'high' | 'low' | 'inner' | 'outer'
@@ -147,27 +146,33 @@ export interface ParticipantProperty {
 // ---------------------------------------------------------------------------
 
 export type KinshipRelation =
-  | 'parent_of' | 'child_of' | 'spouse_of' | 'sibling_of'
-  | 'grandparent_of' | 'grandchild_of' | 'in_law_of' | 'clan_member'
+  | 'parent_of' | 'child_of' | 'spouse_of' | 'husband_of' | 'wife_of'
+  | 'sibling_of' | 'grandparent_of' | 'grandchild_of'
+  | 'ancestor_of' | 'descendant_of' | 'in_law' | 'clan_member'
   | 'not_specified' | 'other';
 
 export type SocialRelation =
   | 'ruler_of' | 'subject_of' | 'master_of' | 'servant_of'
-  | 'ally_of' | 'enemy_of' | 'teacher_of' | 'student_of'
+  | 'ally_of' | 'enemy_of' | 'friend_of' | 'teacher_of'
+  | 'student_of' | 'colleague_of'
   | 'not_specified' | 'other';
 
 export type PossessionRelation =
-  | 'owner_of' | 'belonging_to' | 'steward_of' | 'tribute_to'
+  | 'owner_of' | 'possesses' | 'belongs_to' | 'controls' | 'lacks'
   | 'not_specified' | 'other';
 
 export type SpatialRelation =
-  | 'above' | 'below' | 'beside' | 'inside' | 'outside'
-  | 'between' | 'surrounding' | 'facing'
+  | 'located_at' | 'native_of' | 'inhabitant_of' | 'from_place'
+  | 'near' | 'far_from'
+  | 'not_specified' | 'other';
+
+export type PartWholeRelation =
+  | 'part_of' | 'whole_of' | 'member_of' | 'group_of' | 'substance_of'
   | 'not_specified' | 'other';
 
 export interface Relation {
-  type: 'kinship' | 'social' | 'possession' | 'spatial';
-  value: KinshipRelation | SocialRelation | PossessionRelation | SpatialRelation;
+  type: 'kinship' | 'social' | 'possession' | 'spatial' | 'part_whole';
+  value: KinshipRelation | SocialRelation | PossessionRelation | SpatialRelation | PartWholeRelation;
   from_participant: string; // participant ID
   to_participant: string;
   other_text?: string;
@@ -224,6 +229,7 @@ export interface SemanticEvent {
   participants: Participant[];
   // Per-event modifiers (Pass 1)
   reality: Reality;
+  evidentiality: Evidentiality;
   polarity: Polarity;
   time_frame: TimeFrame;
   aspect: Aspect;
@@ -277,7 +283,7 @@ export type Polarity =
 // ---------------------------------------------------------------------------
 
 export type DiscourseFunction =
-  | 'SET' | 'BG' | 'MAIN' | 'EVAL' | 'QUOTE_MARGIN' | 'PEAK'
+  | 'setting' | 'background' | 'mainline' | 'evaluation' | 'quote_margin' | 'peak'
   | 'not_specified' | 'other';
 
 export type DiscourseRelation =
@@ -326,11 +332,21 @@ export type Emotion =
 
 export type EmotionIntensity =
   | 'low' | 'medium' | 'high' | 'extreme'
-  | 'not_specified';
+  | 'not_specified' | 'other';
 
 export type NarratorStance =
   | 'neutral' | 'sympathetic' | 'critical' | 'ironic' | 'celebratory'
   | 'lamenting' | 'didactic' | 'suspenseful'
+  | 'not_specified' | 'other';
+
+export type AudienceResponse =
+  | 'empathy' | 'sympathy' | 'admiration' | 'disapproval' | 'fear'
+  | 'hope' | 'relief' | 'grief' | 'joy' | 'conviction'
+  | 'not_specified' | 'other';
+
+export type InferenceSource =
+  | 'lexical' | 'contextual' | 'cultural' | 'behavioral' | 'physiological'
+  | 'speech_content' | 'narrator_comment' | 'reader_inference' | 'theological'
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
@@ -351,9 +367,65 @@ export type FigurativeLanguage =
   | 'hendiadys' | 'inclusio' | 'word_pair'
   | 'not_specified' | 'other';
 
+export type FigurativeTransferability =
+  | 'universal' | 'common' | 'limited' | 'culture_specific' | 'language_specific'
+  | 'not_specified' | 'other';
+
 export type KeyTermDomain =
   | 'divine' | 'covenant' | 'salvation' | 'sin' | 'worship'
   | 'ethics' | 'kinship' | 'authority' | 'creation'
+  | 'not_specified' | 'other';
+
+export type KeyTermConsistency =
+  | 'always' | 'preferred' | 'flexible'
+  | 'not_specified' | 'other';
+
+export type RetrievalTagCategory =
+  | 'emotion_tags' | 'event_tags' | 'register_tags' | 'discourse_tags'
+  | 'social_tags' | 'poetic_tags' | 'parallelism_tags' | 'proverb_tags'
+  | 'formulaic_tags'
+  | 'not_specified' | 'other';
+
+export interface RetrievalTag {
+  category: RetrievalTagCategory;
+  tag: string;
+}
+
+export type PoeticParallelism =
+  | 'synonymous' | 'antithetical' | 'synthetic' | 'climactic'
+  | 'emblematic' | 'chiastic' | 'staircase' | 'none'
+  | 'not_specified' | 'other';
+
+export type PoeticLineStructure =
+  | 'bicolon' | 'tricolon' | 'quatrain' | 'monocolon'
+  | 'strophe' | 'refrain' | 'acrostic_element'
+  | 'not_specified' | 'other';
+
+export type PoeticSoundPattern =
+  | 'alliteration' | 'assonance' | 'rhyme' | 'rhythm_regular'
+  | 'rhythm_irregular' | 'wordplay' | 'onomatopoeia' | 'tonal_pattern'
+  | 'not_specified' | 'other';
+
+export type PoeticCompression =
+  | 'ellipsis' | 'gapping' | 'terseness' | 'normal'
+  | 'not_specified' | 'other';
+
+export type ProverbType =
+  | 'observational' | 'comparative' | 'numerical' | 'rhetorical_question'
+  | 'conditional' | 'admonition' | 'consequence' | 'characterization'
+  | 'not_specified' | 'other';
+
+export type WisdomFunction =
+  | 'teach' | 'warn' | 'motivate' | 'evaluate' | 'characterize'
+  | 'console' | 'rebuke' | 'celebrate'
+  | 'not_specified' | 'other';
+
+export type WisdomAuthoritySource =
+  | 'tradition' | 'observation' | 'divine' | 'elder' | 'sage' | 'unspecified'
+  | 'not_specified' | 'other';
+
+export type WisdomApplicability =
+  | 'universal' | 'situational' | 'cultural' | 'contested'
   | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
@@ -361,7 +433,8 @@ export type KeyTermDomain =
 // ---------------------------------------------------------------------------
 
 export type Confidence =
-  | 'high' | 'medium' | 'low' | 'speculative';
+  | 'high' | 'medium' | 'low' | 'speculative'
+  | 'not_specified' | 'other';
 
 // ---------------------------------------------------------------------------
 // Genre System
@@ -434,14 +507,26 @@ export interface ClauseAnnotation {
   social_axis: SocialAxis;
   prominence: Prominence;
   pacing: Pacing;
-  evidentiality: Evidentiality;
+  inference_source: InferenceSource;
   // Pass 3 \u2014 Expressive Layer
   emotion: Emotion;
   emotion_intensity: EmotionIntensity;
   narrator_stance: NarratorStance;
+  audience_response: AudienceResponse[];
   speech_act: SpeechAct;
   figurative_language: FigurativeLanguage[];
+  figurative_transferability: FigurativeTransferability;
   key_term_domain: KeyTermDomain[];
+  key_term_consistency: KeyTermConsistency;
+  retrieval_tags: RetrievalTag[];
+  poetic_parallelism: PoeticParallelism;
+  poetic_line_structure: PoeticLineStructure;
+  poetic_sound_patterns: PoeticSoundPattern[];
+  poetic_compression: PoeticCompression;
+  proverb_type: ProverbType;
+  wisdom_function: WisdomFunction;
+  authority_source: WisdomAuthoritySource;
+  applicability: WisdomApplicability;
   confidence: Confidence;
   // Metadata
   notes: string;

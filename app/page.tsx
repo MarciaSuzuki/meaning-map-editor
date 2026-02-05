@@ -4,13 +4,16 @@ import { useState } from 'react';
 
 const SAMPLE_PROJECTS = [
   {
-    id: '1',
-    name: 'Ruth 1:16',
+    id: 'ruth',
+    name: 'Ruth (Full Book)',
     book: 'ruth',
     genre: 'narrative',
-    subgenre: 'journey',
+    subgenre: 'family loyalty',
     status: 'draft',
-    updated_at: '2026-02-01T12:00:00Z',
+    updated_at: '2026-02-04T08:00:00Z',
+    chapters: 4,
+    verses: 85,
+    clauses: 463,
   },
 ];
 
@@ -67,17 +70,49 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section style={{ backgroundColor: 'white', borderRadius: 12, border: `1px solid ${s.border}`, padding: '1.75rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1.5rem' }}>
+            <div>
+              <h2 style={{ fontFamily: s.display, fontSize: '1.1rem', fontWeight: 600, margin: '0 0 0.5rem 0' }}>Tripod Ontology Reference</h2>
+              <p style={{ fontSize: '0.85rem', color: s.muted, lineHeight: 1.6, maxWidth: 680, margin: 0 }}>
+                Use these references to study the full ontology and the expanded property dimensions. Open them in a new tab while you analyze.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <a
+                href="/ontology/tripod-ontology.html"
+                target="_blank"
+                rel="noreferrer"
+                style={{ padding: '0.45rem 0.85rem', borderRadius: 8, fontSize: '0.8rem', fontWeight: 600, color: 'white', backgroundColor: s.telha, border: 'none', textDecoration: 'none' }}
+              >
+                Open Ontology
+              </a>
+              <a
+                href="/ontology/expanded-properties.html"
+                target="_blank"
+                rel="noreferrer"
+                style={{ padding: '0.45rem 0.85rem', borderRadius: 8, fontSize: '0.8rem', fontWeight: 600, color: s.dark, backgroundColor: '#F0EFE0', border: `1px solid ${s.border}`, textDecoration: 'none' }}
+              >
+                Expanded Properties
+              </a>
+            </div>
+          </div>
+        </section>
+
         <section>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             <h2 style={{ fontFamily: s.display, fontSize: '1.15rem', fontWeight: 600, margin: 0 }}>Projects</h2>
-            <span style={{ fontSize: '0.85rem', color: s.muted }}>{projects.length} project</span>
+            <span style={{ fontSize: '0.85rem', color: s.muted }}>{projects.length} project{projects.length === 1 ? '' : 's'}</span>
           </div>
           {projects.map((p) => (
             <a key={p.id} href={`/editor/${p.id}`} style={{ display: 'block', borderRadius: 12, border: `1px solid ${s.border}`, padding: '1.25rem', backgroundColor: 'white', textDecoration: 'none', color: 'inherit', marginBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <h3 style={{ fontFamily: s.display, fontSize: '1rem', fontWeight: 600, margin: '0 0 0.25rem 0' }}>{p.name}</h3>
-                  <span style={{ fontSize: '0.85rem', color: s.muted }}>{p.genre} &middot; {p.subgenre} &middot; {new Date(p.updated_at).toLocaleDateString()}</span>
+                  <span style={{ fontSize: '0.85rem', color: s.muted }}>{p.genre} - {p.subgenre} - {new Date(p.updated_at).toLocaleDateString()}</span>
+                  <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: s.muted }}>
+                    {p.chapters} chapters - {p.verses} verses - {p.clauses} clauses
+                  </div>
                 </div>
                 <span style={{ padding: '2px 10px', borderRadius: 4, fontSize: '0.7rem', fontFamily: s.mono, fontWeight: 600, backgroundColor: '#F0EFE0', color: s.dark }}>DRAFT</span>
               </div>
@@ -110,7 +145,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logos/I_CONE_-_telha.svg" alt="Shema" style={{ height: 20, width: 20 }} />
-            <span style={{ fontSize: '0.8rem', color: s.muted }}>Shema Bible Translation &middot; Ready Vessels Project &middot; YWAM Kansas City &middot; 2026</span>
+            <span style={{ fontSize: '0.8rem', color: s.muted }}>Shema Bible Translation - Ready Vessels Project - YWAM Kansas City - 2026</span>
           </div>
           <span style={{ fontSize: '0.7rem', color: '#C5C29F' }}>Tripod Ontology v5.3</span>
         </div>

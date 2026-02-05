@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripod Ontology v5.3 — Expanded Property Dimensions + Default Options Rule</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f3;
+    --sand: #f0ece3;
+    --bark: #2d2520;
+    --branch: #5a4a3a;
+    --leaf: #3a6b4a;
+    --leaf-bg: #e6f0e8;
+    --sky: #2a5a7a;
+    --sky-bg: #e0eef5;
+    --clay: #9a5038;
+    --clay-bg: #f5e8e3;
+    --gold: #8a6a18;
+    --gold-bg: #f8f0d8;
+    --purple: #5a3a7a;
+    --purple-bg: #ede4f5;
+    --rose: #7a3a4a;
+    --border: #d8d0c5;
+    --muted: #8a8078;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--cream);
+    color: var(--bark);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  header {
+    background: var(--bark);
+    color: var(--sand);
+    padding: 28px 32px 24px;
+  }
+  header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  header .subtitle { color: #b8a898; font-size: 13px; margin-top: 4px; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+
+  .section { margin-bottom: 32px; }
+  .section-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--bark);
+  }
+  .section-num {
+    font-family: 'Source Serif 4', serif;
+    font-size: 30px; font-weight: 700; color: var(--clay); line-height: 1;
+  }
+  .section-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 18px; font-weight: 700;
+  }
+
+  .rule-box {
+    background: var(--clay-bg);
+    border-left: 4px solid var(--clay);
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 20px;
+  }
+  .rule-box h3 {
+    font-size: 14px; font-weight: 700; color: var(--clay); margin-bottom: 6px;
+  }
+  .rule-box p { font-size: 13px; line-height: 1.6; }
+
+  .note-box {
+    background: var(--sky-bg);
+    border-left: 4px solid var(--sky);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  .gold-box {
+    background: var(--gold-bg);
+    border-left: 4px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  p.prose {
+    font-size: 14px; line-height: 1.6; margin-bottom: 12px; max-width: 740px;
+  }
+
+  .dim-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .dim-header {
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .dim-header .count {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+  .dim-header .arrow { font-size: 11px; transition: transform 0.2s; }
+  .dim-header.collapsed .arrow { transform: rotate(-90deg); }
+  .dim-body { padding: 0 18px 16px; }
+  .dim-body.hidden { display: none; }
+
+  .dh-physical { background: var(--sky-bg); color: var(--sky); border-bottom: 2px solid #a0c4d8; }
+  .dh-physical .count { background: var(--sky); color: white; }
+  .dh-character { background: var(--leaf-bg); color: var(--leaf); border-bottom: 2px solid #a0c8a8; }
+  .dh-character .count { background: var(--leaf); color: white; }
+  .dh-social { background: var(--purple-bg); color: var(--purple); border-bottom: 2px solid #c0a8d8; }
+  .dh-social .count { background: var(--purple); color: white; }
+  .dh-emotional { background: #fce8e8; color: #7a3a3a; border-bottom: 2px solid #d8a0a0; }
+  .dh-emotional .count { background: #7a3a3a; color: white; }
+  .dh-relational { background: #e8e4f0; color: #5a4a6b; border-bottom: 2px solid #b8a8c8; }
+  .dh-relational .count { background: #5a4a6b; color: white; }
+  .dh-material { background: var(--gold-bg); color: #6a5a18; border-bottom: 2px solid #d0c080; }
+  .dh-material .count { background: #6a5a18; color: white; }
+  .dh-evaluative { background: var(--clay-bg); color: var(--clay); border-bottom: 2px solid #d8a898; }
+  .dh-evaluative .count { background: var(--clay); color: white; }
+  .dh-temporal { background: #e8f0e8; color: #3a6b3a; border-bottom: 2px solid #a8c8a0; }
+  .dh-temporal .count { background: #3a6b3a; color: white; }
+  .dh-spatial { background: #e0f0f0; color: #2a6b6b; border-bottom: 2px solid #a0c8c8; }
+  .dh-spatial .count { background: #2a6b6b; color: white; }
+  .dh-sensory { background: #f0e8f0; color: #6b3a5a; border-bottom: 2px solid #c8a0b8; }
+  .dh-sensory .count { background: #6b3a5a; color: white; }
+  .dh-quantity { background: #e8e8f0; color: #4a4a6b; border-bottom: 2px solid #b0b0c8; }
+  .dh-quantity .count { background: #4a4a6b; color: white; }
+
+  table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 4px;
+  }
+  th {
+    text-align: left; padding: 7px 10px;
+    background: var(--sand); font-weight: 600; font-size: 12px;
+    border-bottom: 2px solid var(--border); color: var(--bark);
+  }
+  td {
+    padding: 5px 10px; border-bottom: 1px solid #ebe7e0; vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  .new-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--leaf-bg);
+    color: var(--leaf);
+    margin-left: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+  }
+
+  .default-row td {
+    background: #f8f5f0;
+    color: var(--muted);
+    font-style: italic;
+    border-top: 1px dashed var(--border);
+  }
+  .default-row td:first-child { font-style: normal; color: var(--clay); }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .summary-item {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .summary-item .label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .summary-item .value { font-size: 22px; font-weight: 700; color: var(--bark); }
+  .summary-item .sub { font-size: 11px; color: var(--branch); }
+
+  /* FULL ONTOLOGY DEFAULT OPTIONS */
+  .ont-section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .ont-header {
+    padding: 10px 16px;
+    background: var(--sand);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ont-header .arrow { font-size: 11px; margin-left: auto; transition: transform 0.2s; }
+  .ont-header.collapsed .arrow { transform: rotate(-90deg); }
+  .ont-body { padding: 8px 16px 12px; }
+  .ont-body.hidden { display: none; }
+  .ont-body table { margin-bottom: 0; }
+
+  .tag-ns {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #f0ece8;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .tag-ot {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #f5e8d8;
+    color: var(--clay);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Expanded Property Dimensions + Default Options Rule</h1>
+  <div class="subtitle">Tripod Ontology v5.3 — Amendment for Meaning Map Editor</div>
+</header>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- SECTION 1: UNIVERSAL RULE -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">1</span>
+    <span class="section-title">Universal Default Options Rule</span>
+  </div>
+
+  <div class="rule-box">
+    <h3>Rule: Every field in the entire ontology carries two permanent options</h3>
+    <p><strong>not_specified</strong> — The text provides no basis for determination. The analyst chooses not to tag this field. This is the default state for every field when a clause is first loaded. Honest gaps are always preferable to guesses.</p>
+    <p style="margin-top:8px;"><strong>other</strong> — The analyst identifies something real in the text that does not match any listed value. When selected, the app opens a short text field for a label. All "other" entries are flagged for validator review. If a pattern of repeated "other" entries emerges across analysts, the ontology maintainer evaluates whether to add a new value to the list.</p>
+  </div>
+
+  <p class="prose">This rule applies uniformly to every enumerated field across all 14 layers. No exceptions. The app implements it as follows:</p>
+
+  <div class="gold-box">
+    <strong>App behavior:</strong> Every dropdown, radio group, or selection field includes <span class="tag-ns">not_specified</span> as the pre-selected default and <span class="tag-ot">other →</span> as the final option. The "other" option expands an inline text input when selected. In the exported JSON, not_specified fields are included as <code>"field": "not_specified"</code> (not omitted), so the system can distinguish "analyst made no determination" from "field was never presented." Other entries export as <code>"field": {"value": "other", "label": "analyst's description", "flagged": true}</code>.
+  </div>
+
+  <p class="prose">Section 2 below applies this rule to every layer in a compact reference. Section 3 presents the expanded Property Dimensions.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: FULL ONTOLOGY DEFAULT OPTIONS -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">2</span>
+    <span class="section-title">Default Options Applied to All 14 Layers</span>
+  </div>
+
+  <p class="prose">Every field below now includes <code>not_specified</code> and <code>other</code>. This list confirms the rule is applied everywhere — no field is exempt.</p>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 1 — Participants<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>participant_type</td><td>person, group, divine, animal, place, thing, stuff, abstract, plant, event_as_participant, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>quantity</td><td>one, two, few, many, all, mass, generic, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>reference_status</td><td>new_mention, given, inferrable, generic, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>property dimensions</td><td>See expanded list in Section 3 — each dimension and each value carries defaults</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 2 — Participant Relations<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>kinship</td><td>parent_of, child_of, spouse_of, husband_of, wife_of, sibling_of, grandparent_of, grandchild_of, ancestor_of, descendant_of, in_law, clan_member, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>social</td><td>ruler_of, subject_of, master_of, servant_of, ally_of, enemy_of, friend_of, teacher_of, student_of, colleague_of, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>possession</td><td>owner_of, possesses, belongs_to, controls, lacks, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>spatial</td><td>located_at, native_of, inhabitant_of, from_place, near, far_from, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>part_whole</td><td>part_of, whole_of, member_of, group_of, substance_of, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 3 — Events<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>event_category</td><td>STATE, MOTION, ACTION, TRANSFER, SPEECH, INTERNAL, PROCESS, RITUAL, META, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>event_core</td><td>197 cores (filtered by category), <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>semantic_role</td><td>initiator, affected, experiencer, recipient, beneficiary, source, goal, location, instrument, companion, manner, time, cause, purpose, result, theme, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 4 — Event Modifiers<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>reality</td><td>actual, potential, hypothetical, counterfactual, obligatory, desired, feared, commanded, permitted, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>time_frame</td><td>retrospective, immediate, prospective, gnomic, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>evidentiality</td><td>witnessed_visual, witnessed_sensory, reported, inferred, assumed, general_knowledge, divine_revelation, unspecified, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>aspect</td><td>completed, ongoing, habitual, inchoative, cessative, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>polarity</td><td>positive, negative, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 5 — Discourse<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>discourse_function</td><td>SET, BG, MAIN, EVAL, QUOTE_MARGIN, PEAK, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>discourse_relation</td><td>sequence, simultaneous, cause, result, purpose, condition, contrast, concession, clarification, elaboration, evidence, restatement, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 6 — Pragmatics<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>register</td><td>informal, narrative, formal, ceremonial, elder_speech, legal, poetic, prophetic, wisdom, dialogue, lament, hymnic, didactic_poetry, love_poetry, victory_song, dirge, taunt, blessing_poetry, curse_poetry, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>social_axis</td><td>equal_to_equal, superior_to_inferior, inferior_to_superior, divine_to_human, human_to_divine, formal_public, intimate_private, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>prominence</td><td>peak, high, medium, low, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>pacing</td><td>summary, normal, slow, pause, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 7 — Emotions<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>emotion_type</td><td>joy, hope, gratitude, love, compassion, peace, trust, relief, awe, pride, contentment, desire, zeal, sorrow, fear, anger, disgust, shame, guilt, despair, anxiety, loneliness, jealousy, resentment, bitterness, awe_fear, reverence, remorse, longing, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>intensity</td><td>low, medium, high, extreme, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>narrator_stance</td><td>neutral, sympathetic, critical, ironic, celebratory, lamenting, didactic, suspenseful, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>audience_response</td><td>empathy, sympathy, admiration, disapproval, fear, hope, relief, grief, joy, conviction, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 8 — Source Tracking<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>inference_source</td><td>lexical, contextual, cultural, behavioral, physiological, speech_content, narrator_comment, reader_inference, theological, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>confidence</td><td>high, medium, low, speculative, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 9 — LA Retrieval Tags<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Note</th></tr>
+        <tr><td>All 9 tag categories</td><td>Each tag is a free-form compound label (e.g., grief_at_death). Default: <span class="tag-ns">not_specified</span>. No "other" needed — these are analyst-composed, not selected from a list.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 10 — Speech Acts<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>speech_act</td><td>assertive, directive, commissive, expressive, declarative, interrogative, blessing, curse, oath, prophecy, praise, lament, thanksgiving, petition, instruction, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 11 — Figurative Language<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>figure_type</td><td>metaphor, simile, metonymy, synecdoche, personification, hyperbole, litotes, irony, idiom, euphemism, anthropomorphism, rhetorical_question, merism, hendiadys, inclusio, word_pair, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>transferability</td><td>universal, common, limited, culture_specific, language_specific, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 12 — Key Terms<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>semantic_domain</td><td>divine, covenant, salvation, sin, worship, ethics, kinship, authority, creation, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>consistency</td><td>always, preferred, flexible, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 13 — Poetic Structure<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>parallelism</td><td>synonymous, antithetical, synthetic, climactic, emblematic, chiastic, staircase, none, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>line_structure</td><td>bicolon, tricolon, quatrain, monocolon, strophe, refrain, acrostic_element, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>sound_pattern</td><td>alliteration, assonance, rhyme, rhythm_regular, rhythm_irregular, wordplay, onomatopoeia, tonal_pattern, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>compression</td><td>ellipsis, gapping, terseness, normal, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ont-section">
+    <div class="ont-header" onclick="toggle(this)">Layer 14 — Proverb/Wisdom<span class="arrow">▼</span></div>
+    <div class="ont-body">
+      <table>
+        <tr><th>Field</th><th>Listed Values + Defaults</th></tr>
+        <tr><td>proverb_type</td><td>observational, comparative, numerical, rhetorical_question, conditional, admonition, consequence, characterization, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>wisdom_function</td><td>teach, warn, motivate, evaluate, characterize, console, rebuke, celebrate, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>authority_source</td><td>tradition, observation, divine, elder, sage, unspecified, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+        <tr><td>applicability</td><td>universal, situational, cultural, contested, <span class="tag-ns">not_specified</span>, <span class="tag-ot">other →</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: EXPANDED PROPERTY DIMENSIONS -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">3</span>
+    <span class="section-title">Expanded Property Dimensions</span>
+  </div>
+
+  <p class="prose">Below are the expanded dimensions. Values are selected for cross-linguistic universality — concepts that are lexicalized or grammaticalized in most of the world's languages. New values added in this expansion are marked with <span class="new-tag">NEW</span>.</p>
+
+  <div class="note-box">
+    <strong>Selection criteria for new values:</strong> Each addition was tested against three questions. (1) Is this concept expressed in unrelated language families? (2) Does it appear in biblical texts? (3) Would a community speech tagger need it in the Language Archive? Only concepts passing all three were added. Two entirely new dimensions were added: Sensory and Quantity/Size.
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="label">Original Dimensions</div>
+      <div class="value">9</div>
+      <div class="sub">with ~48 values</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Expanded Dimensions</div>
+      <div class="value">11</div>
+      <div class="sub">with 102 values + 2 defaults each</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">New Values Added</div>
+      <div class="value">54</div>
+      <div class="sub">across all dimensions</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">New Dimensions</div>
+      <div class="value">2</div>
+      <div class="sub">Sensory + Quantity/Size</div>
+    </div>
+  </div>
+
+  <!-- PHYSICAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-physical" onclick="toggle(this)">
+      Physical <span class="count">15 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>old</td><td>Advanced in age</td><td>Abraham was old, advanced in years</td></tr>
+        <tr><td>young</td><td>Early in age</td><td>David was the youngest son</td></tr>
+        <tr><td>strong</td><td>Physical power</td><td>Samson was strong</td></tr>
+        <tr><td>weak</td><td>Lacking physical power</td><td>His hands were weak</td></tr>
+        <tr><td>beautiful</td><td>Pleasing in appearance</td><td>Rachel was beautiful in form</td></tr>
+        <tr><td>tall</td><td>Above normal height</td><td>Saul was taller than any of the people</td></tr>
+        <tr><td>short</td><td>Below normal height</td><td>Zacchaeus was short in stature</td></tr>
+        <tr><td>big <span class="new-tag">NEW</span></td><td>Large in size or extent</td><td>A great fish swallowed Jonah</td></tr>
+        <tr><td>small <span class="new-tag">NEW</span></td><td>Little in size or extent</td><td>The least among the clans of Judah</td></tr>
+        <tr><td>heavy <span class="new-tag">NEW</span></td><td>Great in weight</td><td>The stone was heavy</td></tr>
+        <tr><td>light <span class="new-tag">NEW</span></td><td>Little in weight</td><td>Light as a feather (comparative)</td></tr>
+        <tr><td>fat <span class="new-tag">NEW</span></td><td>Fleshy, well-fed</td><td>Eglon was a very fat man</td></tr>
+        <tr><td>thin <span class="new-tag">NEW</span></td><td>Lean, not fleshy</td><td>Seven thin cows (Pharaoh's dream)</td></tr>
+        <tr><td>healthy <span class="new-tag">NEW</span></td><td>Sound in body, well</td><td>He was restored healthy</td></tr>
+        <tr><td>sick <span class="new-tag">NEW</span></td><td>Unwell, diseased</td><td>Hezekiah became sick</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default. No physical property indicated.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUANTITY / SIZE — NEW DIMENSION -->
+  <div class="dim-card">
+    <div class="dim-header dh-quantity" onclick="toggle(this)">
+      Quantity / Size <span class="new-tag">NEW DIMENSION</span> <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <div class="gold-box">This dimension captures scalar and quantitative properties of things and stuff — separate from the participant-level "quantity" field (one, two, few, many) which counts entities. This dimension describes the amount, fullness, or magnitude of a substance or quality.</div>
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>full <span class="new-tag">NEW</span></td><td>Filled, complete in amount</td><td>The earth was full of violence</td></tr>
+        <tr><td>empty <span class="new-tag">NEW</span></td><td>Containing nothing</td><td>I went away full but the LORD brought me back empty</td></tr>
+        <tr><td>abundant <span class="new-tag">NEW</span></td><td>More than enough</td><td>The land had abundant pasture</td></tr>
+        <tr><td>scarce <span class="new-tag">NEW</span></td><td>Barely enough, lacking</td><td>There was famine; food was scarce</td></tr>
+        <tr><td>whole <span class="new-tag">NEW</span></td><td>Complete, entire, not broken</td><td>The whole earth was of one language</td></tr>
+        <tr><td>broken <span class="new-tag">NEW</span></td><td>Fractured, incomplete</td><td>A broken vessel</td></tr>
+        <tr><td>deep <span class="new-tag">NEW</span></td><td>Extending far down or inward</td><td>The deep waters covered the earth</td></tr>
+        <tr><td>shallow <span class="new-tag">NEW</span></td><td>Not extending far down</td><td>The waters receded (implied shallow)</td></tr>
+        <tr><td>wide <span class="new-tag">NEW</span></td><td>Broad in extent</td><td>A broad and spacious land</td></tr>
+        <tr><td>narrow <span class="new-tag">NEW</span></td><td>Limited in extent</td><td>The gate is narrow</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default. No quantity/size property indicated.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SENSORY — NEW DIMENSION -->
+  <div class="dim-card">
+    <div class="dim-header dh-sensory" onclick="toggle(this)">
+      Sensory <span class="new-tag">NEW DIMENSION</span> <span class="count">14 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <div class="gold-box">Sensory properties describe how participants are perceived through the five senses. These are cross-linguistically basic and heavily used in both biblical text and oral community speech. They are essential for Language Archive retrieval — oral communities describe the world through sensory experience.</div>
+      <table>
+        <tr><th>Value</th><th>Sense</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>bright <span class="new-tag">NEW</span></td><td>sight</td><td>Emitting or reflecting light</td><td>His face shone like the sun</td></tr>
+        <tr><td>dark <span class="new-tag">NEW</span></td><td>sight</td><td>Absence of light</td><td>Darkness was over the face of the deep</td></tr>
+        <tr><td>loud <span class="new-tag">NEW</span></td><td>hearing</td><td>Great in sound</td><td>A loud trumpet blast</td></tr>
+        <tr><td>quiet <span class="new-tag">NEW</span></td><td>hearing</td><td>Little or no sound</td><td>A still small voice</td></tr>
+        <tr><td>sweet <span class="new-tag">NEW</span></td><td>taste</td><td>Pleasant to taste</td><td>Sweeter than honey</td></tr>
+        <tr><td>bitter <span class="new-tag">NEW</span></td><td>taste</td><td>Harsh, unpleasant to taste</td><td>The waters were bitter</td></tr>
+        <tr><td>fragrant <span class="new-tag">NEW</span></td><td>smell</td><td>Pleasant odor</td><td>A pleasing aroma to the LORD</td></tr>
+        <tr><td>foul <span class="new-tag">NEW</span></td><td>smell</td><td>Unpleasant odor</td><td>The river stank</td></tr>
+        <tr><td>soft <span class="new-tag">NEW</span></td><td>touch</td><td>Yielding to pressure</td><td>Soft clothing (those in kings' houses)</td></tr>
+        <tr><td>hard <span class="new-tag">NEW</span></td><td>touch</td><td>Resistant to pressure</td><td>Hard as rock</td></tr>
+        <tr><td>smooth <span class="new-tag">NEW</span></td><td>touch</td><td>Even surface</td><td>Jacob's skin was smooth</td></tr>
+        <tr><td>rough <span class="new-tag">NEW</span></td><td>touch</td><td>Uneven surface</td><td>Esau was a hairy/rough man</td></tr>
+        <tr><td>hot <span class="new-tag">NEW</span></td><td>temp.</td><td>High temperature</td><td>The sun grew hot</td></tr>
+        <tr><td>cold <span class="new-tag">NEW</span></td><td>temp.</td><td>Low temperature</td><td>Cold water to a thirsty soul</td></tr>
+        <tr class="default-row"><td>not_specified</td><td></td><td colspan="2">Default. No sensory property indicated.</td></tr>
+        <tr class="default-row"><td>other →</td><td></td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CHARACTER -->
+  <div class="dim-card">
+    <div class="dim-header dh-character" onclick="toggle(this)">
+      Character <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>righteous</td><td>Morally upright</td><td>Noah was a righteous man</td></tr>
+        <tr><td>wicked</td><td>Morally corrupt</td><td>The wickedness of man was great</td></tr>
+        <tr><td>faithful</td><td>Loyal, trustworthy</td><td>Abraham believed the LORD</td></tr>
+        <tr><td>unfaithful</td><td>Disloyal, untrustworthy</td><td>They were unfaithful to their God</td></tr>
+        <tr><td>wise</td><td>Having wisdom, discerning</td><td>Solomon was wise</td></tr>
+        <tr><td>foolish</td><td>Lacking wisdom</td><td>The fool says in his heart</td></tr>
+        <tr><td>brave <span class="new-tag">NEW</span></td><td>Courageous, bold</td><td>Be strong and courageous</td></tr>
+        <tr><td>cowardly <span class="new-tag">NEW</span></td><td>Lacking courage</td><td>Their hearts melted in fear</td></tr>
+        <tr><td>humble <span class="new-tag">NEW</span></td><td>Lowly in spirit, not proud</td><td>Moses was very humble</td></tr>
+        <tr><td>proud <span class="new-tag">NEW</span></td><td>Arrogant, self-exalting</td><td>Pharaoh's heart was proud</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SOCIAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-social" onclick="toggle(this)">
+      Social <span class="count">11 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>rich</td><td>Having wealth</td><td>Abraham was very rich</td></tr>
+        <tr><td>poor</td><td>Lacking wealth</td><td>The poor widow put in two coins</td></tr>
+        <tr><td>noble</td><td>High birth or rank</td><td>The nobles of the people</td></tr>
+        <tr><td>slave</td><td>In bondage, not free</td><td>We were slaves in Egypt</td></tr>
+        <tr><td>free</td><td>Not in bondage</td><td>You shall let the slave go free</td></tr>
+        <tr><td>foreign</td><td>From another land/people</td><td>Ruth the Moabitess, a foreign woman</td></tr>
+        <tr><td>native</td><td>From this land/people</td><td>The native-born among you</td></tr>
+        <tr><td>powerful <span class="new-tag">NEW</span></td><td>Having social influence or authority</td><td>Nimrod was a mighty one</td></tr>
+        <tr><td>powerless <span class="new-tag">NEW</span></td><td>Lacking social influence</td><td>The fatherless and the widow</td></tr>
+        <tr><td>honored <span class="new-tag">NEW</span></td><td>Held in high esteem</td><td>He was more honored than his brothers</td></tr>
+        <tr><td>despised <span class="new-tag">NEW</span></td><td>Held in low esteem, rejected</td><td>He was despised and rejected</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- EMOTIONAL STATE -->
+  <div class="dim-card">
+    <div class="dim-header dh-emotional" onclick="toggle(this)">
+      Emotional State <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <div class="gold-box">This dimension captures the <strong>standing emotional state</strong> of a participant as a property — distinct from the Emotion Layer (Layer 7), which tags the emotion <strong>expressed in a specific clause/event</strong>. A participant can be "troubled" as a character trait while expressing "anger" in a specific speech act.</div>
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>happy</td><td>In a state of well-being</td><td>Hannah's face was no longer sad</td></tr>
+        <tr><td>sad</td><td>In a state of sorrow</td><td>Why is your face sad? (Nehemiah)</td></tr>
+        <tr><td>angry</td><td>In a state of wrath</td><td>Cain was very angry</td></tr>
+        <tr><td>afraid</td><td>In a state of fear</td><td>Moses was afraid to look at God</td></tr>
+        <tr><td>peaceful</td><td>In a state of calm</td><td>He lay down and slept in peace</td></tr>
+        <tr><td>troubled</td><td>In a state of distress</td><td>Pharaoh's spirit was troubled</td></tr>
+        <tr><td>confident <span class="new-tag">NEW</span></td><td>Assured, trusting</td><td>Though an army encamp, I will be confident</td></tr>
+        <tr><td>anxious <span class="new-tag">NEW</span></td><td>Worried, uneasy</td><td>Martha was anxious about many things</td></tr>
+        <tr><td>grieving <span class="new-tag">NEW</span></td><td>In mourning or deep loss</td><td>David mourned for his son</td></tr>
+        <tr><td>joyful <span class="new-tag">NEW</span></td><td>In a state of deep gladness</td><td>Mary's spirit rejoiced in God</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- RELATIONAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-relational" onclick="toggle(this)">
+      Relational <span class="count">8 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>married</td><td>In a marriage bond</td><td>Boaz took Ruth as his wife</td></tr>
+        <tr><td>widowed</td><td>Spouse has died</td><td>Naomi was widowed</td></tr>
+        <tr><td>orphaned</td><td>Without parents</td><td>The fatherless</td></tr>
+        <tr><td>firstborn</td><td>First child born</td><td>Esau was the firstborn</td></tr>
+        <tr><td>barren <span class="new-tag">NEW</span></td><td>Unable to bear children</td><td>Sarah was barren</td></tr>
+        <tr><td>pregnant <span class="new-tag">NEW</span></td><td>Carrying a child</td><td>Rebekah conceived</td></tr>
+        <tr><td>betrothed <span class="new-tag">NEW</span></td><td>Pledged to marry</td><td>Mary was betrothed to Joseph</td></tr>
+        <tr><td>divorced <span class="new-tag">NEW</span></td><td>Marriage dissolved</td><td>A certificate of divorce</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MATERIAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-material" onclick="toggle(this)">
+      Material <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>wooden</td><td>Made of wood</td><td>A wooden altar</td></tr>
+        <tr><td>stone</td><td>Made of stone</td><td>Tablets of stone</td></tr>
+        <tr><td>golden</td><td>Made of gold</td><td>The golden calf</td></tr>
+        <tr><td>bronze</td><td>Made of bronze</td><td>The bronze serpent</td></tr>
+        <tr><td>clay</td><td>Made of clay / earthen</td><td>Vessels of clay</td></tr>
+        <tr><td>iron <span class="new-tag">NEW</span></td><td>Made of iron</td><td>Iron chariots</td></tr>
+        <tr><td>silver <span class="new-tag">NEW</span></td><td>Made of silver</td><td>Thirty pieces of silver</td></tr>
+        <tr><td>linen <span class="new-tag">NEW</span></td><td>Made of linen / cloth</td><td>Fine linen garments</td></tr>
+        <tr><td>leather <span class="new-tag">NEW</span></td><td>Made of animal skin</td><td>A garment of leather</td></tr>
+        <tr><td>woven <span class="new-tag">NEW</span></td><td>Made by weaving / textile</td><td>A woven tunic</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- EVALUATIVE -->
+  <div class="dim-card">
+    <div class="dim-header dh-evaluative" onclick="toggle(this)">
+      Evaluative <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>good</td><td>Positive in quality or value</td><td>God saw that it was good</td></tr>
+        <tr><td>bad</td><td>Negative in quality or value</td><td>The bad figs were very bad</td></tr>
+        <tr><td>clean</td><td>Ritually or physically pure</td><td>Clean animals</td></tr>
+        <tr><td>unclean</td><td>Ritually or physically impure</td><td>Unclean spirits</td></tr>
+        <tr><td>holy</td><td>Set apart, sacred</td><td>Holy ground</td></tr>
+        <tr><td>profane</td><td>Common, not sacred</td><td>Profane what is holy</td></tr>
+        <tr><td>true <span class="new-tag">NEW</span></td><td>Genuine, reliable, accurate</td><td>Your word is true</td></tr>
+        <tr><td>false <span class="new-tag">NEW</span></td><td>Deceptive, unreliable</td><td>False prophets</td></tr>
+        <tr><td>precious <span class="new-tag">NEW</span></td><td>Of great value</td><td>Precious stones</td></tr>
+        <tr><td>worthless <span class="new-tag">NEW</span></td><td>Of no value</td><td>Worthless idols</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TEMPORAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-temporal" onclick="toggle(this)">
+      Temporal <span class="count">6 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>ancient</td><td>Very old, from long ago</td><td>The ancient paths</td></tr>
+        <tr><td>new</td><td>Recently made or appeared</td><td>A new song, a new covenant</td></tr>
+        <tr><td>temporary</td><td>Lasting a limited time</td><td>Tents, temporary shelters</td></tr>
+        <tr><td>eternal</td><td>Without end</td><td>The eternal God</td></tr>
+        <tr><td>first <span class="new-tag">NEW</span></td><td>Earliest in sequence</td><td>The first day</td></tr>
+        <tr><td>last <span class="new-tag">NEW</span></td><td>Latest/final in sequence</td><td>The last days</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SPATIAL -->
+  <div class="dim-card">
+    <div class="dim-header dh-spatial" onclick="toggle(this)">
+      Spatial <span class="count">10 values</span><span class="arrow">▼</span>
+    </div>
+    <div class="dim-body">
+      <table>
+        <tr><th>Value</th><th>Definition</th><th>Biblical Example</th></tr>
+        <tr><td>near</td><td>Close in space</td><td>The LORD is near to the brokenhearted</td></tr>
+        <tr><td>far</td><td>Distant in space</td><td>A far country</td></tr>
+        <tr><td>high</td><td>Elevated, above</td><td>The high mountain</td></tr>
+        <tr><td>low</td><td>Below, beneath</td><td>The lowest parts of the earth</td></tr>
+        <tr><td>inner</td><td>Inside, interior</td><td>The inner court</td></tr>
+        <tr><td>outer</td><td>Outside, exterior</td><td>The outer darkness</td></tr>
+        <tr><td>right <span class="new-tag">NEW</span></td><td>Right-hand side</td><td>Sit at my right hand</td></tr>
+        <tr><td>left <span class="new-tag">NEW</span></td><td>Left-hand side</td><td>Do not turn to the left</td></tr>
+        <tr><td>front <span class="new-tag">NEW</span></td><td>Before, in front of</td><td>He went before them</td></tr>
+        <tr><td>behind <span class="new-tag">NEW</span></td><td>At the back of</td><td>Get behind me</td></tr>
+        <tr class="default-row"><td>not_specified</td><td colspan="2">Default.</td></tr>
+        <tr class="default-row"><td>other →</td><td colspan="2">Flagged for review.</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: SUMMARY -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">4</span>
+    <span class="section-title">Summary of Changes</span>
+  </div>
+
+  <table>
+    <tr><th>Dimension</th><th>Original Count</th><th>Expanded Count</th><th>New Values</th></tr>
+    <tr><td>Physical</td><td>7</td><td>15</td><td>big, small, heavy, light, fat, thin, healthy, sick</td></tr>
+    <tr><td>Quantity/Size <span class="new-tag">NEW</span></td><td>—</td><td>10</td><td>full, empty, abundant, scarce, whole, broken, deep, shallow, wide, narrow</td></tr>
+    <tr><td>Sensory <span class="new-tag">NEW</span></td><td>—</td><td>14</td><td>bright, dark, loud, quiet, sweet, bitter, fragrant, foul, soft, hard, smooth, rough, hot, cold</td></tr>
+    <tr><td>Character</td><td>6</td><td>10</td><td>brave, cowardly, humble, proud</td></tr>
+    <tr><td>Social</td><td>7</td><td>11</td><td>powerful, powerless, honored, despised</td></tr>
+    <tr><td>Emotional State</td><td>6</td><td>10</td><td>confident, anxious, grieving, joyful</td></tr>
+    <tr><td>Relational</td><td>4</td><td>8</td><td>barren, pregnant, betrothed, divorced</td></tr>
+    <tr><td>Material</td><td>5</td><td>10</td><td>iron, silver, linen, leather, woven</td></tr>
+    <tr><td>Evaluative</td><td>6</td><td>10</td><td>true, false, precious, worthless</td></tr>
+    <tr><td>Temporal</td><td>4</td><td>6</td><td>first, last</td></tr>
+    <tr><td>Spatial</td><td>6</td><td>10</td><td>right, left, front, behind</td></tr>
+    <tr style="font-weight:700;background:var(--sand);">
+      <td>TOTAL</td><td>~48</td><td>114</td><td>54 new values + 2 new dimensions</td></tr>
+  </table>
+
+  <div class="note-box" style="margin-top:16px;">
+    <strong>Every field</strong> across all 14 ontology layers now carries <span class="tag-ns">not_specified</span> (default) and <span class="tag-ot">other →</span> (flagged for review). This applies to ~45 enumerated fields with a combined ~350+ listed values. The "other" flag creates a feedback loop: if analysts repeatedly tag the same "other" value, it becomes a candidate for inclusion in the next ontology version.
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('hidden');
+  header.classList.toggle('collapsed');
+}
+</script>
+
+</body>
+</html>

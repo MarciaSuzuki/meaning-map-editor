@@ -57,49 +57,59 @@ export const SEMANTIC_ROLES = opts([
 
 export const PROPERTY_DIMENSIONS: Record<string, OntologyOption[]> = {
   physical: opts([
-    'male', 'female', 'young', 'old', 'strong', 'weak',
-    'beautiful', 'ugly', 'big', 'small', 'heavy', 'light',
-    'fat', 'thin', 'healthy', 'sick',
+    'old', 'young', 'strong', 'weak', 'beautiful', 'tall', 'short',
+    'big', 'small', 'heavy', 'light', 'fat', 'thin', 'healthy', 'sick',
+    'not_specified', 'other',
   ]),
   quantity_size: opts([
     'full', 'empty', 'abundant', 'scarce', 'whole', 'broken',
     'deep', 'shallow', 'wide', 'narrow',
+    'not_specified', 'other',
   ]),
   sensory: opts([
     'bright', 'dark', 'loud', 'quiet', 'sweet', 'bitter',
     'fragrant', 'foul', 'soft', 'hard', 'smooth', 'rough',
     'hot', 'cold',
+    'not_specified', 'other',
   ]),
   character: opts([
-    'wise', 'foolish', 'righteous', 'wicked', 'faithful',
-    'unfaithful', 'brave', 'cowardly', 'humble', 'proud',
+    'righteous', 'wicked', 'faithful', 'unfaithful', 'wise',
+    'foolish', 'brave', 'cowardly', 'humble', 'proud',
+    'not_specified', 'other',
   ]),
   social: opts([
-    'rich', 'poor', 'free', 'enslaved', 'royal', 'common',
-    'priest', 'prophet', 'powerful', 'powerless', 'honored', 'despised',
+    'rich', 'poor', 'noble', 'slave', 'free', 'foreign', 'native',
+    'powerful', 'powerless', 'honored', 'despised',
+    'not_specified', 'other',
   ]),
   emotional_state: opts([
     'happy', 'sad', 'angry', 'afraid', 'peaceful', 'troubled',
     'confident', 'anxious', 'grieving', 'joyful',
+    'not_specified', 'other',
   ]),
   relational: opts([
     'married', 'widowed', 'orphaned', 'firstborn', 'barren',
     'pregnant', 'betrothed', 'divorced',
+    'not_specified', 'other',
   ]),
   material: opts([
-    'gold', 'silver', 'bronze', 'iron', 'wood', 'stone',
-    'clay', 'linen', 'leather', 'woven',
+    'wooden', 'stone', 'golden', 'bronze', 'clay', 'iron',
+    'silver', 'linen', 'leather', 'woven',
+    'not_specified', 'other',
   ]),
   evaluative: opts([
-    'clean', 'unclean', 'holy', 'profane', 'blessed', 'cursed',
+    'good', 'bad', 'clean', 'unclean', 'holy', 'profane',
     'true', 'false', 'precious', 'worthless',
+    'not_specified', 'other',
   ]),
   temporal: opts([
-    'new', 'ancient', 'temporary', 'permanent', 'first', 'last',
+    'ancient', 'new', 'temporary', 'eternal', 'first', 'last',
+    'not_specified', 'other',
   ]),
   spatial: opts([
     'near', 'far', 'high', 'low', 'inner', 'outer',
     'right', 'left', 'front', 'behind',
+    'not_specified', 'other',
   ]),
 };
 
@@ -108,25 +118,32 @@ export const PROPERTY_DIMENSIONS: Record<string, OntologyOption[]> = {
 // ---------------------------------------------------------------------------
 
 export const KINSHIP_RELATIONS = opts([
-  'parent_of', 'child_of', 'spouse_of', 'sibling_of',
-  'grandparent_of', 'grandchild_of', 'in_law_of', 'clan_member',
+  'parent_of', 'child_of', 'spouse_of', 'husband_of', 'wife_of',
+  'sibling_of', 'grandparent_of', 'grandchild_of',
+  'ancestor_of', 'descendant_of', 'in_law', 'clan_member',
   'not_specified', 'other',
 ] as const);
 
 export const SOCIAL_RELATIONS = opts([
   'ruler_of', 'subject_of', 'master_of', 'servant_of',
-  'ally_of', 'enemy_of', 'teacher_of', 'student_of',
+  'ally_of', 'enemy_of', 'friend_of', 'teacher_of',
+  'student_of', 'colleague_of',
   'not_specified', 'other',
 ] as const);
 
 export const POSSESSION_RELATIONS = opts([
-  'owner_of', 'belonging_to', 'steward_of', 'tribute_to',
+  'owner_of', 'possesses', 'belongs_to', 'controls', 'lacks',
   'not_specified', 'other',
 ] as const);
 
 export const SPATIAL_RELATIONS = opts([
-  'above', 'below', 'beside', 'inside', 'outside',
-  'between', 'surrounding', 'facing',
+  'located_at', 'native_of', 'inhabitant_of', 'from_place',
+  'near', 'far_from',
+  'not_specified', 'other',
+] as const);
+
+export const PART_WHOLE_RELATIONS = opts([
+  'part_of', 'whole_of', 'member_of', 'group_of', 'substance_of',
   'not_specified', 'other',
 ] as const);
 
@@ -199,10 +216,16 @@ export const POLARITY_VALUES = opts([
 // Layer 11: Discourse Structure
 // ---------------------------------------------------------------------------
 
-export const DISCOURSE_FUNCTIONS = opts([
-  'SET', 'BG', 'MAIN', 'EVAL', 'QUOTE_MARGIN', 'PEAK',
-  'not_specified', 'other',
-] as const);
+export const DISCOURSE_FUNCTIONS: OntologyOption[] = [
+  { value: 'setting', label: 'Setting (SET)' },
+  { value: 'background', label: 'Background (BG)' },
+  { value: 'mainline', label: 'Mainline (MAIN)' },
+  { value: 'evaluation', label: 'Evaluation (EVAL)' },
+  { value: 'quote_margin', label: 'Quote Margin (QUOTE_MARGIN)' },
+  { value: 'peak', label: 'Peak (PEAK)' },
+  { value: 'not_specified', label: 'Not Specified' },
+  { value: 'other', label: 'Other' },
+];
 
 export const DISCOURSE_RELATIONS = opts([
   'sequence', 'simultaneous', 'cause', 'result', 'purpose',
@@ -256,12 +279,24 @@ export const EMOTIONS = opts([
 
 export const EMOTION_INTENSITIES = opts([
   'low', 'medium', 'high', 'extreme',
-  'not_specified',
+  'not_specified', 'other',
 ] as const);
 
 export const NARRATOR_STANCES = opts([
   'neutral', 'sympathetic', 'critical', 'ironic', 'celebratory',
   'lamenting', 'didactic', 'suspenseful',
+  'not_specified', 'other',
+] as const);
+
+export const AUDIENCE_RESPONSES = opts([
+  'empathy', 'sympathy', 'admiration', 'disapproval', 'fear',
+  'hope', 'relief', 'grief', 'joy', 'conviction',
+  'not_specified', 'other',
+] as const);
+
+export const INFERENCE_SOURCES = opts([
+  'lexical', 'contextual', 'cultural', 'behavioral', 'physiological',
+  'speech_content', 'narrator_comment', 'reader_inference', 'theological',
   'not_specified', 'other',
 ] as const);
 
@@ -285,9 +320,19 @@ export const FIGURATIVE_LANGUAGE = opts([
   'not_specified', 'other',
 ] as const);
 
+export const FIGURATIVE_TRANSFERABILITY = opts([
+  'universal', 'common', 'limited', 'culture_specific', 'language_specific',
+  'not_specified', 'other',
+] as const);
+
 export const KEY_TERM_DOMAINS = opts([
   'divine', 'covenant', 'salvation', 'sin', 'worship',
   'ethics', 'kinship', 'authority', 'creation',
+  'not_specified', 'other',
+] as const);
+
+export const KEY_TERM_CONSISTENCY = opts([
+  'always', 'preferred', 'flexible',
   'not_specified', 'other',
 ] as const);
 
@@ -297,6 +342,59 @@ export const KEY_TERM_DOMAINS = opts([
 
 export const CONFIDENCE_VALUES = opts([
   'high', 'medium', 'low', 'speculative',
+  'not_specified', 'other',
+] as const);
+
+export const RETRIEVAL_TAG_CATEGORIES = opts([
+  'emotion_tags', 'event_tags', 'register_tags', 'discourse_tags',
+  'social_tags', 'poetic_tags', 'parallelism_tags', 'proverb_tags',
+  'formulaic_tags',
+  'not_specified', 'other',
+] as const);
+
+export const POETIC_PARALLELISM = opts([
+  'synonymous', 'antithetical', 'synthetic', 'climactic',
+  'emblematic', 'chiastic', 'staircase', 'none',
+  'not_specified', 'other',
+] as const);
+
+export const POETIC_LINE_STRUCTURE = opts([
+  'bicolon', 'tricolon', 'quatrain', 'monocolon',
+  'strophe', 'refrain', 'acrostic_element',
+  'not_specified', 'other',
+] as const);
+
+export const POETIC_SOUND_PATTERNS = opts([
+  'alliteration', 'assonance', 'rhyme', 'rhythm_regular',
+  'rhythm_irregular', 'wordplay', 'onomatopoeia', 'tonal_pattern',
+  'not_specified', 'other',
+] as const);
+
+export const POETIC_COMPRESSION = opts([
+  'ellipsis', 'gapping', 'terseness', 'normal',
+  'not_specified', 'other',
+] as const);
+
+export const PROVERB_TYPES = opts([
+  'observational', 'comparative', 'numerical', 'rhetorical_question',
+  'conditional', 'admonition', 'consequence', 'characterization',
+  'not_specified', 'other',
+] as const);
+
+export const WISDOM_FUNCTIONS = opts([
+  'teach', 'warn', 'motivate', 'evaluate', 'characterize',
+  'console', 'rebuke', 'celebrate',
+  'not_specified', 'other',
+] as const);
+
+export const WISDOM_AUTHORITY_SOURCES = opts([
+  'tradition', 'observation', 'divine', 'elder', 'sage', 'unspecified',
+  'not_specified', 'other',
+] as const);
+
+export const WISDOM_APPLICABILITY = opts([
+  'universal', 'situational', 'cultural', 'contested',
+  'not_specified', 'other',
 ] as const);
 
 // ---------------------------------------------------------------------------
@@ -338,8 +436,10 @@ export type LayerKey =
   | 'events' | 'semantic_roles' | 'reality' | 'time_frame'
   | 'evidentiality' | 'aspect' | 'polarity' | 'discourse_structure'
   | 'register' | 'social_axis' | 'prominence' | 'pacing'
-  | 'emotion' | 'narrator_stance' | 'speech_acts'
-  | 'figurative_language' | 'key_terms';
+  | 'emotion' | 'narrator_stance' | 'audience_response'
+  | 'speech_acts' | 'figurative_language' | 'figurative_transferability'
+  | 'key_terms' | 'key_term_consistency' | 'inference_source'
+  | 'retrieval_tags' | 'poetic_structure' | 'proverb_features';
 
 export type Activation = true | false | 'conditional' | 'preset';
 
@@ -350,8 +450,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: 'conditional', aspect: true, polarity: true,
     discourse_structure: true, register: 'preset', social_axis: true,
     prominence: true, pacing: true, emotion: true, narrator_stance: true,
+    audience_response: true, inference_source: true, retrieval_tags: 'conditional',
     speech_acts: 'conditional', figurative_language: 'conditional',
-    key_terms: true,
+    figurative_transferability: 'conditional', key_terms: true, key_term_consistency: true,
+    poetic_structure: false, proverb_features: false,
   },
   law: {
     participants: true, participant_properties: 'conditional', relations: true,
@@ -359,8 +461,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: false, aspect: 'conditional', polarity: true,
     discourse_structure: true, register: 'preset', social_axis: 'preset',
     prominence: 'conditional', pacing: false, emotion: false,
-    narrator_stance: false, speech_acts: true, figurative_language: false,
-    key_terms: true,
+    narrator_stance: false, audience_response: false, inference_source: 'conditional',
+    retrieval_tags: 'conditional', speech_acts: true, figurative_language: false,
+    figurative_transferability: false, key_terms: true, key_term_consistency: true,
+    poetic_structure: false, proverb_features: false,
   },
   poetry: {
     participants: true, participant_properties: true, relations: 'conditional',
@@ -368,7 +472,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: 'conditional', aspect: true, polarity: true,
     discourse_structure: true, register: 'preset', social_axis: true,
     prominence: true, pacing: true, emotion: true, narrator_stance: true,
-    speech_acts: true, figurative_language: true, key_terms: true,
+    audience_response: true, inference_source: true, retrieval_tags: 'conditional',
+    speech_acts: true, figurative_language: true, figurative_transferability: true,
+    key_terms: true, key_term_consistency: true, poetic_structure: true,
+    proverb_features: false,
   },
   prophecy: {
     participants: true, participant_properties: true, relations: true,
@@ -376,7 +483,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: true, aspect: true, polarity: true,
     discourse_structure: true, register: 'preset', social_axis: true,
     prominence: true, pacing: true, emotion: true, narrator_stance: true,
-    speech_acts: true, figurative_language: true, key_terms: true,
+    audience_response: true, inference_source: true, retrieval_tags: 'conditional',
+    speech_acts: true, figurative_language: true, figurative_transferability: true,
+    key_terms: true, key_term_consistency: true, poetic_structure: 'conditional',
+    proverb_features: false,
   },
   wisdom: {
     participants: true, participant_properties: true, relations: 'conditional',
@@ -384,8 +494,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: 'conditional', aspect: 'conditional', polarity: true,
     discourse_structure: true, register: 'preset', social_axis: 'conditional',
     prominence: 'conditional', pacing: false, emotion: 'conditional',
-    narrator_stance: true, speech_acts: true, figurative_language: true,
-    key_terms: true,
+    narrator_stance: true, audience_response: true, inference_source: true,
+    retrieval_tags: 'conditional', speech_acts: true, figurative_language: true,
+    figurative_transferability: true, key_terms: true, key_term_consistency: true,
+    poetic_structure: 'conditional', proverb_features: true,
   },
   discourse_speech: {
     participants: true, participant_properties: 'conditional', relations: true,
@@ -393,7 +505,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: true, aspect: true, polarity: true,
     discourse_structure: true, register: true, social_axis: true,
     prominence: true, pacing: true, emotion: true, narrator_stance: true,
-    speech_acts: true, figurative_language: 'conditional', key_terms: true,
+    audience_response: true, inference_source: true, retrieval_tags: 'conditional',
+    speech_acts: true, figurative_language: 'conditional',
+    figurative_transferability: 'conditional', key_terms: true, key_term_consistency: true,
+    poetic_structure: false, proverb_features: false,
   },
   apocalyptic: {
     participants: true, participant_properties: true, relations: true,
@@ -401,7 +516,10 @@ export const GENRE_LAYER_MATRIX: Record<string, Record<LayerKey, Activation>> = 
     evidentiality: true, aspect: true, polarity: true,
     discourse_structure: true, register: 'preset', social_axis: true,
     prominence: true, pacing: true, emotion: true, narrator_stance: true,
-    speech_acts: true, figurative_language: true, key_terms: true,
+    audience_response: true, inference_source: true, retrieval_tags: 'conditional',
+    speech_acts: true, figurative_language: true, figurative_transferability: true,
+    key_terms: true, key_term_consistency: true, poetic_structure: 'conditional',
+    proverb_features: false,
   },
 };
 
