@@ -853,39 +853,70 @@ export default function EditorPage() {
                   const isComplete = clauseAnnotation ? hasAnyContent(clauseAnnotation) : false;
                   const bhsaDiscourse = getBhsaDiscourse(clause.clause_type);
                   return (
-                    <button
-                      key={clause.id}
-                      onClick={() => setSelectedClauseId(clause.id)}
-                      data-clause-id={clause.id}
-                      style={{
-                        textAlign: 'left',
-                        borderRadius: 10,
-                        border: isSelected ? `1px solid ${s.telha}` : `1px solid transparent`,
-                        backgroundColor: isSelected ? s.soft : 'transparent',
-                        padding: '0.5rem 0.65rem',
-                        cursor: 'pointer',
-                        transition: 'all 120ms ease',
-                        scrollMarginTop: clauseScrollOffset,
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
-                        <span style={{ fontSize: '0.7rem', color: s.muted }}>Clause {index + 1}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                          {isFlagged && <span style={{ fontSize: '0.7rem', color: '#C8730F' }}>FLAG</span>}
-                          {isComplete && <span style={{ fontSize: '0.7rem', color: '#2C7A4B' }}>OK</span>}
-                          <span style={{ fontSize: '0.65rem', fontWeight: 600, color: bhsaDiscourse === 'mainline' ? s.telha : s.azul }}>
-                            {bhsaDiscourse === 'mainline' ? 'Mainline' : bhsaDiscourse === 'background' ? 'Background' : 'Unknown'}
-                          </span>
-                          <span style={{ fontSize: '0.65rem', fontFamily: s.mono, color: clause.is_verbless ? s.verde : s.telha }}>
-                            {clause.clause_type}
-                          </span>
+                    <div key={clause.id} style={{ position: 'relative' }}>
+                      <button
+                        onClick={() => setSelectedClauseId(clause.id)}
+                        data-clause-id={clause.id}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          borderRadius: 10,
+                          border: isSelected ? `1px solid ${s.telha}` : `1px solid transparent`,
+                          backgroundColor: isSelected ? s.soft : 'transparent',
+                          padding: isSelected ? '0.5rem 2.4rem 0.5rem 0.65rem' : '0.5rem 0.65rem',
+                          cursor: 'pointer',
+                          transition: 'all 120ms ease',
+                          scrollMarginTop: clauseScrollOffset,
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                          <span style={{ fontSize: '0.7rem', color: s.muted }}>Clause {index + 1}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            {isFlagged && <span style={{ fontSize: '0.7rem', color: '#C8730F' }}>FLAG</span>}
+                            {isComplete && <span style={{ fontSize: '0.7rem', color: '#2C7A4B' }}>OK</span>}
+                            <span style={{ fontSize: '0.65rem', fontWeight: 600, color: bhsaDiscourse === 'mainline' ? s.telha : s.azul }}>
+                              {bhsaDiscourse === 'mainline' ? 'Mainline' : bhsaDiscourse === 'background' ? 'Background' : 'Unknown'}
+                            </span>
+                            <span style={{ fontSize: '0.65rem', fontFamily: s.mono, color: clause.is_verbless ? s.verde : s.telha }}>
+                              {clause.clause_type}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div style={{ fontFamily: s.hebrew, fontSize: '0.9rem', lineHeight: 1.4 }}>
-                        {clause.hebrew_text}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: s.muted, marginTop: '0.2rem' }}>{clause.gloss}</div>
-                    </button>
+                        <div style={{ fontFamily: s.hebrew, fontSize: '0.9rem', lineHeight: 1.4 }}>
+                          {clause.hebrew_text}
+                        </div>
+                        <div style={{ fontSize: '0.65rem', color: s.muted, marginTop: '0.2rem' }}>{clause.gloss}</div>
+                      </button>
+                      {isSelected && (
+                        <button
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setAssistantOpen((prev) => !prev);
+                          }}
+                          style={{
+                            position: 'absolute',
+                            right: 6,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: 34,
+                            height: 34,
+                            borderRadius: '50%',
+                            border: 'none',
+                            backgroundColor: assistantOpen ? s.dark : s.telha,
+                            color: 'white',
+                            fontSize: '0.95rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
+                            zIndex: 2,
+                          }}
+                          aria-label="Open ontology assistant"
+                          title="Ask the assistant about this clause"
+                        >
+                          ?
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -2142,24 +2173,6 @@ export default function EditorPage() {
                   )}
                 </div>
               )}
-              <button
-                onClick={() => setAssistantOpen((prev) => !prev)}
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  border: 'none',
-                  backgroundColor: s.telha,
-                  color: 'white',
-                  fontSize: '1.1rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 16px rgba(0,0,0,0.12)',
-                }}
-                aria-label="Open ontology assistant"
-              >
-                ?
-              </button>
             </div>
           </div>
         </section>
