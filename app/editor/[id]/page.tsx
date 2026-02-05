@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useParams } from 'next/navigation';
 import ruth from '@/data/bhsa/ruth.json';
 import type {
@@ -2152,7 +2154,39 @@ export default function EditorPage() {
                         <div style={{ fontSize: '0.7rem', fontWeight: 600, color: msg.role === 'assistant' ? s.azul : s.telha }}>
                           {msg.role === 'assistant' ? 'Assistant' : 'You'}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: s.dark }}>{msg.content}</div>
+                        <div style={{ fontSize: '0.75rem', color: s.dark }}>
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              p: ({ children }) => (
+                                <p style={{ margin: 0, marginBottom: '0.35rem', fontSize: '0.75rem', color: s.dark }}>{children}</p>
+                              ),
+                              ul: ({ children }) => (
+                                <ul style={{ margin: '0.2rem 0 0.35rem 1rem', padding: 0, fontSize: '0.75rem', color: s.dark }}>{children}</ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol style={{ margin: '0.2rem 0 0.35rem 1rem', padding: 0, fontSize: '0.75rem', color: s.dark }}>{children}</ol>
+                              ),
+                              li: ({ children }) => (
+                                <li style={{ marginBottom: '0.2rem' }}>{children}</li>
+                              ),
+                              strong: ({ children }) => <strong style={{ fontWeight: 600 }}>{children}</strong>,
+                              em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
+                              code: ({ children }) => (
+                                <code style={{ fontFamily: s.mono, fontSize: '0.72rem', backgroundColor: '#F4F1E6', padding: '0 0.25rem', borderRadius: 4 }}>
+                                  {children}
+                                </code>
+                              ),
+                              a: ({ children, href }) => (
+                                <a href={href} style={{ color: s.azul, textDecoration: 'underline' }} target="_blank" rel="noreferrer">
+                                  {children}
+                                </a>
+                              ),
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
                       </div>
                     ))}
                   </div>
