@@ -189,6 +189,15 @@ function createDefaultParticipant(id: string): Participant {
   };
 }
 
+function createDefaultRelation(): Relation {
+  return {
+    type: 'kinship',
+    value: 'not_specified',
+    from_participant: '',
+    to_participant: '',
+  };
+}
+
 function createDefaultEvent(id: string): SemanticEvent {
   return {
     id,
@@ -402,6 +411,37 @@ export default function EditorPage() {
     updateAnnotation(clauseId, (current) => {
       const relations = [...current.relations];
       relations[index] = updater(relations[index]);
+      return { ...current, relations };
+    });
+  }
+
+  function removeEvent(clauseId: number, eventIndex: number) {
+    updateAnnotation(clauseId, (current) => {
+      const events = current.events.filter((_, idx) => idx !== eventIndex);
+      if (events.length === 0) {
+        events.push(createDefaultEvent(`event_${clauseId}_1`));
+      }
+      return { ...current, events };
+    });
+  }
+
+  function removeParticipant(clauseId: number, eventIndex: number, participantIndex: number) {
+    updateEvent(clauseId, eventIndex, (event) => {
+      const participants = event.participants.filter((_, idx) => idx !== participantIndex);
+      return { ...event, participants };
+    });
+  }
+
+  function removeParticipantProperty(clauseId: number, eventIndex: number, participantIndex: number, propIndex: number) {
+    updateParticipant(clauseId, eventIndex, participantIndex, (participant) => {
+      const properties = participant.properties.filter((_, idx) => idx !== propIndex);
+      return { ...participant, properties };
+    });
+  }
+
+  function removeRelation(clauseId: number, relationIndex: number) {
+    updateAnnotation(clauseId, (current) => {
+      const relations = current.relations.filter((_, idx) => idx !== relationIndex);
       return { ...current, relations };
     });
   }
@@ -806,6 +846,14 @@ export default function EditorPage() {
                               />
                               Primary Event
                             </label>
+                            {activeAnnotation.events.length > 1 && (
+                              <button
+                                onClick={() => removeEvent(selected.clause.id, eventIndex)}
+                                style={{ padding: '0.2rem 0.5rem', borderRadius: 6, border: `1px solid ${s.border}`, backgroundColor: 'white', fontSize: '0.7rem', cursor: 'pointer' }}
+                              >
+                                Remove Event
+                              </button>
+                            )}
                           </div>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                             <div>
@@ -1007,6 +1055,15 @@ export default function EditorPage() {
                             {event.participants.length === 0 && <p style={smallMuted}>Add participants to define WHO does WHAT.</p>}
                             {event.participants.map((participant, pIndex) => (
                               <div key={participant.id} style={{ border: `1px solid ${s.border}`, borderRadius: 10, padding: '0.8rem', marginBottom: '0.6rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                                  <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Participant {pIndex + 1}</span>
+                                  <button
+                                    onClick={() => removeParticipant(selected.clause.id, eventIndex, pIndex)}
+                                    style={{ padding: '0.2rem 0.5rem', borderRadius: 6, border: `1px solid ${s.border}`, backgroundColor: 'white', fontSize: '0.7rem', cursor: 'pointer' }}
+                                  >
+                                    Remove Participant
+                                  </button>
+                                </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: showSemanticRoles ? '1.2fr 1fr 1fr' : '1.2fr 1fr', gap: '0.6rem' }}>
                                   <div>
                                     <label style={labelStyle}>Label</label>
@@ -1114,6 +1171,12 @@ export default function EditorPage() {
                                           ))}
                                           <option value="not_specified">Not specified</option>
                                         </select>
+                                        <button
+                                          onClick={() => removeParticipantProperty(selected.clause.id, eventIndex, pIndex, propIndex)}
+                                          style={{ gridColumn: '1 / -1', justifySelf: 'flex-end', padding: '0.2rem 0.5rem', borderRadius: 6, border: `1px solid ${s.border}`, backgroundColor: 'white', fontSize: '0.7rem', cursor: 'pointer' }}
+                                        >
+                                          Remove Property
+                                        </button>
                                       </div>
                                     ))}
                                   </div>
@@ -1142,7 +1205,7 @@ export default function EditorPage() {
                         <h3 style={labelStyle}>Relations (Between Participants)</h3>
                         <p style={smallMuted}>Use relations to capture kinship, social, possession, or spatial links within the clause.</p>
                         {activeAnnotation.relations.map((relation, rIndex) => (
-                        <div key={`${selected.clause.id}_relation_${rIndex}`} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.6rem', marginBottom: '0.6rem', backgroundColor: 'white', borderRadius: 10, border: `1px solid ${s.border}`, padding: '0.6rem' }}>
+                        <div key={`${selected.clause.id}_relation_${rIndex}`} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto', gap: '0.6rem', marginBottom: '0.6rem', backgroundColor: 'white', borderRadius: 10, border: `1px solid ${s.border}`, padding: '0.6rem' }}>
                           <select
                             value={relation.type}
                             onChange={(e) => updateRelation(selected.clause.id, rIndex, (rel) => ({ ...rel, type: e.target.value as Relation['type'], value: 'not_specified' }))}
@@ -1191,12 +1254,18 @@ export default function EditorPage() {
                               <option key={p.id} value={p.id}>{p.label || p.id}</option>
                             ))}
                           </select>
+                          <button
+                            onClick={() => removeRelation(selected.clause.id, rIndex)}
+                            style={{ padding: '0.2rem 0.5rem', borderRadius: 6, border: `1px solid ${s.border}`, backgroundColor: 'white', fontSize: '0.7rem', cursor: 'pointer' }}
+                          >
+                            Remove
+                          </button>
                         </div>
                       ))}
                         <button
                         onClick={() => updateAnnotation(selected.clause.id, (current) => ({
                           ...current,
-                          relations: [...current.relations, { type: 'kinship', value: 'not_specified', from_participant: '', to_participant: '' }],
+                          relations: [...current.relations, createDefaultRelation()],
                         }))}
                         style={{ padding: '0.35rem 0.75rem', borderRadius: 8, border: `1px dashed ${s.border}`, backgroundColor: 'transparent', fontSize: '0.75rem', cursor: 'pointer' }}
                       >
