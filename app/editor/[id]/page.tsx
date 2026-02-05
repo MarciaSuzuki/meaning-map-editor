@@ -127,6 +127,15 @@ const confirmedFieldStyle = {
   border: `1px solid ${s.verde}`,
 };
 
+const autoFieldStyle = {
+  backgroundColor: '#F1F1EC',
+  border: `1px dashed ${s.borderLight}`,
+};
+
+const SOURCE_PREFIX = '__source:';
+const SOURCE_AUTO = 'BHSA_AUTO';
+const SOURCE_HUMAN_CONFIRMED = 'human_confirmed';
+
 const confirmedSectionStyle = {
   backgroundColor: '#F6F7E9',
   border: `1px solid ${s.verde}`,
@@ -143,6 +152,14 @@ const labelStyle = {
 const smallMuted = { fontSize: '0.75rem', color: s.muted };
 
 const DEFAULT_PERICOPE = { chapterStart: 1, verseStart: 1, chapterEnd: 1, verseEnd: 5 };
+
+function sourceKey(key: string) {
+  return `${SOURCE_PREFIX}${key}`;
+}
+
+function setFieldSource(otherFields: Record<string, string>, key: string, source: string) {
+  return { ...otherFields, [sourceKey(key)]: source };
+}
 
 function normalizeRef(ref: string) {
   return ref
@@ -353,35 +370,46 @@ function applyPrefillToAnnotation(
 ): ClauseAnnotation {
   if (!prefill) return base;
   const next = { ...base };
+  let sources = { ...next.other_fields };
   const prefillClauseType = prefill.clause_type.value;
   if (prefillClauseType && prefillClauseType !== 'not_specified') {
     if (next.clause_type === 'not_specified' || (next.clause_type === 'event' && prefillClauseType !== 'event')) {
       next.clause_type = prefillClauseType as ClauseAnnotation['clause_type'];
+      sources = setFieldSource(sources, 'clause_type', SOURCE_AUTO);
     }
   }
 
   const primaryEvent = { ...next.events[0] };
   if (prefill.event_category?.value && primaryEvent.event_category === 'not_specified') {
     primaryEvent.event_category = prefill.event_category.value as SemanticEvent['event_category'];
+    sources = setFieldSource(sources, 'event:0:event_category', SOURCE_AUTO);
   }
   if (!primaryEvent.verbal_core || primaryEvent.verbal_core === 'not_specified') {
     const mapped = mapVerbalCore(prefill.event_core, primaryEvent.event_category);
-    if (mapped) primaryEvent.verbal_core = mapped;
+    if (mapped) {
+      primaryEvent.verbal_core = mapped;
+      sources = setFieldSource(sources, 'event:0:verbal_core', SOURCE_AUTO);
+    }
   }
   if (primaryEvent.reality === 'not_specified' && prefill.reality?.value) {
     primaryEvent.reality = prefill.reality.value as SemanticEvent['reality'];
+    sources = setFieldSource(sources, 'event:0:reality', SOURCE_AUTO);
   }
   if (primaryEvent.polarity === 'not_specified' && prefill.polarity?.value) {
     primaryEvent.polarity = prefill.polarity.value as SemanticEvent['polarity'];
+    sources = setFieldSource(sources, 'event:0:polarity', SOURCE_AUTO);
   }
   if (primaryEvent.aspect === 'not_specified' && prefill.aspect?.value) {
     primaryEvent.aspect = prefill.aspect.value as SemanticEvent['aspect'];
+    sources = setFieldSource(sources, 'event:0:aspect', SOURCE_AUTO);
   }
   if (primaryEvent.time_frame === 'not_specified' && prefill.time_frame?.value) {
     primaryEvent.time_frame = prefill.time_frame.value as SemanticEvent['time_frame'];
+    sources = setFieldSource(sources, 'event:0:time_frame', SOURCE_AUTO);
   }
   if (primaryEvent.volitionality === 'not_specified' && prefill.volitionality?.value) {
     primaryEvent.volitionality = prefill.volitionality.value as SemanticEvent['volitionality'];
+    sources = setFieldSource(sources, 'event:0:volitionality', SOURCE_AUTO);
   }
 
   if (primaryEvent.participants.length === 0 && prefill.participants.length) {
@@ -395,17 +423,27 @@ function applyPrefillToAnnotation(
       properties: [],
       name_meaning: '',
     }));
+    prefill.participants.forEach((_, index) => {
+      sources = setFieldSource(sources, `event:0:participant:${index}:label`, SOURCE_AUTO);
+      sources = setFieldSource(sources, `event:0:participant:${index}:type`, SOURCE_AUTO);
+      sources = setFieldSource(sources, `event:0:participant:${index}:quantity`, SOURCE_AUTO);
+      sources = setFieldSource(sources, `event:0:participant:${index}:reference_status`, SOURCE_AUTO);
+      sources = setFieldSource(sources, `event:0:participant:${index}:semantic_role`, SOURCE_AUTO);
+    });
   }
 
   next.events = [primaryEvent, ...next.events.slice(1)];
 
   if (next.discourse_function === 'not_specified' && prefill.discourse_function?.value) {
     next.discourse_function = prefill.discourse_function.value as ClauseAnnotation['discourse_function'];
+    sources = setFieldSource(sources, 'discourse_function', SOURCE_AUTO);
   }
   if (next.register === 'not_specified' && prefill.register?.value) {
     next.register = prefill.register.value as ClauseAnnotation['register'];
+    sources = setFieldSource(sources, 'register', SOURCE_AUTO);
   }
 
+  next.other_fields = sources;
   return next;
 }
 
@@ -618,6 +656,19 @@ export default function EditorPage() {
       return { ...prev, [clauseId]: { ...current, [key]: true } };
     });
     setLastFocusedFieldKey(key);
+    setAnnotations((prev) => {
+      const current = prev[clauseId];
+      if (!current) return prev;
+      const currentSource = current.other_fields?.[sourceKey(key)];
+      if (currentSource !== SOURCE_AUTO) return prev;
+      return {
+        ...prev,
+        [clauseId]: {
+          ...current,
+          other_fields: { ...current.other_fields, [sourceKey(key)]: SOURCE_HUMAN_CONFIRMED },
+        },
+      };
+    });
   }
 
   function isFieldConfirmed(clauseId: number, key: string) {
@@ -625,8 +676,11 @@ export default function EditorPage() {
   }
 
   function fieldStyle(clauseId: number, key: string) {
+    const annotation = annotations[clauseId];
+    const isAuto = annotation?.other_fields?.[sourceKey(key)] === SOURCE_AUTO;
     return {
       ...inputStyle,
+      ...(isAuto ? autoFieldStyle : {}),
       ...(isFieldConfirmed(clauseId, key) ? confirmedFieldStyle : {}),
     };
   }
