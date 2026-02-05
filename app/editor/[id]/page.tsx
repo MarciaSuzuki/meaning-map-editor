@@ -337,14 +337,7 @@ export default function EditorPage() {
     if (!container) return;
     const target = container.querySelector<HTMLElement>(`[data-clause-id="${selectedClauseId}"]`);
     if (!target) return;
-    let offsetTop = 0;
-    let el: HTMLElement | null = target;
-    while (el && el !== container) {
-      offsetTop += el.offsetTop;
-      el = el.offsetParent as HTMLElement | null;
-    }
-    const top = Math.max(offsetTop - 6, 0);
-    container.scrollTo({ top, behavior: 'smooth' });
+    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }, [selectedClauseId, pericopeRange]);
 
   useEffect(() => {
@@ -574,6 +567,8 @@ export default function EditorPage() {
 
   const analysisPassBg = ['#FAF3E7', '#EDF2F5', '#F0F5EA', '#F2F1E8'];
 
+  const clauseScrollOffset = 72;
+
   return (
     <div style={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', fontFamily: s.body }}>
       <header style={{ borderBottom: `1px solid ${s.borderLight}`, padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -629,7 +624,18 @@ export default function EditorPage() {
       </nav>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-        <aside ref={clausePanelRef} style={{ width: 340, minHeight: 0, borderRight: `1px solid ${s.borderLight}`, overflowY: 'auto', padding: '1rem' }}>
+        <aside
+          ref={clausePanelRef}
+          style={{
+            width: 340,
+            minHeight: 0,
+            borderRight: `1px solid ${s.borderLight}`,
+            overflowY: 'auto',
+            padding: '1rem',
+            position: 'relative',
+            scrollPaddingTop: clauseScrollOffset,
+          }}
+        >
           <div style={{ backgroundColor: s.bgCard, borderRadius: 12, padding: '0.9rem', marginBottom: '1rem', border: `1px solid ${s.border}` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <span style={labelStyle}>Pericope Reference</span>
@@ -684,6 +690,7 @@ export default function EditorPage() {
                         padding: '0.5rem 0.65rem',
                         cursor: 'pointer',
                         transition: 'all 120ms ease',
+                        scrollMarginTop: clauseScrollOffset,
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
