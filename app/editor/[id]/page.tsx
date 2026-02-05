@@ -635,6 +635,20 @@ export default function EditorPage() {
     }
   }
 
+  function toggleAssistantOpen() {
+    setAssistantOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        setAssistantMessages([]);
+        setAssistantInput('');
+        setAssistantStatus('idle');
+        setAssistantError(null);
+        setAssistantFocus('auto');
+      }
+      return next;
+    });
+  }
+
   function handlePericopeApply() {
     const parsed = parseReferenceInput(pericopeInput);
     if (!parsed) {
@@ -893,7 +907,7 @@ export default function EditorPage() {
                         <button
                           onClick={(event) => {
                             event.stopPropagation();
-                            setAssistantOpen((prev) => !prev);
+                            toggleAssistantOpen();
                           }}
                           style={{
                             position: 'absolute',
