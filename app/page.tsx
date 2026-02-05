@@ -300,7 +300,25 @@ export default function HomePage() {
         </section>
       </div>
 
-      <footer style={{ borderTop: `1px solid ${s.border}`, padding: '1.5rem 2rem', marginTop: '3rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '0 2rem 2rem' }}>
+        <a
+          href="/tier-3-help.html"
+          style={{
+            padding: '0.7rem 1.4rem',
+            borderRadius: 10,
+            fontSize: '0.9rem',
+            fontWeight: 700,
+            color: 'white',
+            backgroundColor: s.telha,
+            textDecoration: 'none',
+            border: 'none',
+          }}
+        >
+          Tier 3 Help
+        </a>
+      </div>
+
+      <footer style={{ borderTop: `1px solid ${s.border}`, padding: '1.5rem 2rem', marginTop: '1rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logos/I_CONE_-_telha.svg" alt="Shema" style={{ height: 20, width: 20 }} />
