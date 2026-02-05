@@ -443,12 +443,6 @@ export default function EditorPage() {
   const [subgenre, setSubgenre] = useState('historical');
   const [showJson, setShowJson] = useState(false);
   const [confirmedFields, setConfirmedFields] = useState<Record<number, Record<string, boolean>>>({});
-  const [testingLog, setTestingLog] = useState({
-    analyst: '',
-    duration_minutes: '',
-    confidence: 'not_specified',
-    notes: '',
-  });
   const [thematicSpine, setThematicSpine] = useState('');
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [assistantInput, setAssistantInput] = useState('');
@@ -537,12 +531,6 @@ export default function EditorPage() {
   }, [pericopeClauses, presets, projectId, prefillByClauseId]);
 
   useEffect(() => {
-    setTestingLog({
-      analyst: '',
-      duration_minutes: '',
-      confidence: 'not_specified',
-      notes: '',
-    });
     setThematicSpine('');
   }, [pericopeRange]);
 
@@ -898,19 +886,12 @@ export default function EditorPage() {
   }
 
   const pericopeAnnotationJson = useMemo(() => {
-    const minutes = Number(testingLog.duration_minutes);
     return {
       project_id: projectId,
       reference: formatRange(pericopeRange),
       genre,
       subgenre,
       thematic_spine: thematicSpine.trim() ? thematicSpine.trim() : null,
-      team_testing_log: {
-        analyst: testingLog.analyst,
-        duration_minutes: Number.isFinite(minutes) ? minutes : null,
-        confidence: testingLog.confidence,
-        notes: testingLog.notes,
-      },
       clauses: pericopeClauses
         .map((clause) => {
           const annotation = annotations[clause.id];
@@ -925,7 +906,7 @@ export default function EditorPage() {
         })
         .filter(Boolean),
     };
-  }, [annotations, pericopeClauses, pericopeRange, projectId, genre, subgenre, testingLog, thematicSpine]);
+  }, [annotations, pericopeClauses, pericopeRange, projectId, genre, subgenre, thematicSpine]);
 
   const flaggedClauseIds = new Set(reviewFlags.map((f) => f.clause_id));
 
@@ -1190,61 +1171,6 @@ export default function EditorPage() {
                     </div>
                     <div style={{ fontSize: '0.9rem', color: s.muted, marginBottom: '0.3rem' }}>{selected.clause.transliteration}</div>
                     <div style={{ fontSize: '0.85rem', color: s.dark }}>{selected.clause.gloss}</div>
-                  </div>
-                </div>
-
-                <div style={{ backgroundColor: s.bgCard, borderRadius: 14, border: `1px solid ${s.border}`, padding: '1.25rem', marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                    <div>
-                      <h2 style={{ fontFamily: s.display, fontSize: '1.05rem', marginBottom: '0.2rem' }}>Team Testing Log</h2>
-                      <p style={smallMuted}>Record how long this pericope took and how confident you feel about the work.</p>
-                    </div>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.75rem' }}>
-                    <div>
-                      <label style={labelStyle}>Analyst Name</label>
-                      <input
-                        style={inputStyle}
-                        value={testingLog.analyst}
-                        onChange={(e) => setTestingLog((prev) => ({ ...prev, analyst: e.target.value }))}
-                        placeholder="Analyst name"
-                      />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Time (Minutes)</label>
-                      <input
-                        type="number"
-                        min="0"
-                        style={inputStyle}
-                        value={testingLog.duration_minutes}
-                        onChange={(e) => setTestingLog((prev) => ({ ...prev, duration_minutes: e.target.value }))}
-                        placeholder="90"
-                      />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Confidence</label>
-                      <select
-                        value={testingLog.confidence}
-                        onChange={(e) => setTestingLog((prev) => ({ ...prev, confidence: e.target.value }))}
-                        style={inputStyle}
-                      >
-                        <option value="not_specified">Not specified</option>
-                        <option value="very_low">Very low</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                        <option value="very_high">Very high</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div style={{ marginTop: '0.75rem' }}>
-                    <label style={labelStyle}>Notes</label>
-                    <textarea
-                      style={{ ...inputStyle, minHeight: 90 }}
-                      value={testingLog.notes}
-                      onChange={(e) => setTestingLog((prev) => ({ ...prev, notes: e.target.value }))}
-                      placeholder="Observations, challenges, or questions for review..."
-                    />
                   </div>
                 </div>
 
