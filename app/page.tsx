@@ -206,7 +206,7 @@ export default function HomePage() {
     <div style={{ minHeight: '100vh', fontFamily: s.body }}>
       <header style={{ borderBottom: '1px solid #D4D2B8', padding: '1.25rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
-          <img src="/logos/LOGO_-_telha.svg" alt="Shema" style={{ height: 52, width: 'auto' }} />
+          <img src="/logos/LOGO_-_telha.svg" alt="Shema" style={{ height: 72, width: 'auto' }} />
           <h1 style={{ fontFamily: s.display, fontSize: '1.3rem', fontWeight: 600, margin: 0, color: s.dark }}>Meaning Map Three Tiers Test</h1>
         </div>
         <button style={{ padding: '0.5rem 1rem', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, color: 'white', backgroundColor: s.telha, border: 'none', cursor: 'pointer' }}>+ New Project</button>
