@@ -170,7 +170,7 @@ export const EVENT_CATEGORIES = opts([
 ] as const);
 
 export const VERBAL_CORES: Record<string, OntologyOption[]> = {
-  STATE: opts(['be', 'exist', 'remain', 'belong', 'resemble', 'lack', 'need', 'contain']),
+  STATE: opts(['be', 'exist', 'remain', 'dwell', 'sojourn', 'belong', 'resemble', 'lack', 'need', 'contain']),
   MOTION: opts(['go', 'come', 'return', 'follow', 'flee', 'walk', 'run', 'enter', 'leave', 'ascend', 'descend', 'cross', 'wander', 'turn', 'approach']),
   ACTION: opts(['make', 'build', 'break', 'cut', 'strike', 'kill', 'eat', 'drink', 'take', 'give', 'write', 'open', 'close', 'bind', 'gather', 'plant', 'reap']),
   TRANSFER: opts(['give', 'send', 'bring', 'receive', 'pay', 'offer', 'lend', 'steal', 'return_object']),
@@ -178,7 +178,7 @@ export const VERBAL_CORES: Record<string, OntologyOption[]> = {
   INTERNAL: opts(['know', 'think', 'believe', 'remember', 'forget', 'see', 'hear', 'feel', 'love', 'hate', 'fear', 'desire', 'trust', 'decide']),
   PROCESS: opts(['grow', 'die', 'be_born', 'ripen', 'decay', 'heal', 'age', 'change']),
   RITUAL: opts(['sacrifice', 'anoint', 'purify', 'circumcise', 'consecrate', 'worship']),
-  META: opts(['begin', 'finish', 'continue', 'repeat', 'cause', 'prevent', 'try']),
+  META: opts(['begin', 'exist', 'finish', 'continue', 'repeat', 'cause', 'prevent', 'try']),
   SOCIAL: opts(['marry', 'divorce', 'adopt', 'inherit', 'covenant', 'judge', 'redeem', 'vow']),
 };
 

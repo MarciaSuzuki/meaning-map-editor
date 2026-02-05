@@ -281,6 +281,634 @@ function createDefaultAnnotation(projectId: string, clauseId: number, presets: R
   return annotation;
 }
 
+const RUTH_1_1_5_RANGE = { chapterStart: 1, verseStart: 1, chapterEnd: 1, verseEnd: 5 };
+const RUTH_1_1_5_THEMATIC_SPINE =
+  'A family migrates because of famine, and death progressively strips a woman of her husband and both sons, leaving her utterly alone.';
+
+function buildRuthSeed(projectId: string, presets: Record<string, string>) {
+  const prop = (dimension: ParticipantProperty['dimension'], value: ParticipantProperty['value']) => ({ dimension, value });
+  const participant = (
+    id: string,
+    label: string,
+    type: Participant['type'],
+    quantity: Participant['quantity'],
+    reference_status: Participant['reference_status'],
+    semantic_role: Participant['semantic_role'],
+    properties: ParticipantProperty[] = [],
+    name_meaning?: string,
+  ): Participant => ({
+    id,
+    label,
+    type,
+    quantity,
+    reference_status,
+    semantic_role,
+    properties,
+    name_meaning,
+  });
+  const relation = (type: Relation['type'], value: Relation['value'], from: string, to: string): Relation => ({
+    type,
+    value,
+    from_participant: from,
+    to_participant: to,
+  });
+  const event = (id: string, overrides: Partial<SemanticEvent>): SemanticEvent => ({
+    ...createDefaultEvent(id),
+    ...overrides,
+    participants: overrides.participants ?? [],
+  });
+
+  const seed: Record<number, Partial<ClauseAnnotation>> = {
+    502838: {
+      clause_type: 'event',
+      events: [
+        event('event_502838_1', {
+          event_category: 'META',
+          verbal_core: 'exist',
+          participants: [
+            participant('p_502838_1', 'the days', 'abstract', 'not_specified', 'new_mention', 'time'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          evidentiality: 'unspecified',
+        }),
+      ],
+      discourse_function: 'setting',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+      prominence: 'low',
+      pacing: 'summary',
+      focalization: 'narrator_external',
+      retrieval_tags: [
+        { category: 'discourse_tags', tag: 'story_opening' },
+        { category: 'formulaic_tags', tag: 'narrative_opening_formula' },
+      ],
+    },
+    502839: {
+      clause_type: 'event',
+      events: [
+        event('event_502839_1', {
+          event_category: 'SOCIAL',
+          verbal_core: 'judge',
+          participants: [
+            participant(
+              'p_502839_1',
+              'the judges',
+              'group',
+              'generic',
+              'new_mention',
+              'initiator',
+              [prop('social', 'powerful')],
+            ),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'habitual',
+          polarity: 'positive',
+          duration: 'unbounded',
+          volitionality: 'volitional',
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+    },
+    502840: {
+      clause_type: 'existential',
+      non_event_roles: {
+        subject: 'famine',
+        predicate: '',
+        domain: '',
+        location: 'in the land',
+      },
+      events: [
+        event('event_502840_1', {
+          reality: 'actual',
+          polarity: 'positive',
+        }),
+      ],
+      discourse_function: 'setting',
+      discourse_relation: 'cause',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'new_info_focus',
+      formulaic_marker: 'non_formulaic',
+      prominence: 'medium',
+      pacing: 'summary',
+      focalization: 'narrator_external',
+      emotion: 'anxiety',
+      emotion_intensity: 'medium',
+      narrator_stance: 'neutral',
+      audience_response: ['fear'],
+      inference_source: 'contextual',
+      confidence: 'medium',
+    },
+    502841: {
+      clause_type: 'event',
+      events: [
+        event('event_502841_1', {
+          event_category: 'MOTION',
+          verbal_core: 'go',
+          participants: [
+            participant('p_502841_1', 'a man', 'person', 'one', 'new_mention', 'initiator'),
+            participant('p_502841_2', 'Bethlehem', 'place', 'not_specified', 'new_mention', 'source'),
+            participant('p_502841_3', 'Judah', 'place', 'not_specified', 'new_mention', 'not_specified'),
+            participant('p_502841_4', 'his wife', 'person', 'one', 'new_mention', 'companion', [prop('relational', 'married')]),
+            participant('p_502841_5', 'his two sons', 'person', 'two', 'new_mention', 'companion'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          volitionality: 'volitional',
+        }),
+      ],
+      relations: [
+        relation('kinship', 'husband_of', 'p_502841_1', 'p_502841_4'),
+        relation('kinship', 'wife_of', 'p_502841_4', 'p_502841_1'),
+        relation('kinship', 'parent_of', 'p_502841_1', 'p_502841_5'),
+        relation('kinship', 'child_of', 'p_502841_5', 'p_502841_1'),
+        relation('spatial', 'from_place', 'p_502841_1', 'p_502841_2'),
+        relation('part_whole', 'part_of', 'p_502841_2', 'p_502841_3'),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'result',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'new_info_focus',
+      formulaic_marker: 'non_formulaic',
+      prominence: 'high',
+      pacing: 'summary',
+    },
+    502842: {
+      clause_type: 'event',
+      events: [
+        event('event_502842_1', {
+          event_category: 'STATE',
+          verbal_core: 'sojourn',
+          participants: [
+            participant('p_502842_1', 'the family', 'group', 'not_specified', 'given', 'initiator'),
+            participant('p_502842_2', 'fields of Moab', 'place', 'not_specified', 'new_mention', 'goal'),
+          ],
+          reality: 'desired',
+          time_frame: 'prospective',
+          aspect: 'ongoing',
+          polarity: 'positive',
+          volitionality: 'volitional',
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'purpose',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+      key_term_domain: ['land_belonging'],
+      retrieval_tags: [
+        { category: 'event_tags', tag: 'journey_story' },
+        { category: 'event_tags', tag: 'migration_narrative' },
+        { category: 'social_tags', tag: 'alien_sojourn' },
+        { category: 'social_tags', tag: 'displacement' },
+      ],
+    },
+    502843: {
+      clause_type: 'identification',
+      non_event_roles: {
+        subject: 'the man',
+        predicate: 'Elimelech',
+        domain: 'name',
+        location: '',
+      },
+      events: [
+        event('event_502843_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502843_1', 'the man', 'person', 'one', 'given', 'subject'),
+            participant('p_502843_2', 'Elimelech', 'person', 'one', 'given', 'predicate', [], 'My God is King'),
+          ],
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+    },
+    502844: {
+      clause_type: 'identification',
+      non_event_roles: {
+        subject: 'his wife',
+        predicate: 'Naomi',
+        domain: 'name',
+        location: '',
+      },
+      events: [
+        event('event_502844_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502844_1', 'his wife', 'person', 'one', 'given', 'subject', [prop('relational', 'married')]),
+            participant('p_502844_2', 'Naomi', 'person', 'one', 'given', 'predicate', [], 'Pleasant/Sweet'),
+          ],
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+    },
+    502845: {
+      clause_type: 'identification',
+      non_event_roles: {
+        subject: 'his two sons',
+        predicate: 'Mahlon and Kilion',
+        domain: 'name',
+        location: '',
+      },
+      events: [
+        event('event_502845_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502845_1', 'his two sons', 'person', 'two', 'given', 'subject'),
+            participant('p_502845_2', 'Mahlon', 'person', 'one', 'given', 'predicate', [], 'Sickness'),
+            participant('p_502845_3', 'Kilion', 'person', 'one', 'given', 'predicate', [], 'Perishing'),
+          ],
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+    },
+    502846: {
+      clause_type: 'classification',
+      non_event_roles: {
+        subject: 'the family',
+        predicate: 'Ephrathites from Bethlehem Judah',
+        domain: 'clan/origin',
+        location: '',
+      },
+      events: [
+        event('event_502846_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502846_1', 'the family', 'group', 'not_specified', 'given', 'subject', [prop('social', 'native')]),
+            participant('p_502846_2', 'Ephrathites', 'group', 'generic', 'new_mention', 'predicate'),
+            participant('p_502846_3', 'Bethlehem', 'place', 'not_specified', 'given', 'not_specified'),
+            participant('p_502846_4', 'Judah', 'place', 'not_specified', 'given', 'not_specified'),
+          ],
+        }),
+      ],
+      relations: [
+        relation('kinship', 'clan_member', 'p_502846_1', 'p_502846_2'),
+        relation('spatial', 'from_place', 'p_502846_1', 'p_502846_3'),
+        relation('part_whole', 'part_of', 'p_502846_3', 'p_502846_4'),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+    },
+    502847: {
+      clause_type: 'event',
+      events: [
+        event('event_502847_1', {
+          event_category: 'MOTION',
+          verbal_core: 'come',
+          participants: [
+            participant('p_502847_1', 'the family', 'group', 'not_specified', 'given', 'initiator'),
+            participant('p_502847_2', 'fields of Moab', 'place', 'not_specified', 'given', 'goal'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          volitionality: 'volitional',
+        }),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'resumption',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+    },
+    502848: {
+      clause_type: 'event',
+      events: [
+        event('event_502848_1', {
+          event_category: 'STATE',
+          verbal_core: 'be',
+          participants: [
+            participant('p_502848_1', 'they', 'group', 'not_specified', 'given', 'theme'),
+            participant('p_502848_2', 'there (Moab)', 'place', 'not_specified', 'given', 'location'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'ongoing',
+          polarity: 'positive',
+          duration: 'unbounded',
+        }),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'sequence',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+    },
+    502849: {
+      clause_type: 'event',
+      events: [
+        event('event_502849_1', {
+          event_category: 'PROCESS',
+          verbal_core: 'die',
+          participants: [
+            participant('p_502849_1', 'Elimelech', 'person', 'one', 'given', 'affected', [prop('physical', 'deceased')]),
+            participant('p_502849_2', 'Naomi', 'person', 'one', 'given', 'not_specified'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          duration: 'point',
+          volitionality: 'non_volitional',
+        }),
+      ],
+      relations: [
+        relation('kinship', 'husband_of', 'p_502849_1', 'p_502849_2'),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'sequence',
+      information_structure_topic: 'marked_topic',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+      prominence: 'high',
+      pacing: 'summary',
+      focalization: 'narrator_aligned',
+      emotion: 'sorrow',
+      emotion_intensity: 'medium',
+      narrator_stance: 'sympathetic',
+      audience_response: ['sympathy', 'grief'],
+      inference_source: 'contextual',
+      confidence: 'medium',
+      retrieval_tags: [
+        { category: 'emotion_tags', tag: 'grief_at_death' },
+        { category: 'event_tags', tag: 'death_narrative' },
+        { category: 'social_tags', tag: 'widow_vulnerability' },
+      ],
+    },
+    502850: {
+      clause_type: 'event',
+      events: [
+        event('event_502850_1', {
+          event_category: 'STATE',
+          verbal_core: 'remain',
+          participants: [
+            participant('p_502850_1', 'Naomi', 'person', 'one', 'given', 'affected', [
+              prop('relational', 'widowed'),
+              prop('emotional_state', 'grieving'),
+            ]),
+            participant('p_502850_2', 'her two sons', 'person', 'two', 'given', 'companion'),
+            participant('p_502850_3', 'Elimelech', 'person', 'one', 'given', 'separated_from'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'ongoing',
+          polarity: 'positive',
+          volitionality: 'non_volitional',
+        }),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'result',
+      information_structure_topic: 'marked_topic',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+    },
+    502851: {
+      clause_type: 'event',
+      events: [
+        event('event_502851_1', {
+          event_category: 'SOCIAL',
+          verbal_core: 'marry',
+          participants: [
+            participant('p_502851_1', 'Mahlon', 'person', 'one', 'given', 'initiator', [prop('relational', 'married')]),
+            participant('p_502851_2', 'Kilion', 'person', 'one', 'given', 'initiator', [prop('relational', 'married')]),
+            participant('p_502851_3', 'Orpah', 'person', 'one', 'new_mention', 'affected', [
+              prop('social', 'foreign'),
+              prop('relational', 'married'),
+            ]),
+            participant('p_502851_4', 'Ruth', 'person', 'one', 'new_mention', 'affected', [
+              prop('social', 'foreign'),
+              prop('relational', 'married'),
+            ]),
+            participant('p_502851_5', 'Naomi', 'person', 'one', 'given', 'not_specified'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          volitionality: 'volitional',
+        }),
+      ],
+      relations: [
+        relation('kinship', 'husband_of', 'p_502851_1', 'p_502851_3'),
+        relation('kinship', 'husband_of', 'p_502851_2', 'p_502851_4'),
+        relation('kinship', 'in_law', 'p_502851_5', 'p_502851_3'),
+        relation('kinship', 'in_law', 'p_502851_5', 'p_502851_4'),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'sequence',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+      figurative_language: ['idiom'],
+      figurative_transferability: 'common',
+    },
+    502852: {
+      clause_type: 'identification',
+      non_event_roles: {
+        subject: 'the one',
+        predicate: 'Orpah',
+        domain: 'name',
+        location: '',
+      },
+      events: [
+        event('event_502852_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502852_1', 'the one', 'person', 'one', 'given', 'subject'),
+            participant('p_502852_2', 'Orpah', 'person', 'one', 'given', 'predicate'),
+          ],
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+    },
+    502853: {
+      clause_type: 'identification',
+      non_event_roles: {
+        subject: 'the second',
+        predicate: 'Ruth',
+        domain: 'name',
+        location: '',
+      },
+      events: [
+        event('event_502853_1', {
+          polarity: 'positive',
+          participants: [
+            participant('p_502853_1', 'the second', 'person', 'one', 'given', 'subject'),
+            participant('p_502853_2', 'Ruth', 'person', 'one', 'given', 'predicate'),
+          ],
+        }),
+      ],
+      discourse_function: 'background',
+      discourse_relation: 'elaboration',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'formulaic',
+    },
+    502854: {
+      clause_type: 'event',
+      events: [
+        event('event_502854_1', {
+          event_category: 'STATE',
+          verbal_core: 'dwell',
+          participants: [
+            participant('p_502854_1', 'they', 'group', 'not_specified', 'given', 'theme'),
+            participant('p_502854_2', 'there (Moab)', 'place', 'not_specified', 'given', 'location'),
+            participant('p_502854_3', 'about ten years', 'abstract', 'not_specified', 'not_specified', 'time'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'habitual',
+          polarity: 'positive',
+          duration: 'bounded',
+          duration_precision: 'approximate',
+          volitionality: 'volitional',
+        }),
+      ],
+      discourse_function: 'mainline',
+      discourse_relation: 'sequence',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+      pacing: 'summary',
+    },
+    502855: {
+      clause_type: 'event',
+      events: [
+        event('event_502855_1', {
+          event_category: 'PROCESS',
+          verbal_core: 'die',
+          participants: [
+            participant('p_502855_1', 'Mahlon', 'person', 'one', 'given', 'affected', [prop('physical', 'deceased')]),
+            participant('p_502855_2', 'Kilion', 'person', 'one', 'given', 'affected', [prop('physical', 'deceased')]),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'completed',
+          polarity: 'positive',
+          duration: 'point',
+          volitionality: 'non_volitional',
+        }),
+      ],
+      discourse_function: 'peak',
+      discourse_relation: 'additive',
+      information_structure_topic: 'unmarked',
+      information_structure_focus: 'contrastive_focus',
+      formulaic_marker: 'non_formulaic',
+      prominence: 'peak',
+      pacing: 'summary',
+      focalization: 'narrator_external',
+      emotion: 'sorrow',
+      emotion_intensity: 'high',
+      narrator_stance: 'neutral',
+      audience_response: ['grief', 'empathy'],
+      inference_source: 'contextual',
+      confidence: 'high',
+      retrieval_tags: [
+        { category: 'emotion_tags', tag: 'grief_at_death' },
+        { category: 'event_tags', tag: 'death_narrative' },
+        { category: 'discourse_tags', tag: 'climax_moment' },
+      ],
+    },
+    502856: {
+      clause_type: 'event',
+      events: [
+        event('event_502856_1', {
+          event_category: 'STATE',
+          verbal_core: 'remain',
+          participants: [
+            participant('p_502856_1', 'the woman (Naomi)', 'person', 'one', 'given', 'affected', [
+              prop('relational', 'widowed'),
+              prop('emotional_state', 'grieving'),
+              prop('social', 'powerless'),
+              prop('social', 'foreign'),
+            ]),
+            participant('p_502856_2', 'her two children', 'person', 'two', 'given', 'separated_from'),
+            participant('p_502856_3', 'her husband (Elimelech)', 'person', 'one', 'given', 'separated_from'),
+          ],
+          reality: 'actual',
+          time_frame: 'retrospective',
+          aspect: 'ongoing',
+          polarity: 'positive',
+          volitionality: 'non_volitional',
+        }),
+      ],
+      relations: [
+        relation('possession', 'lacks', 'p_502856_1', 'p_502856_2'),
+        relation('possession', 'lacks', 'p_502856_1', 'p_502856_3'),
+      ],
+      discourse_function: 'evaluation',
+      discourse_relation: 'result',
+      information_structure_topic: 'marked_topic',
+      information_structure_focus: 'unmarked',
+      formulaic_marker: 'non_formulaic',
+      focalization: 'narrator_aligned',
+      emotion: 'loneliness',
+      emotion_intensity: 'extreme',
+      narrator_stance: 'sympathetic',
+      audience_response: ['empathy', 'grief'],
+      inference_source: 'behavioral',
+      confidence: 'high',
+      retrieval_tags: [
+        { category: 'emotion_tags', tag: 'grief_at_death' },
+        { category: 'emotion_tags', tag: 'loneliness_isolation' },
+        { category: 'event_tags', tag: 'death_narrative' },
+        { category: 'event_tags', tag: 'bereavement' },
+        { category: 'social_tags', tag: 'widow_vulnerability' },
+      ],
+    },
+  };
+
+  const annotations: Record<number, ClauseAnnotation> = {};
+  for (const [key, partial] of Object.entries(seed)) {
+    const clauseId = Number(key);
+    const base = createDefaultAnnotation(projectId, clauseId, presets);
+    annotations[clauseId] = {
+      ...base,
+      ...partial,
+      non_event_roles: { ...base.non_event_roles, ...(partial.non_event_roles ?? {}) },
+      events: partial.events ?? base.events,
+      relations: partial.relations ?? base.relations,
+      audience_response: partial.audience_response ?? base.audience_response,
+      figurative_language: partial.figurative_language ?? base.figurative_language,
+      poetic_sound_patterns: partial.poetic_sound_patterns ?? base.poetic_sound_patterns,
+      key_term_domain: partial.key_term_domain ?? base.key_term_domain,
+      retrieval_tags: partial.retrieval_tags ?? base.retrieval_tags,
+      other_fields: { ...base.other_fields, ...(partial.other_fields ?? {}) },
+    };
+  }
+  return annotations;
+}
+
 function getPresetKey(genre: string, subgenre: string) {
   if (!genre) return null;
   const key = `${genre}_${subgenre}`;
@@ -348,6 +976,15 @@ export default function EditorPage() {
       return confirmed && Object.keys(confirmed).length > 0;
     });
   }, [pericopeClauses, confirmedFields]);
+  const isRuthSeedRange = useMemo(() => {
+    if (book.name.toLowerCase() !== 'ruth') return false;
+    return (
+      pericopeRange.chapterStart === RUTH_1_1_5_RANGE.chapterStart
+      && pericopeRange.verseStart === RUTH_1_1_5_RANGE.verseStart
+      && pericopeRange.chapterEnd === RUTH_1_1_5_RANGE.chapterEnd
+      && pericopeRange.verseEnd === RUTH_1_1_5_RANGE.verseEnd
+    );
+  }, [book.name, pericopeRange]);
 
   const selected = useMemo(() => {
     if (!selectedClauseId) return null;
@@ -397,6 +1034,15 @@ export default function EditorPage() {
     });
     setThematicSpine('');
   }, [pericopeRange]);
+
+  useEffect(() => {
+    if (!isRuthSeedRange) return;
+    if (pericopeClauses.length === 0) return;
+    const hasContent = pericopeClauses.some((clause) => hasAnyContent(annotations[clause.id]));
+    if (hasContent) return;
+    setAnnotations((prev) => ({ ...prev, ...buildRuthSeed(projectId, presets) }));
+    setThematicSpine(RUTH_1_1_5_THEMATIC_SPINE);
+  }, [isRuthSeedRange, pericopeClauses, annotations, projectId, presets]);
 
   useEffect(() => {
     if (activePass === 3 && !pericopeReadyForReview) {

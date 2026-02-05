@@ -199,7 +199,7 @@ export type NonEventRole =
   | 'not_specified' | 'other';
 
 export const VERBAL_CORES: Record<string, string[]> = {
-  STATE: ['be', 'exist', 'remain', 'belong', 'resemble', 'lack', 'need', 'contain'],
+  STATE: ['be', 'exist', 'remain', 'dwell', 'sojourn', 'belong', 'resemble', 'lack', 'need', 'contain'],
   MOTION: ['go', 'come', 'return', 'follow', 'flee', 'walk', 'run', 'enter', 'leave', 'ascend', 'descend', 'cross', 'wander', 'turn', 'approach'],
   ACTION: ['make', 'build', 'break', 'cut', 'strike', 'kill', 'eat', 'drink', 'take', 'give', 'write', 'open', 'close', 'bind', 'gather', 'plant', 'reap'],
   TRANSFER: ['give', 'send', 'bring', 'receive', 'pay', 'offer', 'lend', 'steal', 'return_object'],
@@ -207,7 +207,7 @@ export const VERBAL_CORES: Record<string, string[]> = {
   INTERNAL: ['know', 'think', 'believe', 'remember', 'forget', 'see', 'hear', 'feel', 'love', 'hate', 'fear', 'desire', 'trust', 'decide'],
   PROCESS: ['grow', 'die', 'be_born', 'ripen', 'decay', 'heal', 'age', 'change'],
   RITUAL: ['sacrifice', 'anoint', 'purify', 'circumcise', 'consecrate', 'worship'],
-  META: ['begin', 'finish', 'continue', 'repeat', 'cause', 'prevent', 'try'],
+  META: ['begin', 'exist', 'finish', 'continue', 'repeat', 'cause', 'prevent', 'try'],
 };
 
 // Verbless predication (Biblical Hebrew nominal clauses)
