@@ -492,6 +492,7 @@ export default function EditorPage() {
 
   const [selectedClauseId, setSelectedClauseId] = useState<number | null>(null);
   const [annotations, setAnnotations] = useState<Record<number, ClauseAnnotation>>({});
+  const [autoLocks, setAutoLocks] = useState<Record<number, boolean>>({});
   const [reviewFlags, setReviewFlags] = useState<Array<{ clause_id: number; message: string; severity: string; recommendation: string }>>([]);
   const [reviewStatus, setReviewStatus] = useState<'idle' | 'loading' | 'error' | 'done'>('idle');
   const [reviewError, setReviewError] = useState<string | null>(null);
@@ -675,12 +676,22 @@ export default function EditorPage() {
     return Boolean(confirmedFields[clauseId]?.[key]);
   }
 
+  function isFieldLocked(clauseId: number, key: string) {
+    const annotation = annotations[clauseId];
+    const isAuto = annotation?.other_fields?.[sourceKey(key)] === SOURCE_AUTO;
+    const locked = autoLocks[clauseId] ?? true;
+    return isAuto && locked;
+  }
+
   function fieldStyle(clauseId: number, key: string) {
     const annotation = annotations[clauseId];
     const isAuto = annotation?.other_fields?.[sourceKey(key)] === SOURCE_AUTO;
+    const locked = isFieldLocked(clauseId, key);
+    const lockedStyle = { pointerEvents: 'none' as const, opacity: 0.85, cursor: 'not-allowed' as const };
     return {
       ...inputStyle,
       ...(isAuto ? autoFieldStyle : {}),
+      ...(locked ? lockedStyle : {}),
       ...(isFieldConfirmed(clauseId, key) ? confirmedFieldStyle : {}),
     };
   }
@@ -965,6 +976,11 @@ export default function EditorPage() {
   const flaggedClauseIds = new Set(reviewFlags.map((f) => f.clause_id));
 
   const activeAnnotation = selectedClauseId ? annotations[selectedClauseId] : null;
+  const hasAutoFields = useMemo(() => {
+    if (!activeAnnotation) return false;
+    return Object.values(activeAnnotation.other_fields ?? {}).some((value) => value === SOURCE_AUTO);
+  }, [activeAnnotation]);
+  const autoLocked = selectedClauseId ? (autoLocks[selectedClauseId] ?? true) : true;
   const clauseType = activeAnnotation?.clause_type ?? 'not_specified';
   const isEventClause = clauseType === 'event';
   const isNonEventClause = ['identification', 'classification', 'attribution', 'existential'].includes(clauseType);
@@ -1214,9 +1230,32 @@ export default function EditorPage() {
                       <h2 style={{ fontFamily: s.display, fontSize: '1.4rem', marginBottom: '0.25rem' }}>{selected.verse.reference}</h2>
                       <p style={{ fontSize: '0.85rem', color: s.muted, margin: 0 }}>Clause {selected.verse.clauses.findIndex((c) => c.id === selected.clause.id) + 1} - {selected.clause.clause_type} - {selected.clause.is_verbless ? 'Verbless' : 'Verbal'}</p>
                     </div>
-                    <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: '0.7rem', fontFamily: s.mono, backgroundColor: '#E8F0EE', color: s.azul, border: `1px solid ${s.azul}` }}>
-                      Pass {activePass + 1}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      {hasAutoFields && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '0.7rem', color: s.muted }}>BHSA auto‑fill</span>
+                          <button
+                            onClick={() => {
+                              if (!selectedClauseId) return;
+                              setAutoLocks((prev) => ({ ...prev, [selectedClauseId]: !autoLocked }));
+                            }}
+                            style={{
+                              padding: '0.25rem 0.6rem',
+                              borderRadius: 999,
+                              border: `1px solid ${s.borderLight}`,
+                              backgroundColor: autoLocked ? '#F1F1EC' : 'white',
+                              fontSize: '0.7rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {autoLocked ? 'Unlock' : 'Lock'}
+                          </button>
+                        </div>
+                      )}
+                      <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: '0.7rem', fontFamily: s.mono, backgroundColor: '#E8F0EE', color: s.azul, border: `1px solid ${s.azul}` }}>
+                        Pass {activePass + 1}
+                      </span>
+                    </div>
                   </div>
 
                   <div style={{ backgroundColor: 'white', borderRadius: 12, border: `1px solid ${s.border}`, padding: '1.5rem' }}>
