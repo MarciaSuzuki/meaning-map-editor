@@ -468,7 +468,7 @@ export default function EditorPage() {
 
   function getFieldHelp(key: string, annotation: ClauseAnnotation | null) {
     if (!key) {
-      return { label: 'General', options: [] as string[], note: '' };
+      return { label: 'General', options: [] as string[], note: '', context: {} as Record<string, string> };
     }
     const options = (list: Array<{ value: string }>) => list.map((opt) => opt.value);
     if (key.includes('event_category')) return { label: 'Event Category', options: options(EVENT_CATEGORIES), note: '' };
@@ -522,10 +522,61 @@ export default function EditorPage() {
     if (key === 'participant_role') return { label: 'Semantic Role', options: options(SEMANTIC_ROLES), note: '' };
     if (key === 'participant_quantity') return { label: 'Participant Quantity', options: options(QUANTITIES), note: '' };
     if (key === 'reference_status') return { label: 'Reference Status', options: options(REFERENCE_STATUSES), note: '' };
-    if (key.includes('property:') && key.includes('dimension')) return { label: 'Property Dimension', options: Object.keys(PROPERTY_DIMENSIONS), note: '' };
-    if (key.includes('property:') && key.includes('value')) return { label: 'Property Value', options: [], note: 'Property values depend on the chosen dimension.' };
+    if (key.includes('property:') && key.includes('dimension')) {
+      return { label: 'Property Dimension', options: Object.keys(PROPERTY_DIMENSIONS), note: '', context: {} as Record<string, string> };
+    }
+    if (key.includes('property:') && key.includes('value')) {
+      const match = key.match(/event:(\d+):participant:(\d+):property:(\d+)/);
+      const eventIndex = match ? Number(match[1]) : -1;
+      const participantIndex = match ? Number(match[2]) : -1;
+      const propIndex = match ? Number(match[3]) : -1;
+      const dimension = annotation?.events?.[eventIndex]?.participants?.[participantIndex]?.properties?.[propIndex]?.dimension;
+      const valueOptions = dimension ? PROPERTY_DIMENSIONS[dimension] ?? [] : [];
+      return {
+        label: 'Property Value',
+        options: options(valueOptions),
+        note: 'Property values depend on the chosen dimension.',
+        context: dimension ? { dimension } : {},
+      };
+    }
+    if (key.includes('relation:') && key.includes(':value')) {
+      const match = key.match(/relation:(\d+):value/);
+      const relationIndex = match ? Number(match[1]) : -1;
+      const relation = annotation?.relations?.[relationIndex];
+      const relationType = relation?.type;
+      const relationOptions =
+        relationType === 'kinship'
+          ? KINSHIP_RELATIONS
+          : relationType === 'social'
+            ? SOCIAL_RELATIONS
+            : relationType === 'possession'
+              ? POSSESSION_RELATIONS
+              : relationType === 'spatial'
+                ? SPATIAL_RELATIONS
+                : relationType === 'part_whole'
+                  ? PART_WHOLE_RELATIONS
+                  : [];
+      const relationLabel =
+        relationType === 'kinship'
+          ? 'Kinship Relation'
+          : relationType === 'social'
+            ? 'Social Relation'
+            : relationType === 'possession'
+              ? 'Possession Relation'
+              : relationType === 'spatial'
+                ? 'Spatial Relation'
+                : relationType === 'part_whole'
+                  ? 'Part-Whole Relation'
+                  : 'Relation';
+      return {
+        label: relationLabel,
+        options: options(relationOptions),
+        note: 'Relation values depend on the selected relation type.',
+        context: relationType ? { relation_type: relationType } : {},
+      };
+    }
     if (key.includes('relation')) return { label: 'Relation', options: [], note: 'Relation options depend on the selected relation type.' };
-    return { label: 'General', options: [] as string[], note: '' };
+    return { label: 'General', options: [] as string[], note: '', context: {} as Record<string, string> };
   }
 
   async function askAssistant() {
@@ -564,6 +615,7 @@ export default function EditorPage() {
             label: fieldHelp.label,
             options: fieldHelp.options,
             note: fieldHelp.note,
+            context: fieldHelp.context ?? {},
           },
           question: userMessage,
         }),
